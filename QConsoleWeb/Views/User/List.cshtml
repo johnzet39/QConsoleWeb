@@ -1,0 +1,39 @@
+﻿@model UserViewModel
+
+
+<div class="text-center">
+    <h5>Список пользователей</h5>
+</div>
+
+
+
+<a asp-action="CreateUser" asp-controller="User" class="btn btn-sm btn-outline-primary">
+    <span style="color:green"><i class="fas fa-plus"></i></span>
+    Создать
+</a>
+<div class="table-responsive">
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Имя пользователя</th>
+                <th>Описание</th>
+                <th>Суперюзер</th>
+                <th>Групповая роль</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int rowNumber = 0;}
+            @foreach (var p in Model.Users)
+            {
+                <tr>
+                    <td>@(rowNumber += 1)</td>
+                    @Html.Partial("UserSummary", p)
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+</div>

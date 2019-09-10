@@ -1,0 +1,15 @@
+﻿@model LayerViewModel
+
+
+<div class="text-center">
+    <h5>Слои и справочники</h5>
+</div>
+
+<div>
+
+    @Html.Partial("LayerSummary", Model.Layers)
+
+    @Html.Partial("LayerSummary", Model.Dictionaries)
+
+
+</div>

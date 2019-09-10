@@ -1,0 +1,45 @@
+﻿@model IEnumerable<LogRow>
+
+<div class="text-center">
+    <h5>Аудит операций</h5>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>gid</th>
+                <th>Операция</th>
+                <th>Пользователь</th>
+                <th>Адрес</th>
+                <th>Дата изм.</th>
+                <th>Схема</th>
+                <th>Таблица</th>
+                <th>gidnum</th>
+                <th>Содержание</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int rowNumber = 0;}
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@(rowNumber += 1)</td>
+                    <td>@p.Gid</td>
+                    <td>@p.Action</td>
+                    <td>@p.Username</td>
+                    <td>@p.Address</td>
+                    <td>@p.Timechange</td>
+                    <td>@p.Tableschema</td>
+                    <td>@p.Tablename</td>
+                    <td>@p.Gidnum</td>
+                    <td>@p.Context</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+</div>
