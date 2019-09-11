@@ -22,4 +22,8 @@
     <ProjectReference Include="..\QConsoleWeb.DAL\QConsoleWeb.DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\icons\" />
+  </ItemGroup>
+
 </Project>

@@ -9,6 +9,7 @@ using AutoMapper;
 using QConsoleWeb.Models;
 using QConsoleWeb.Views.ViewModels;
 using Microsoft.Extensions.Configuration;
+using QConsoleWeb.Components.Paging;
 
 namespace QConsoleWeb.Controllers
 {
@@ -27,26 +28,26 @@ namespace QConsoleWeb.Controllers
         {
             _config = config;
             _service = serv;
-            _service.LastRowsCount = _config.GetSection("LoggerTab").GetValue<int>("LastRowsCount");
             _service.LastRowsCount = _config.GetValue<int>("AppSettings:LoggerTab:LastRowsCount");
             _model = new LogRowViewModel();
         }
 
         [HttpGet]
-        public ViewResult List()
+        public ViewResult List(int page = 1)
         {
             ViewBag.Title = "Логгер";
             _model.LogRows = GetLogRows();
+            _model.PagedLogRows = GetLogRows().GetPaged(page, 100);
             return View(_model);
         }
 
         [HttpPost]
         public IActionResult List(LogRowViewModel model)
         {
+            if (model.DateFrom == null & model.DateTo == null & model.SubQuery == null)
+                return RedirectToAction("List");
             if (ModelState.IsValid)
             {
-
-            
                 _model.DateFrom = model.DateFrom;
                 _model.DateTo = model.DateTo;
                 _model.SubQuery = model.SubQuery;
@@ -69,8 +70,9 @@ namespace QConsoleWeb.Controllers
 
         public IActionResult LogRowHistory(string gid)
         {
+            ViewBag.Title = "История изменений";
             LogRowHistoryViewModel hismodel = new LogRowHistoryViewModel();
-            var logrows = GetLogRows();
+            var logrows = GetLogRows(onlyLastRows:false);
             hismodel.CurrentLogRow = logrows.FirstOrDefault(g => g.Gid == gid);
             var cur = hismodel.CurrentLogRow;
             hismodel.HitoriedLogRows = logrows
@@ -80,10 +82,10 @@ namespace QConsoleWeb.Controllers
         }
 
 
-        private IEnumerable<LogRow> GetLogRows()
+        private IEnumerable<LogRow> GetLogRows(bool onlyLastRows = true)
         {
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<LogRowDTO, LogRow>()).CreateMapper();
-            return mapper.Map<IEnumerable<LogRowDTO>, List<LogRow>>(_service.GetLogList(_model.DateFrom, _model.DateTo, _model.SubQuery, true));
+            return mapper.Map<IEnumerable<LogRowDTO>, List<LogRow>>(_service.GetLogList(_model.DateFrom, _model.DateTo, _model.SubQuery, onlyLastRows));
         }
     }
 }

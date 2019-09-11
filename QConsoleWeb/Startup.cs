@@ -28,7 +28,6 @@ namespace QConsoleWeb
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            //string _connectionString = "Host=localhost;Port=5432;Username=admin;Database=QGIS_BASE;Password=1;Application Name=\"QConsole WEB\"";
             string _connectionString = Configuration.GetConnectionString("QGIS_BASE");
 
             services.AddMvc();
@@ -55,7 +54,7 @@ namespace QConsoleWeb
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Session}/{action=List}/{id?}");
+                    template: "{controller=LogRow}/{action=List}/{id?}");
             });
         }
     }

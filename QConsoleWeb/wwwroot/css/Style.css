@@ -2,6 +2,7 @@
     font-size: .875rem;
 }
 
+
 .sidebar .nav-link {
     font-weight: 500;
     color: #333;
@@ -9,6 +10,22 @@
 
 .sidebar .nav-link.active {
     color: #007bff;
+}
+
+.ButtonClass {
+    cursor: pointer;
+}
+
+.table td.text {
+    max-width: 177px;
+}
+
+.table td.text span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    max-width: 100%;
 }
 
 /* BEGIN styles for validation helpers */

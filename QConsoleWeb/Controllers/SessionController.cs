@@ -21,6 +21,7 @@ namespace QConsoleWeb.Controllers
 
         public ViewResult List()
         {
+            ViewBag.Title = "Сессии";
             var sessions = GetSessions();
 
             return View(sessions);

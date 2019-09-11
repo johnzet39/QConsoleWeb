@@ -1,7 +1,7 @@
 ﻿@model User
 
 <td><a asp-action="EditUser" asp-controller="User" asp-route-userid=@Model.Usesysid>@Model.Usename</a></td>
-<td>@Model.Descript</td>
+<td class="text"><span>@Model.Descript</span></td>
 <td>@Model.Usesuper</td>
 <td>@Model.Isrole</td>
 <td>
@@ -17,56 +17,3 @@
     </div>
 </td>
 
-
-
-
-
-
-<div class="modal fade" id="newModal">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                Hello
-            </div>
-            <div class="modal-body">
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="btnHide" class="btn btn-primary">Hide</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
-
-<script type="text/javascript">
-    $(document).ready(function () {
-        $("#btnEdit").click(function () {
-            $("#newModal").modal('show');
-        });
-        $("#btnHide").click(function () {
-            $("#newModal").modal('hide');
-        });
-    });
-</script>
-
-
-
-
-@*onclick="return confirm('Подтвердите удаление');"*@
-
-
-
-
-@*<form asp-action="DeleteUser" asp-route-userid=@Model.Usesysid method="post">
-        <a asp-action="EditUser" asp-controller="User" asp-route-userid=@Model.Usesysid class="btn btn-sm btn-outline-info">
-            <i class="fa fa-pen"></i>
-        </a>
-        <button type="submit" class="btn btn-outline-danger btn-sm">
-            <i class="fa fa-trash"></i>
-        </button>
-
-        <input type="hidden" name="Usesysid" value="@Model.Usesysid" />
-    </form>*@

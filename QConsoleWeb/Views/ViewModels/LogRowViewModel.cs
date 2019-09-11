@@ -1,4 +1,5 @@
-﻿using QConsoleWeb.Models;
+﻿using QConsoleWeb.Components.Paging;
+using QConsoleWeb.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -11,10 +12,12 @@ namespace QConsoleWeb.Views.ViewModels
     {
         public IEnumerable<LogRow> LogRows;
 
-        [Display(Name = "Дата с")]
+        public PagedResult<LogRow> PagedLogRows;
+
+        [Display(Name = "Дата от")]
         public DateTime? DateFrom { get; set; }
 
-        [Display(Name = "по")]
+        [Display(Name = "Дата до")]
         public DateTime? DateTo { get; set; }
 
         [Display(Name = "Дополнительные условия")]
