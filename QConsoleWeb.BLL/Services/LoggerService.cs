@@ -20,14 +20,14 @@ namespace QConsoleWeb.BLL.Services
     {
         IManagerDAL _managerDAL;
         UnitOfWork _unitOfWork;
-        int lastRowsCount = 1000;
-        string Conn;
+
+        public int LastRowsCount { get; set; }
 
         public LoggerService(string conn)
         {
             _managerDAL = new ManagerDAL(conn);
             _unitOfWork = new UnitOfWork(conn);
-            Conn = conn;
+            LastRowsCount = 1000;
         }
 
         public string BuildExtraDateString(DateTime? dateFrom, DateTime? dateTo)
@@ -37,7 +37,7 @@ namespace QConsoleWeb.BLL.Services
 
         public string BuildExtraFirstRowsString()
         {
-            return _managerDAL.LoggerAccess.BuildExtraFirstRowsString(lastRowsCount);
+            return _managerDAL.LoggerAccess.BuildExtraFirstRowsString(LastRowsCount);
         }
 
         public List<string> GetColumnsList()
@@ -77,7 +77,7 @@ namespace QConsoleWeb.BLL.Services
                 List<Logtable> OrderedList;
                 if (onlyLastRows)
                 {
-                    OrderedList = _unitOfWork.LogtableRepository.Get().OrderByDescending(r => r.gid).Take(lastRowsCount).ToList();
+                    OrderedList = _unitOfWork.LogtableRepository.Get().OrderByDescending(r => r.gid).Take(LastRowsCount).ToList();
                 }
                 else
                 {

@@ -10,6 +10,7 @@ namespace QConsoleWeb.BLL.Interfaces
 {
     public interface ILoggerService
     {
+        int LastRowsCount { get; set; }
         //LOG LIST main
         List<LogRowDTO> GetLogList(DateTime? DateFrom, DateTime? DateTo, string extraQuery, bool onlyLastRows);
         //build date string subquery

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace QConsoleWeb.Models.ViewModels
+namespace QConsoleWeb.Views.ViewModels
 {
     public class UserViewModel
     {

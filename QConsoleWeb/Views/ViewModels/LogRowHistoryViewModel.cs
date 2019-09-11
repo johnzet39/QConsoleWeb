@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace QConsoleWeb.Views.ViewModels
 {
-    public class LayerViewModel
+    public class LogRowHistoryViewModel
     {
-        public IEnumerable<Layer> Layers { get; set; }
-        public IEnumerable<Layer> Dictionaries { get; set; }
+        public LogRow CurrentLogRow { get; set; }
+        public IEnumerable<LogRow> HitoriedLogRows { get; set; }
+
+
     }
 }

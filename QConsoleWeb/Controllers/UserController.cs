@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using QConsoleWeb.Models;
-using QConsoleWeb.Models.ViewModels;
+using QConsoleWeb.Views.ViewModels;
 
 namespace QConsoleWeb.Controllers
 {
@@ -25,8 +25,6 @@ namespace QConsoleWeb.Controllers
             ViewBag.Title = "Список пользователей";
             UserViewModel model = new UserViewModel();
             model.Users = GetUsers();
-            //model.AssignedRoles = GetAssignedRoles();
-            //model.AvailableRoles = GetAvailableRoles();
 
             return View(model);
         }

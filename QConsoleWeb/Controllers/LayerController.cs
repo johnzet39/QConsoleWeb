@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using QConsoleWeb.Models;
-using QConsoleWeb.Models.ViewModels;
+using QConsoleWeb.Views.ViewModels;
 
 namespace QConsoleWeb.Controllers
 {

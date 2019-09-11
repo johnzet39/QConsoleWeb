@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using QConsoleWeb.BLL.Interfaces;
 using QConsoleWeb.BLL.Services;
@@ -14,12 +15,21 @@ namespace QConsoleWeb
 {
     public class Startup
     {
+        public IHostingEnvironment HostingEnvironment { get; private set; }
+        public IConfiguration Configuration { get; private set; }
+
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        {
+            this.HostingEnvironment = env;
+            this.Configuration = configuration;
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            string _connectionString = "Host=localhost;Port=5432;Username=admin;Database=QGIS_BASE;Password=vfhfreqz_14;Application Name=\"QConsole WEB\"";
-            services.AddEntityFrameworkNpgsql();
+            //string _connectionString = "Host=localhost;Port=5432;Username=admin;Database=QGIS_BASE;Password=1;Application Name=\"QConsole WEB\"";
+            string _connectionString = Configuration.GetConnectionString("QGIS_BASE");
 
             services.AddMvc();
             //services.AddTransient<IUserService, FakeUserService>();

@@ -16,19 +16,16 @@ namespace QConsoleWeb.DAL.EF.EDM
 
     public partial class BaseEntities : DbContext
     {
-        //public BaseEntities(string conn)
-        //    : base(string.Format("metadata=res://*/EF.EDM.QgisbaseModel.csdl|res://*/EF.EDM.QgisbaseModel.ssdl|res://*/EF.EDM.QgisbaseModel.msl;provider=Npgsql;provider connection string=\"{0}\"", conn.Replace('"', ' '))) //"Host=127.0.0.1;Database=MY_BASE;Username=admin;Password=1"
-        //{
-        //}
-
+        private string _conn;
         public BaseEntities(string conn)
         {
-
+            _conn = conn;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=127.0.0.1;Database=QGIS_BASE;Username=admin;Password=vfhfreqz_14");
+            //optionsBuilder.UseNpgsql("Host=127.0.0.1;Database=QGIS_BASE;Username=admin;Password=1");
+            optionsBuilder.UseNpgsql(_conn);
         }
 
 
