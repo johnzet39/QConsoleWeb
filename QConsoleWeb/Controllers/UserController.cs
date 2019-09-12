@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using QConsoleWeb.Models;
 using QConsoleWeb.Views.ViewModels;
+using Npgsql;
 
 namespace QConsoleWeb.Controllers
 {
@@ -23,58 +24,96 @@ namespace QConsoleWeb.Controllers
         public ViewResult List()
         {
             ViewBag.Title = "Список пользователей";
-            UserViewModel model = new UserViewModel();
-            model.Users = GetUsers();
+            var users = GetUsers();
 
-            return View(model);
+            return View(users);
         }
 
         [HttpGet]
         public ViewResult EditUser(string userid)
         {
+            UserViewModel model = new UserViewModel();
+            User current = GetUsers()
+                    .FirstOrDefault(p => p.Usesysid == userid);
+            model.CurrentUser = current;
+            model.AssignedRoles = GetAssignedRoles(current.Usesysid);
+            model.AvailableRoles = GetAvailableRoles(current.Usesysid);
+            model.Roles = GetUsers().Where(m => m.Isrole);
+
             ViewBag.isnew = false;
             ViewBag.Title = "Редактирование пользователя";
-            return View(GetUsers()
-                    .FirstOrDefault(p => p.Usesysid == userid));
+            return View(model);
         }
 
         [HttpPost]
-        public IActionResult EditUser(User user, bool isnew)
+        public IActionResult EditUser(UserViewModel model, bool isnew, List<string> ischeckedlist)
         {
             if (ModelState.IsValid)
             {
-                if (user.Isrole == false && isnew && (user.Password == null || user.Password.Length <= 0))
-                {
-                    return View(user);
-                }
+                if (model.CurrentUser.Isrole == false && isnew && (model.CurrentUser.Password == null || model.CurrentUser.Password.Length <= 0)) //заглушка
+                    return View(model);
 
                 try
                 {
                     if (isnew)
-                        _service.CreateUserOrRole(user.Usename, user.Password, user.Descript);
+                    {
+                        _service.CreateUserOrRole(model.CurrentUser.Usename, model.CurrentUser.Password, model.CurrentUser.Descript);
+                        ExceptPrivilegies(model.CurrentUser.Usename, ischeckedlist);
+                    }
                     else
-                        _service.EditUserOrRole(user.Usename, user.Password, user.Descript);
-                    TempData["message"] = $"{user.Usename} has been saved";
+                    {
+                        _service.EditUserOrRole(model.CurrentUser.Usename, model.CurrentUser.Password, model.CurrentUser.Descript);
+                        ExceptPrivilegies(model.CurrentUser, ischeckedlist);
+                    }
+
+                    TempData["message"] = $"{model.CurrentUser.Usename} has been saved";
+                }
+                catch (NpgsqlException e)
+                {
+                    TempData["error"] = $"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
                 }
                 catch (Exception e)
                 {
-                    TempData["error"] = $"{user.Usename} has not been saved. {e.Message}";
+                    TempData["error"] = $"Warning: {e.Message}";
                 }
-                
                 return RedirectToAction("List");
             }
             else
             {
-                // there is something wrong with the data values
-                return View(user);
+                return View(model);
             }
+        }
+
+        private void ExceptPrivilegies(User curUser, List<string> ischeckedList)
+        {
+            var assignedList = GetAssignedRoles(curUser.Usesysid).Select(o => o.Usename).ToList();
+            ischeckedList.RemoveAll(o => o == "false");
+
+            var ToGrantList = ischeckedList.Except(assignedList).ToList();
+            var ToRevokeList = assignedList.Except(ischeckedList).ToList();
+
+            foreach (string grantRole in ToGrantList)
+                _service.GrantRole(curUser.Usename, grantRole);
+            foreach (string revokeRole in ToRevokeList)
+                _service.RevokeRole(curUser.Usename, revokeRole);
+        }
+
+        private void ExceptPrivilegies(string newUserName, List<string> ischeckedList)
+        {
+            ischeckedList.RemoveAll(o => o == "false");
+            foreach (string rolestring in ischeckedList)
+                _service.GrantRole(newUserName, rolestring);
         }
 
         public IActionResult CreateUser()
         {
+            UserViewModel model = new UserViewModel()
+            {
+                Roles = GetUsers().Where(m => m.Isrole)
+            };
             ViewBag.isnew = true;
             ViewBag.Title = "Редактирование пользователя";
-            return View("EditUser", new User());
+            return View("EditUser", model);
         }
 
         [HttpGet]
@@ -95,17 +134,17 @@ namespace QConsoleWeb.Controllers
             return RedirectToAction("List");
         }
 
-        //private IEnumerable<User> GetAvailableRoles()
-        //{
-        //    var mapper = new MapperConfiguration(cfg => cfg.CreateMap<UserDTO, User>()).CreateMapper();
-        //    return mapper.Map<IEnumerable<UserDTO>, List<User>>(_service.GetAvailableRoles());
-        //}
+        private IEnumerable<User> GetAvailableRoles(string oid)
+        {
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<UserDTO, User>()).CreateMapper();
+            return mapper.Map<IEnumerable<UserDTO>, List<User>>(_service.GetAvailableRolesObject(oid));
+        }
 
-        //private IEnumerable<User> GetAssignedRoles()
-        //{
-        //    var mapper = new MapperConfiguration(cfg => cfg.CreateMap<UserDTO, User>()).CreateMapper();
-        //    return mapper.Map<IEnumerable<UserDTO>, List<User>>(_service.GetAssignedRoles());
-        //}
+        private IEnumerable<User> GetAssignedRoles(string oid)
+        {
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<UserDTO, User>()).CreateMapper();
+            return mapper.Map<IEnumerable<UserDTO>, List<User>>(_service.GetAssignedRolesObject(oid));
+        }
 
         private IEnumerable<User> GetUsers()
         {

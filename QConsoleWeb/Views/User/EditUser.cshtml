@@ -1,66 +1,135 @@
-﻿@model  User
+﻿@model UserViewModel
 
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <form asp-action="EditUser" method="post" asp-route-isnew=@ViewBag.isnew>
-        <input type="hidden" asp-for="Usesysid" />
+@{
+    var dicUserName = new Dictionary<string, object>();
+    var dicCheckBoxIsRole = new Dictionary<string, object>();
+    if (@ViewBag.isnew == false)
+    {
+        dicUserName.Add("readonly", "readonly");
+        dicCheckBoxIsRole.Add("disabled", "disabled");
+    }
+}
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form asp-action="EditUser" method="post" asp-route-isnew=@ViewBag.isnew asp-route-statusdict=statusRolesDict>
+    <input type="hidden" asp-for="@Model.CurrentUser.Usesysid" />
+    <div class="form-group">
+        <label asp-for="@Model.CurrentUser.Usename"></label>
+        <div><span asp-validation-for="@Model.CurrentUser.Usename" class="text-danger"></span></div>
+        @Html.TextBoxFor(m => m.CurrentUser.Usename, HtmlHelpers.GetHtmlAttributes(new { @class = "form-control form-control-sm" }, dicUserName))
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.CurrentUser.Descript"></label>
+        <div><span asp-validation-for="@Model.CurrentUser.Descript" class="text-danger"></span></div>
+        <input asp-for="@Model.CurrentUser.Descript" class="form-control form-control-sm" />
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.CurrentUser.Isrole"></label>
+        <div><span asp-validation-for="@Model.CurrentUser.Isrole" class="text-danger"></span></div>
+        @*<input type="checkbox" asp-for="@Model.CurrentUser.Isrole" class="form-check" id="role_checkbox2"/>*@
+        @Html.CheckBoxFor(m => m.CurrentUser.Isrole, HtmlHelpers.GetHtmlAttributes(new { @class = "form-check", @id="role_checkbox" }, dicCheckBoxIsRole))
+    </div>
+
+    <div class="form-group" id="pass_group">
         <div class="form-group">
-            <label asp-for="Usename"></label>
-            <div><span asp-validation-for="Usename" class="text-danger"></span></div>
-            <input asp-for="Usename" class="form-control" />
+            <label asp-for="@Model.CurrentUser.Password"></label>
+            <div><span asp-validation-for="@Model.CurrentUser.Password" class="text-danger"></span></div>
+            <input asp-for="@Model.CurrentUser.Password" class="form-control form-control-sm" placeholder="Новый пароль" id="pass" />
         </div>
         <div class="form-group">
-            <label asp-for="Descript"></label>
-            <div><span asp-validation-for="Descript" class="text-danger"></span></div>
-            <input asp-for="Descript" class="form-control" />
+            <label asp-for="@Model.CurrentUser.ConfirmPassword"></label>
+            <div><span asp-validation-for="@Model.CurrentUser.ConfirmPassword" class="text-danger"></span></div>
+            <input asp-for="@Model.CurrentUser.ConfirmPassword" class="form-control form-control-sm" placeholder="Повторите пароль" id="conf_pass" />
         </div>
-        <div class="form-group">
-            <label asp-for="Isrole"></label>
-            <div><span asp-validation-for="Isrole" class="text-danger"></span></div>
-            <input type="checkbox" asp-for="Isrole" class="form-check" id="role_checkbox"/>
-        </div>
+    </div>
 
-        <div class="form-group" id="pass_group">
-            <div class="form-group">
-                <label asp-for="Password"></label>
-                <div><span asp-validation-for="Password" class="text-danger"></span></div>
-                <input asp-for="Password" class="form-control" placeholder="Новый пароль"  id="pass" />
-            </div>
-            <div class="form-group">
-                <label asp-for="ConfirmPassword"></label>
-                <div><span asp-validation-for="ConfirmPassword" class="text-danger"></span></div>
-                <input asp-for="ConfirmPassword" class="form-control" placeholder="Повторите пароль" id="conf_pass"/>
-            </div>
-        </div>
-
-        <div class="text-center">
-            <button class="btn btn-primary" type="submit">Save</button>
-            <a asp-action="List" class="btn btn-secondary">Cancel</a>
-        </div>
-    </form>
-
-
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-
-            $('#role_checkbox').before(function () {
-                if (!this.checked) {
-                    $('#pass_group').show();
+    <div class="container">
+        <h5>Доступные роли</h5>
+        <table id="DataTableAsi" style="width:100%;" class="table table-striped table-sm table-hover text-nowrap">
+            <thead class="thead-dark">
+                <tr>
+                    <th><input type="checkbox" id="checkBoxAll" class="custom-checkbox" /></th>
+                    <th>#</th>
+                    <th>Роль</th>
+                    <th>Описание</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var rowNo = 1;
+                    List<User> assignedList = new List<User>();
+                    if (!ViewBag.isnew)
+                    {
+                        assignedList = Model.AssignedRoles.ToList();
+                    }
                 }
-                else {
-                    $('#pass_group').hide();
-                }
-            });
+                @foreach (var p in Model.Roles)
+                {
+                    var dicrole = new Dictionary<string, object>();
+                    if (!ViewBag.isnew)
+                    {
+                        if (assignedList.Exists(a => a.Usename == p.Usename))
+                        {
+                            dicrole.Add("checked", "checked");
+                        }
+                    }
 
-            $('#role_checkbox').change(function () {
-                if (!this.checked) {
-                    $('#pass_group').show();
+                    <tr>
+                        <td>@Html.CheckBox("ischeckedlist", HtmlHelpers.GetHtmlAttributes(new { @class = "custom-checkbox chkCheckBoxId", @value = @p.Usename }, dicrole))</td>
+                        <td>@(rowNo++)</td>
+                        <td>@p.Usename</td>
+                        <td>@p.Descript</td>
+                    </tr>
                 }
-                else {
-                    $('#pass_group').hide();
-                    document.getElementById('pass').value = '';
-                    document.getElementById('conf_pass').value = '';
-                }
-            });
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center">
+        <button class="btn btn-primary" type="submit">Сохранить</button>
+        <a asp-action="List" class="btn btn-secondary">Отмена</a>
+    </div>
+
+</form>
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#role_checkbox').before(function () {
+            if (!this.checked) {
+                $('#pass_group').show();
+            }
+            else {
+                $('#pass_group').hide();
+            }
         });
-    </script>
+
+        $('#role_checkbox').change(function () {
+            if (!this.checked) {
+                $('#pass_group').show();
+            }
+            else {
+                $('#pass_group').hide();
+                document.getElementById('pass').value = '';
+                document.getElementById('conf_pass').value = '';
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //$('#DataTableAsi').DataTable();
+        $('#checkBoxAll').click(function () {
+            if ($(this).is(":checked")) {
+                $(".chkCheckBoxId").prop("checked", true)
+            }
+            else {
+                $(".chkCheckBoxId").prop("checked", false)
+            }
+        });
+    });
+</script>

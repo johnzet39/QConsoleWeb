@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Routing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,5 +27,33 @@ namespace QConsoleWeb.Helpers
 
             return (controller == routeController && action == routeAction) ? "active" : "";
         }
+
+
+
+
+        /// <summary>
+        /// Gets an object containing a htmlAttributes collection for any Razor HTML helper component,
+        /// supporting a static set (anonymous object) and/or a dynamic set (Dictionary)
+        /// </summary>
+        /// <param name="fixedHtmlAttributes">A fixed set of htmlAttributes (anonymous object)</param>
+        /// <param name="dynamicHtmlAttributes">A dynamic set of htmlAttributes (Dictionary)</param>
+        /// <returns>A collection of htmlAttributes including a merge of the given set(s)</returns>
+        public static IDictionary<string, object> GetHtmlAttributes(
+            object fixedHtmlAttributes = null,
+            IDictionary<string, object> dynamicHtmlAttributes = null
+            )
+        {
+            var rvd = (fixedHtmlAttributes == null)
+                ? new RouteValueDictionary()
+                : HtmlHelper.AnonymousObjectToHtmlAttributes(fixedHtmlAttributes);
+            if (dynamicHtmlAttributes != null)
+            {
+                foreach (KeyValuePair<string, object> kvp in dynamicHtmlAttributes)
+                    rvd[kvp.Key] = kvp.Value;
+            }
+            return rvd;
+        }
     }
 }
+
+

@@ -8,9 +8,9 @@ namespace QConsoleWeb.Views.ViewModels
 {
     public class UserViewModel
     {
-        public IEnumerable<User> Users { get; set; }
         public IEnumerable<User> AssignedRoles { get; set; }
         public IEnumerable<User> AvailableRoles { get; set; }
+        public IEnumerable<User> Roles { get; set; }
         public User CurrentUser { get; set; }
     }
 }

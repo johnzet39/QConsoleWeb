@@ -102,7 +102,17 @@ namespace QConsoleWeb.Data
             throw new NotImplementedException();
         }
 
+        public IEnumerable<UserDTO> GetAssignedRolesObject(string oid)
+        {
+            throw new NotImplementedException();
+        }
+
         public DataTable GetAvailableRoles(string oid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<UserDTO> GetAvailableRolesObject(string oid)
         {
             throw new NotImplementedException();
         }
