@@ -14,7 +14,7 @@ namespace QConsoleWeb.Controllers
 {
     public class UserController : Controller
     {
-        private IUserService _service;
+        private readonly IUserService _service;
 
         public UserController(IUserService serv)
         {
@@ -37,8 +37,7 @@ namespace QConsoleWeb.Controllers
                     .FirstOrDefault(p => p.Usesysid == userid);
             model.CurrentUser = current;
             model.AssignedRoles = GetAssignedRoles(current.Usesysid);
-            model.AvailableRoles = GetAvailableRoles(current.Usesysid);
-            model.Roles = GetUsers().Where(m => m.Isrole);
+            model.Roles = GetUsers().Where(m => m.Isrole && m.Usesysid != userid);
 
             ViewBag.isnew = false;
             ViewBag.Title = "Редактирование пользователя";
@@ -58,19 +57,15 @@ namespace QConsoleWeb.Controllers
                     if (isnew)
                     {
                         _service.CreateUserOrRole(model.CurrentUser.Usename, model.CurrentUser.Password, model.CurrentUser.Descript);
-                        ExceptPrivilegies(model.CurrentUser.Usename, ischeckedlist);
+                        AcceptPrivilegies(model.CurrentUser.Usename, ischeckedlist);
                     }
                     else
                     {
                         _service.EditUserOrRole(model.CurrentUser.Usename, model.CurrentUser.Password, model.CurrentUser.Descript);
-                        ExceptPrivilegies(model.CurrentUser, ischeckedlist);
+                        AcceptPrivilegies(model.CurrentUser, ischeckedlist);
                     }
 
                     TempData["message"] = $"{model.CurrentUser.Usename} has been saved";
-                }
-                catch (NpgsqlException e)
-                {
-                    TempData["error"] = $"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
                 }
                 catch (Exception e)
                 {
@@ -84,7 +79,7 @@ namespace QConsoleWeb.Controllers
             }
         }
 
-        private void ExceptPrivilegies(User curUser, List<string> ischeckedList)
+        private void AcceptPrivilegies(User curUser, List<string> ischeckedList)
         {
             var assignedList = GetAssignedRoles(curUser.Usesysid).Select(o => o.Usename).ToList();
             ischeckedList.RemoveAll(o => o == "false");
@@ -98,7 +93,7 @@ namespace QConsoleWeb.Controllers
                 _service.RevokeRole(curUser.Usename, revokeRole);
         }
 
-        private void ExceptPrivilegies(string newUserName, List<string> ischeckedList)
+        private void AcceptPrivilegies(string newUserName, List<string> ischeckedList)
         {
             ischeckedList.RemoveAll(o => o == "false");
             foreach (string rolestring in ischeckedList)
