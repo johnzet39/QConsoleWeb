@@ -15,9 +15,11 @@ namespace QConsoleWeb.DAL.AccessLayer.Interfaces
 
         //assigned roles for user
         DataTable GetAssignedRoles(string oid);
+        IEnumerable<User> GetAssignedRolesObject(string oid);
 
         //available roles for user
         DataTable GetAvailableRoles(string oid);
+        IEnumerable<User> GetAvailableRolesObject(string oid);
 
         //grant available role
         void GrantRole(string userName, string roleName);

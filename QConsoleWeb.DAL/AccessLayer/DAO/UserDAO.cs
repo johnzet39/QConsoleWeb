@@ -86,8 +86,7 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
                     }
                 }
             }
-            return listOfUsers;
-            
+            return listOfUsers;  
         }
 
         //assigned roles for user
@@ -98,6 +97,35 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
             return GetQueryResult(sql_query);
         }
 
+        public IEnumerable<User> GetAssignedRolesObject(string oid)
+        {
+            var listOfUsers = new List<User>();
+            string sql_query = "SELECT pr.rolname, (select shobj_description(pr.oid, 'pg_authid')) as descript, am.admin_option, pr.oid " +
+                               " from pg_auth_members am LEFT JOIN pg_roles pr ON pr.oid = am.roleid WHERE am.member = " + oid;
+            using (var conn = new NpgsqlConnection(_connectionString))
+            {
+                conn.Open();
+                using (var command = new NpgsqlCommand(sql_query, conn))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var userpsql = new User();
+
+                            userpsql.Usename = dataReader["rolname"].ToString();
+                            userpsql.Descript = dataReader["descript"].ToString();
+                            userpsql.Usesuper = Convert.ToBoolean(dataReader["admin_option"]);
+                            userpsql.Usesysid = dataReader["oid"].ToString();
+
+                            listOfUsers.Add(userpsql);
+                        }
+                    }
+                }
+            }
+            return listOfUsers;
+        }
+
         //available roles for user
         public DataTable GetAvailableRoles(string oid)
         {
@@ -105,6 +133,35 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
                                " from pg_group pg WHERE pg.groname not in ('pg_signal_backend') AND  pg.grosysid <> " + oid + " AND pg.grosysid not in  (select pr.oid from pg_auth_members am " +
                                " LEFT JOIN pg_roles pr ON pr.oid = am.roleid WHERE am.member = " + oid + ")";
             return GetQueryResult(sql_query);
+        }
+
+        public IEnumerable<User> GetAvailableRolesObject(string oid)
+        {
+            var listOfUsers = new List<User>();
+            string sql_query = "select pg.groname, (select shobj_description(pg.grosysid, 'pg_authid')) as descript, pg.grosysid , pg.grolist " +
+                               " from pg_group pg WHERE pg.groname not in ('pg_signal_backend') AND  pg.grosysid <> " + oid + " AND pg.grosysid not in  (select pr.oid from pg_auth_members am " +
+                               " LEFT JOIN pg_roles pr ON pr.oid = am.roleid WHERE am.member = " + oid + ")";
+            using (var conn = new NpgsqlConnection(_connectionString))
+            {
+                conn.Open();
+                using (var command = new NpgsqlCommand(sql_query, conn))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var userpsql = new User();
+
+                            userpsql.Usename = dataReader["groname"].ToString();
+                            userpsql.Descript = dataReader["descript"].ToString();
+                            userpsql.Usesysid = dataReader["grosysid"].ToString();
+
+                            listOfUsers.Add(userpsql);
+                        }
+                    }
+                }
+            }
+            return listOfUsers;
         }
 
         // return DataTable for SQL query

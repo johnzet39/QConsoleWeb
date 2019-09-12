@@ -12,7 +12,9 @@ namespace QConsoleWeb.BLL.Interfaces
     {
         IEnumerable<UserDTO> GetUsers();
         DataTable GetAssignedRoles(string oid);
+        IEnumerable<UserDTO> GetAssignedRolesObject(string oid);
         DataTable GetAvailableRoles(string oid);
+        IEnumerable<UserDTO> GetAvailableRolesObject(string oid);
         void GrantRole(string userName, string roleName);
         void RevokeRole(string userName, string roleName);
         void RemoveRoleOrUser(string userName);
