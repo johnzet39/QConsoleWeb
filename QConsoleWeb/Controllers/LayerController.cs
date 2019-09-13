@@ -20,13 +20,70 @@ namespace QConsoleWeb.Controllers
             _service = serv;
         }
 
-        public ViewResult List()
+        public IActionResult List()
         {
             ViewBag.Title = "Слои и справочники";
             LayerViewModel model = new LayerViewModel();
             model.Layers = GetLayers();
             model.Dictionaries = GetDictionaries();
             return View(model);
+        }
+
+        [HttpGet]
+        public ViewResult EditLayer(string schemaname, 
+                                    string tablename, 
+                                    string geomtype)
+        {
+            Layer layer;
+            if (geomtype == null)
+                layer = GetDictionaries()
+                    .FirstOrDefault(d => d.Table_schema == schemaname && d.Table_name == tablename);
+            else
+                layer = GetLayers()
+                    .FirstOrDefault(d => d.Table_schema == schemaname && d.Table_name == tablename);
+            ViewBag.Title = "Редактирование параметров таблицы";
+            return View(layer);
+        }
+
+        [HttpPost]
+        public IActionResult EditLayer(Layer layer, string geomtype)
+        {
+            if (ModelState.IsValid)
+            {
+                Layer olrlayer;
+                if (geomtype == null)
+                    olrlayer = GetDictionaries()
+                        .FirstOrDefault(d => d.Table_schema == layer.Table_schema && d.Table_name == layer.Table_name);
+                else
+                    olrlayer = GetLayers()
+                        .FirstOrDefault(d => d.Table_schema == layer.Table_schema && d.Table_name == layer.Table_name);
+
+                bool? isupdaterCompare = null;
+                if (layer.Isupdater != olrlayer.Isupdater)
+                    isupdaterCompare = layer.Isupdater;
+                bool? isloggerCompare = null;
+                if (layer.Islogger != olrlayer.Islogger)
+                    isloggerCompare = layer.Islogger;
+
+                try
+                {
+                    _service.ChangeLayer(
+                        layer.Table_schema,
+                        layer.Table_name,
+                        (layer.Descript != olrlayer.Descript) ? layer.Descript : null,
+                        isupdaterCompare,
+                        isloggerCompare
+                        );
+                    TempData["message"] = $"Изменения в {layer.Table_schema}.{layer.Table_name} сохранены.";
+                }
+                catch(Exception e)
+                {
+                    TempData["error"] = $"Warning: {e.Message}";
+                }
+
+                return RedirectToAction("List");
+            }
+            return View(layer);
         }
 
         private IEnumerable<Layer> GetLayers()

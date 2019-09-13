@@ -1,0 +1,47 @@
+﻿@model Layer
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form asp-action="EditLayer" asp-controller="Layer" method="post">
+    <div class="form-group">
+        <label asp-for="@Model.Table_schema"></label>
+        <div><span asp-validation-for="@Model.Table_schema" class="text-danger"></span></div>
+        <input asp-for="@Model.Table_schema" class="form-control form-control-sm" readonly />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="@Model.Table_name"></label>
+        <div><span asp-validation-for="@Model.Table_name" class="text-danger"></span></div>
+        <input asp-for="@Model.Table_name" class="form-control form-control-sm" readonly />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="@Model.Descript"></label>
+        <div><span asp-validation-for="@Model.Descript" class="text-danger"></span></div>
+        <input asp-for="@Model.Descript" class="form-control form-control-sm" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="@Model.Geomtype"></label>
+        <div><span asp-validation-for="@Model.Geomtype" class="text-danger"></span></div>
+        <input asp-for="@Model.Geomtype" class="form-control form-control-sm" readonly />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="@Model.Isupdater"></label>
+        <div><span asp-validation-for="@Model.Isupdater" class="text-danger"></span></div>
+        <input type="checkbox" asp-for="@Model.Isupdater" class="form-check" id="role_checkbox2" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="@Model.Islogger"></label>
+        <div><span asp-validation-for="@Model.Islogger" class="text-danger"></span></div>
+        <input type="checkbox" asp-for="@Model.Islogger" class="form-check" id="role_checkbox2" />
+    </div>
+
+
+    <div class="text-center">
+        <button class="btn btn-primary" type="submit">Сохранить</button>
+        <a asp-action="List" class="btn btn-secondary">Отмена</a>
+    </div>
+
+</form>
