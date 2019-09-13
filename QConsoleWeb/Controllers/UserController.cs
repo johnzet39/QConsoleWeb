@@ -49,8 +49,14 @@ namespace QConsoleWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (model.CurrentUser.Isrole == false && isnew && (model.CurrentUser.Password == null || model.CurrentUser.Password.Length <= 0)) //заглушка
+                if (model.CurrentUser.Isrole == false && isnew && (model.CurrentUser.Password == null || model.CurrentUser.Password.Length <= 0)) //заглушка если не введен пароль для нового пользователя
                     return View(model);
+
+                //is definition changed?
+                User oldlayer = GetUsers().FirstOrDefault(m => m.Usesysid == model.CurrentUser.Usesysid);
+                string descript = null;
+                if (oldlayer != null)
+                    descript = (oldlayer.Descript != model.CurrentUser.Descript) ? model.CurrentUser.Descript : null;
 
                 try
                 {
@@ -61,11 +67,11 @@ namespace QConsoleWeb.Controllers
                     }
                     else
                     {
-                        _service.EditUserOrRole(model.CurrentUser.Usename, model.CurrentUser.Password, model.CurrentUser.Descript);
+                        _service.EditUserOrRole(model.CurrentUser.Usename, model.CurrentUser.Password, descript);
                         AcceptPrivilegies(model.CurrentUser, ischeckedlist);
                     }
 
-                    TempData["message"] = $"{model.CurrentUser.Usename} has been saved";
+                    TempData["message"] = $"{model.CurrentUser.Usename} сохранен.";
                 }
                 catch (Exception e)
                 {
