@@ -26,7 +26,6 @@
     <div class="form-group">
         <label asp-for="@Model.CurrentUser.Isrole"></label>
         <div><span asp-validation-for="@Model.CurrentUser.Isrole" class="text-danger"></span></div>
-        @*<input type="checkbox" asp-for="@Model.CurrentUser.Isrole" class="form-check" id="role_checkbox2"/>*@
         @Html.CheckBoxFor(m => m.CurrentUser.Isrole, HtmlHelpers.GetHtmlAttributes(new { @class = "form-check", @id="role_checkbox" }, dicCheckBoxIsRole))
     </div>
 
