@@ -1,21 +1,28 @@
 ﻿
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+    @*<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
         <a class="navbar-brand" href="#">QConsole</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav mr-auto">
-                @*<li class="nav-item @(ViewBag.SelectedCategory == "Session" ? "active" : "")">*@
                 <li class="nav-item @Html.IsActiveController("Session")">
                     <a class="nav-link" asp-controller="Session" asp-action="List">Сессии <span class="sr-only">(current)</span></a>
                 </li>
-                @*<li class="nav-item @(ViewBag.SelectedCategory == "User" ? "active" : "")">*@
                 <li class="nav-item @Html.IsActiveController("User")">
                     <a class="nav-link" asp-controller="User" asp-action="List">Пользователи</a>
                 </li>
             </ul>
         </div>
+    </nav>*@
+
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">QConsole</a>
+        <ul class="navbar-nav px-3">
+            <li class="nav-item text-nowrap">
+                <a class="nav-link" href="#">Sign out</a>
+            </li>
+        </ul>
     </nav>
 
     
