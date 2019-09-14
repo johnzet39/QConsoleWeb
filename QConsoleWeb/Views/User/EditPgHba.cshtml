@@ -1,0 +1,20 @@
+﻿@model UserPgHbaViewModel
+
+<h4>pg_hba</h4>
+
+<p>Дата последнего изменения файла: @Model.FileDate</p>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form asp-action="EditPgHba" method="post">
+    <div class="form-group">
+        <textarea class="form-control rounded-0" style="font-size: 0.825rem" asp-for=@Model.PgHbaContext rows=@Model.PgHbaContext.ToString().Split('\n').Length>  </textarea>
+    </div>
+
+
+    <div class="text-center">
+        <button class="btn btn-primary" type="submit">Сохранить</button>
+        <a asp-action="List" class="btn btn-secondary">Отмена</a>
+    </div>
+</form>
+
+@*rows=@Model.PgHbaContext.ToString().Split('\n').Length*@

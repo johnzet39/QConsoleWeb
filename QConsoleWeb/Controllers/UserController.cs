@@ -8,15 +8,20 @@ using System.Threading.Tasks;
 using AutoMapper;
 using QConsoleWeb.Models;
 using QConsoleWeb.Views.ViewModels;
+using Microsoft.Extensions.Configuration;
+using System.Text;
+using System.IO;
 
 namespace QConsoleWeb.Controllers
 {
     public class UserController : Controller
     {
         private readonly IUserService _service;
+        private readonly IConfiguration _config;
 
-        public UserController(IUserService serv)
+        public UserController(IUserService serv, IConfiguration config)
         {
+            _config = config;
             _service = serv;
         }
 
@@ -152,7 +157,77 @@ namespace QConsoleWeb.Controllers
             return mapper.Map<IEnumerable<UserDTO>, List<User>>(_service.GetUsers());
         }
 
+        public ViewResult EditPgHba()
+        {
+            var pgHbas = _config.GetSection("AppSettings:UserTab:pg_hbaPaths").Get<List<string>>();
+            UserPgHbaViewModel model = new UserPgHbaViewModel();
+            string pghbaText = string.Empty;
+            string fileDate = string.Empty;
 
+            try
+            {
+                pghbaText = System.IO.File.ReadAllText(pgHbas[0]);
+                fileDate = GetFileDate(pgHbas[0]);
+            }
+
+            catch (FileNotFoundException)
+            {
+                pghbaText = "Файл не найден";
+            }
+            catch (DirectoryNotFoundException)
+            {
+                pghbaText = "Файл не найден";
+            }
+            catch (Exception e)
+            {
+                pghbaText = e.Message;
+            }
+            
+            model.PgHbaContext = pghbaText;
+            model.FileDate = fileDate;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult EditPgHba(UserPgHbaViewModel model)
+        {
+            string pghbaText = model.PgHbaContext;
+            var pgHbas = _config.GetSection("AppSettings:UserTab:pg_hbaPaths").Get<List<string>>();
+
+            string errors = string.Empty;
+            foreach (string pghba in pgHbas)
+            {
+                try
+                {
+                    var fileStream = new FileStream(pghba, FileMode.Create, FileAccess.Write);
+                    Encoding encodingUtf8WoBOM = new UTF8Encoding(false);
+                    using (var streamWriter = new StreamWriter(fileStream, encodingUtf8WoBOM))
+                    {
+                        streamWriter.Write(pghbaText);
+                    }
+                }
+                catch (Exception e)
+                {
+                   errors += $"Не удалось сохранить файл конфигурации {pghba}. ({e.Message}).\n";
+                }
+            }
+
+            if (errors.Length > 0)
+                TempData["error"] = errors;
+
+
+            return RedirectToAction("List");
+        }
+
+        private string GetFileDate(string filePath)
+        {
+            string dtString;
+            DateTime dt = System.IO.File.GetLastWriteTime(filePath);
+            dtString = string.Format("({0})", dt.ToString("dd.MM.yyyy HH:mm:ss"));
+
+            return dtString;
+        }
 
     }
 }
