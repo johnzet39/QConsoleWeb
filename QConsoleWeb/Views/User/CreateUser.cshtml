@@ -1,13 +1,22 @@
 ﻿@model UserViewModel
 
+@*@{
+    var dicUserName = new Dictionary<string, object>();
+    var dicCheckBoxIsRole = new Dictionary<string, object>();
+    if (@ViewBag.isnew == false)
+    {
+        dicCheckBoxIsRole.Add("disabled", "disabled");
+    }
+}*@
+
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-<form asp-action="EditUser" method="post">
+<form asp-action="CreateUser" method="post">
     <input type="hidden" asp-for="@Model.CurrentUser.Usesysid" />
     <div class="form-group">
         <label asp-for="@Model.CurrentUser.Usename"></label>
         <div><span asp-validation-for="@Model.CurrentUser.Usename" class="text-danger"></span></div>
         @*@Html.TextBoxFor(m => m.CurrentUser.Usename, HtmlHelpers.GetHtmlAttributes(new { @class = "form-control form-control-sm" }, dicUserName))*@
-        <input asp-for="@Model.CurrentUser.Usename" class="form-control form-control-sm" readonly="readonly"/>
+        <input asp-for="@Model.CurrentUser.Usename" class="form-control form-control-sm"/>
     </div>
     <div class="form-group">
         <label asp-for="@Model.CurrentUser.Descript"></label>
@@ -18,7 +27,7 @@
         <label asp-for="@Model.CurrentUser.Isrole"></label>
         <div><span asp-validation-for="@Model.CurrentUser.Isrole" class="text-danger"></span></div>
         @*@Html.CheckBoxFor(m => m.CurrentUser.Isrole, HtmlHelpers.GetHtmlAttributes(new { @class = "form-check", @id = "role_checkbox" }, dicCheckBoxIsRole))*@
-        <input type="checkbox" asp-for="@Model.CurrentUser.Isrole" class="form-check" disabled="disabled"/>
+        <input type="checkbox" asp-for="@Model.CurrentUser.Isrole" id="role_checkbox" class = "form-check"/>
     </div>
 
     <div class="form-group" id="only_user_group">
@@ -32,6 +41,39 @@
             <div><span asp-validation-for="@Model.CurrentUser.ConfirmPassword" class="text-danger"></span></div>
             <input asp-for="@Model.CurrentUser.ConfirmPassword" class="form-control form-control-sm" placeholder="Повторите пароль" id="conf_pass" />
         </div>
+
+        @*//to pg_hba*@
+        <div class="form-group">
+            <label>Добавить запись в pg_hba.conf</label>
+            <input type="checkbox" asp-for="ToPgHba" id="checkboxPgHba" class="checkboxPgHba" checked="checked" />
+        </div>
+
+        <div class="form-group" id="pghba_group">
+            <div class="form-group">
+                <label asp-for="@Model.Ip"></label>
+                <div><span asp-validation-for="@Model.Ip" class="text-danger"></span></div>
+                <input asp-for="@Model.Ip" class="form-control form-control-sm" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Method"></label>
+                <select asp-for="@Model.Method" class="form-control form-control-sm">
+                    <option value="">Метод доступа (@ViewBag.MethodDefault по умолчанию)</option>
+                    <option>md5</option>
+                    <option>trust</option>
+                    <option>reject</option>
+                    <option>password</option>
+                    <option>gss</option>
+                    <option>sspi</option>
+                    <option>ident</option>
+                    <option>peer</option>
+                    <option>pam</option>
+                    <option>ldap</option>
+                    <option>radius</option>
+                    <option>cert</option>
+                </select>
+            </div>
+        </div>
+
     </div>
 
 
@@ -50,19 +92,14 @@
             <tbody>
                 @{
                     var rowNo = 1;
-                    List<User> assignedList = Model.AssignedRoles.ToList();
                 }
                 @foreach (var p in Model.Roles)
                 {
                     var dicrole = new Dictionary<string, object>();
 
-                    if (assignedList.Exists(a => a.Usename == p.Usename))
-                    {
-                        dicrole.Add("checked", "checked");
-                    }
-
                     <tr>
-                        <td>@Html.CheckBox("ischeckedlist", HtmlHelpers.GetHtmlAttributes(new { @class = "custom-checkbox chkCheckBoxId", @value = @p.Usename }, dicrole))</td>
+                        @*<td>@Html.CheckBox("ischeckedlist", HtmlHelpers.GetHtmlAttributes(new { @class = "custom-checkbox chkCheckBoxId", @value = @p.Usename }, dicrole))</td>*@
+                        <td><input type="checkbox" name="ischeckedlist" value=@p.Usename class = "custom-checkbox chkCheckBoxId"></td>
                         <td>@(rowNo++)</td>
                         <td>@p.Usename</td>
                         <td>@p.Descript</td>
@@ -104,11 +141,35 @@
                 $('#only_user_group').hide();
                 document.getElementById('pass').value = '';
                 document.getElementById('conf_pass').value = '';
+                $(".checkboxPgHba").prop("checked", false)
             }
         });
     });
 </script>
 
+@*Hide or show pg_hba group when checkbox changes its status*@
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#checkboxPgHba').before(function () {
+            if (this.checked) {
+                $('#pghba_group').show();
+            }
+            else {
+                $('#pghba_group').hide();
+            }
+        });
+
+        $('#checkboxPgHba').change(function () {
+            if (this.checked) {
+                $('#pghba_group').show();
+            }
+            else {
+                $('#pghba_group').hide();
+            }
+        });
+    });
+</script>
 
 @*select all chechboxes in table column*@
 <script type="text/javascript">

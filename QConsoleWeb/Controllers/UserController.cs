@@ -43,19 +43,15 @@ namespace QConsoleWeb.Controllers
             model.AssignedRoles = GetAssignedRoles(current.Usesysid);
             model.Roles = GetUsers().Where(m => m.Isrole && m.Usesysid != userid);
 
-            ViewBag.isnew = false;
             ViewBag.Title = "Редактирование пользователя";
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult EditUser(UserViewModel model, bool isnew, List<string> ischeckedlist)
+        public IActionResult EditUser(UserViewModel model, List<string> ischeckedlist)
         {
             if (ModelState.IsValid)
             {
-                if (model.CurrentUser.Isrole == false && isnew && (model.CurrentUser.Password == null || model.CurrentUser.Password.Length <= 0)) //заглушка если не введен пароль для нового пользователя
-                    return View(model);
-
                 //is definition changed?
                 User oldlayer = GetUsers().FirstOrDefault(m => m.Usesysid == model.CurrentUser.Usesysid);
                 string descript = null;
@@ -64,16 +60,8 @@ namespace QConsoleWeb.Controllers
 
                 try
                 {
-                    if (isnew)
-                    {
-                        _service.CreateUserOrRole(model.CurrentUser.Usename, model.CurrentUser.Password, model.CurrentUser.Descript);
-                        AcceptPrivilegies(model.CurrentUser.Usename, ischeckedlist);
-                    }
-                    else
-                    {
-                        _service.EditUserOrRole(model.CurrentUser.Usename, model.CurrentUser.Password, descript);
-                        AcceptPrivilegies(model.CurrentUser, ischeckedlist);
-                    }
+                    _service.EditUserOrRole(model.CurrentUser.Usename, model.CurrentUser.Password, descript);
+                    AcceptPrivilegies(model.CurrentUser, ischeckedlist);
 
                     TempData["message"] = $"{model.CurrentUser.Usename} сохранен.";
                 }
@@ -87,6 +75,46 @@ namespace QConsoleWeb.Controllers
             {
                 return View(model);
             }
+        }
+
+        public IActionResult CreateUser()
+        {
+            UserViewModel model = new UserViewModel()
+            {
+                Roles = GetUsers().Where(m => m.Isrole)
+            };
+            ViewBag.MethodDefault = _config.GetSection("AppSettings:UserTab:Pg_hba:method_default").Get<string>();
+            ViewBag.Title = "Создание пользователя";
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult CreateUser(UserViewModel model, List<string> ischeckedlist)
+        {
+            if (ModelState.IsValid)
+            {
+                if (model.CurrentUser.Isrole == false && (model.CurrentUser.Password == null || model.CurrentUser.Password.Length <= 0)) //заглушка если не введен пароль для нового пользователя
+                {
+                    model.Roles = GetUsers().Where(m => m.Isrole);
+                    return View(model);
+                }
+
+                try
+                {
+                    _service.CreateUserOrRole(model.CurrentUser.Usename, model.CurrentUser.Password, model.CurrentUser.Descript);
+                    AcceptPrivilegies(model.CurrentUser.Usename, ischeckedlist);
+                    if (model.ToPgHba)
+                        CreateUserPgHba(model);
+                }
+                catch (Exception e)
+                {
+                    TempData["error"] = $"Warning: {e.Message}";
+                }
+                return RedirectToAction("List");
+            }
+            ViewBag.MethodDefault = _config.GetSection("AppSettings:UserTab:Pg_hba:method_default").Get<string>();
+            model.Roles = GetUsers().Where(m => m.Isrole);
+            return View(model);
         }
 
         private void AcceptPrivilegies(User curUser, List<string> ischeckedList)
@@ -110,15 +138,48 @@ namespace QConsoleWeb.Controllers
                 _service.GrantRole(newUserName, rolestring);
         }
 
-        public IActionResult CreateUser()
+        private void CreateUserPgHba(UserViewModel model)
         {
-            UserViewModel model = new UserViewModel()
+            if (model.Ip == null)
+                return;
+
+            string username = model.CurrentUser.Usename;
+            string ip = model.Ip;
+            string method = model.Method ?? _config
+                .GetSection("AppSettings:UserTab:Pg_hba:method_default").Get<string>();
+            string additional_roles_postfix = _config
+                .GetSection("AppSettings:UserTab:Pg_hba:additional_roles_postfix").Get<string>();
+            string section_line = _config
+                .GetSection("AppSettings:UserTab:Pg_hba:section_line").Get<string>();
+            string database_name = _config
+                .GetSection("AppSettings:UserTab:Pg_hba:database_name").Get<string>();
+
+            var pgHbas = _config.GetSection("AppSettings:UserTab:Pg_hba:pg_hbaPaths").Get<List<string>>();
+            string pghba0 = pgHbas[0];
+            List<string> textLines = System.IO.File.ReadAllLines(pghba0).ToList();
+            int index_IPv4 = textLines.IndexOf(section_line);
+
+            string lineToAdd = $"host     {database_name}   {username}{additional_roles_postfix}     {ip}/32    {method}";
+
+            char[] delimiterChars = { ' ', '\t' };
+            for (int i = index_IPv4; i < textLines.Count(); i++)
             {
-                Roles = GetUsers().Where(m => m.Isrole)
-            };
-            ViewBag.isnew = true;
-            ViewBag.Title = "Редактирование пользователя";
-            return View("EditUser", model);
+                if (!textLines[i].StartsWith("host")
+                    && !textLines[i].StartsWith("# host")
+                    && !textLines[i].StartsWith("#host"))
+                    continue;
+                string[] words = textLines[i].Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
+                string compared_word = words[2];
+                if (String.Compare(username.ToLower(), compared_word.ToLower()) < 0)
+                {
+                    textLines.Insert(i, lineToAdd);
+                    foreach (string pghba in pgHbas)
+                        System.IO.File.WriteAllLines(pghba, textLines);
+                    return;
+                }
+                continue;
+            }
+            textLines.Insert(textLines.Count(), lineToAdd);
         }
 
         [HttpGet]
@@ -159,7 +220,7 @@ namespace QConsoleWeb.Controllers
 
         public ViewResult EditPgHba()
         {
-            var pgHbas = _config.GetSection("AppSettings:UserTab:pg_hbaPaths").Get<List<string>>();
+            var pgHbas = _config.GetSection("AppSettings:UserTab:Pg_hba:pg_hbaPaths").Get<List<string>>();
             UserPgHbaViewModel model = new UserPgHbaViewModel();
             string pghbaText = string.Empty;
             string fileDate = string.Empty;
@@ -193,7 +254,7 @@ namespace QConsoleWeb.Controllers
         public IActionResult EditPgHba(UserPgHbaViewModel model)
         {
             string pghbaText = model.PgHbaContext;
-            var pgHbas = _config.GetSection("AppSettings:UserTab:pg_hbaPaths").Get<List<string>>();
+            var pgHbas = _config.GetSection("AppSettings:UserTab:Pg_hba:pg_hbaPaths").Get<List<string>>();
 
             string errors = string.Empty;
             foreach (string pghba in pgHbas)
