@@ -10,8 +10,6 @@ namespace QConsoleWeb.Views.ViewModels
 {
     public class LogRowViewModel
     {
-        public IEnumerable<LogRow> LogRows;
-
         public PagedResult<LogRow> PagedLogRows;
 
         [Display(Name = "Дата от")]

@@ -9,7 +9,7 @@
 
 
 <div asp-validation-summary="All" class="text-danger"></div>
-<form asp-action="List" method="post" class="form-row row">
+<form asp-action="List" asp-route-subquery=@Model.SubQuery method="get" class="form-row row">
     <div class="form-group">
         <label asp-for="DateFrom"></label>
         <div><span asp-validation-for="DateFrom" class="text-danger"></span></div>
@@ -26,7 +26,7 @@
         <label @*class="sr-only"*@ asp-for="SubQuery"></label>
         <div><span asp-validation-for="SubQuery" class="text-danger"></span></div>
         <div class="form-inline">
-            <input asp-for="SubQuery" class="form-control form-control-sm" placeholder="Дополнительные условия" />
+            <input asp-for="SubQuery" class="form-control form-control-sm SubQueryId" id="SubQueryId" placeholder="Дополнительные условия" />
             <button class="btn btn-outline-secondary btn-sm" type="submit">Применить</button>
         </div>
     </div>
@@ -83,3 +83,4 @@
     </table>
 </div>
 @(await Component.InvokeAsync<PagerViewComponent>(Model.PagedLogRows))
+

@@ -18,7 +18,7 @@
         <label asp-for="@Model.CurrentUser.Isrole"></label>
         <div><span asp-validation-for="@Model.CurrentUser.Isrole" class="text-danger"></span></div>
         @*@Html.CheckBoxFor(m => m.CurrentUser.Isrole, HtmlHelpers.GetHtmlAttributes(new { @class = "form-check", @id = "role_checkbox" }, dicCheckBoxIsRole))*@
-        <input type="checkbox" asp-for="@Model.CurrentUser.Isrole" class="form-check" disabled="disabled"/>
+        <input type="checkbox" asp-for="@Model.CurrentUser.Isrole" id = "role_checkbox" class="form-check" disabled="disabled"/>
     </div>
 
     <div class="form-group" id="only_user_group">

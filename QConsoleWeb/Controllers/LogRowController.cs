@@ -18,10 +18,7 @@ namespace QConsoleWeb.Controllers
         private readonly ILoggerService _service;
         private readonly IConfiguration _config;
 
-        //private DateTime? _dateFrom;
-        //private DateTime? _dateTo;
-        //private string _subQuery;
-        private LogRowViewModel _model;
+        private int pageRowCount;
 
 
         public LogRowController(ILoggerService serv, IConfiguration config)
@@ -29,50 +26,29 @@ namespace QConsoleWeb.Controllers
             _config = config;
             _service = serv;
             _service.LastRowsCount = _config.GetValue<int>("AppSettings:LoggerTab:LastRowsCount");
-            _model = new LogRowViewModel();
+            pageRowCount = _config.GetValue<int>("AppSettings:LoggerTab:PageRowCount");
         }
 
         [HttpGet]
-        public ViewResult List(int page = 1)
+        public ViewResult List(LogRowViewModel modelview = null, int page = 1)
         {
-            ViewBag.Title = "Логгер";
-            _model.LogRows = GetLogRows();
-            _model.PagedLogRows = GetLogRows().GetPaged(page, 100);
-            return View(_model);
-        }
-
-        [HttpPost]
-        public IActionResult List(LogRowViewModel model)
-        {
-            if (model.DateFrom == null & model.DateTo == null & model.SubQuery == null)
-                return RedirectToAction("List");
-            if (ModelState.IsValid)
-            {
-                _model.DateFrom = model.DateFrom;
-                _model.DateTo = model.DateTo;
-                _model.SubQuery = model.SubQuery;
-                try
-                {
-                    _model.LogRows = GetLogRows();
-                    return View(_model);
-                }
-                catch (Exception e)
-                {
-                    TempData["error"] = $"{e.Message}";
-                    return RedirectToAction("List");
-                }
-            }
+            LogRowViewModel model;
+            if (modelview == null)
+                model = new LogRowViewModel();
             else
-            {
-                return RedirectToAction("List");
-            }
+                model = modelview;
+            //model.SubQuery = subquery;
+            ViewBag.Title = "Логгер";
+            model.PagedLogRows = GetLogRows(model).GetPaged(page, pageRowCount);
+            return View(model);
         }
 
         public IActionResult LogRowHistory(string gid)
         {
+            LogRowViewModel model = new LogRowViewModel();
             ViewBag.Title = "История изменений";
             LogRowHistoryViewModel hismodel = new LogRowHistoryViewModel();
-            var logrows = GetLogRows(onlyLastRows:false);
+            var logrows = GetLogRows(model, onlyLastRows:false);
             hismodel.CurrentLogRow = logrows.FirstOrDefault(g => g.Gid == gid);
             var cur = hismodel.CurrentLogRow;
             hismodel.HitoriedLogRows = logrows
@@ -82,10 +58,10 @@ namespace QConsoleWeb.Controllers
         }
 
 
-        private IEnumerable<LogRow> GetLogRows(bool onlyLastRows = true)
+        private IEnumerable<LogRow> GetLogRows(LogRowViewModel model, bool onlyLastRows = true)
         {
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<LogRowDTO, LogRow>()).CreateMapper();
-            return mapper.Map<IEnumerable<LogRowDTO>, List<LogRow>>(_service.GetLogList(_model.DateFrom, _model.DateTo, _model.SubQuery, onlyLastRows));
+            return mapper.Map<IEnumerable<LogRowDTO>, List<LogRow>>(_service.GetLogList(model.DateFrom, model.DateTo, model.SubQuery, onlyLastRows));
         }
     }
 }
