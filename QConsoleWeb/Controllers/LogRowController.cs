@@ -37,7 +37,6 @@ namespace QConsoleWeb.Controllers
                 model = new LogRowViewModel();
             else
                 model = modelview;
-            //model.SubQuery = subquery;
             ViewBag.Title = "Логгер";
             model.PagedLogRows = GetLogRows(model).GetPaged(page, pageRowCount);
             return View(model);
