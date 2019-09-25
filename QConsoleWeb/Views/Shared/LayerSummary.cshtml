@@ -18,21 +18,24 @@
             @{ int rowNumber = 0;}
             @foreach (var p in Model)
             {
-                <tr>
-                    <td>@(rowNumber += 1)</td>
-                    <td>@p.Table_schema</td>
-                    <td>@p.Table_name</td>
-                    <td>@p.Descript</td>
-                    <td>@p.Geomtype</td>
-                    <td>@p.Isupdater</td>
-                    <td>@p.Islogger</td>
-                    <td><a asp-action="EditLayer" asp-controller="Layer" 
-                           asp-route-schemaname=@p.Table_schema 
-                           asp-route-tablename=@p.Table_name
-                           asp-route-geomtype=@p.Geomtype 
-                           class="btn-sm btn-outline-info">
-                        <i class="fas fa-pen"></i></a></td>
-                </tr>
+            <tr>
+                <td>@(rowNumber += 1)</td>
+                <td>@p.Table_schema</td>
+                <td>@p.Table_name</td>
+                <td>@p.Descript</td>
+                <td>@p.Geomtype</td>
+                <td>@p.Isupdater</td>
+                <td>@p.Islogger</td>
+                <td>
+                    <a asp-action="EditLayer" asp-controller="Layer"
+                       asp-route-schemaname=@p.Table_schema
+                       asp-route-tablename=@p.Table_name
+                       asp-route-geomtype=@p.Geomtype
+                       class="btn-sm btn-outline-info">
+                        <i class="fas fa-pen"></i>
+                    </a>
+                </td>
+            </tr>
             }
         </tbody>
     </table>
