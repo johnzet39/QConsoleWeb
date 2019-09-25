@@ -34,14 +34,14 @@ namespace QConsoleWeb.Controllers
         }
 
         [HttpGet]
-        public ViewResult EditUser(string userid)
+        public ViewResult EditUser(string id)
         {
             UserViewModel model = new UserViewModel();
             User current = GetUsers()
-                    .FirstOrDefault(p => p.Usesysid == userid);
+                    .First(p => p.Usesysid == id);
             model.CurrentUser = current;
             model.AssignedRoles = GetAssignedRoles(current.Usesysid);
-            model.Roles = GetUsers().Where(m => m.Isrole && m.Usesysid != userid);
+            model.Roles = GetUsers().Where(m => m.Isrole && m.Usesysid != id);
 
             ViewBag.Title = "Редактирование пользователя";
             return View(model);
