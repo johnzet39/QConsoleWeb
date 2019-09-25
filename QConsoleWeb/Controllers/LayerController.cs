@@ -37,10 +37,10 @@ namespace QConsoleWeb.Controllers
             Layer layer;
             if (geomtype == null)
                 layer = GetDictionaries()
-                    .FirstOrDefault(d => d.Table_schema == schemaname && d.Table_name == tablename);
+                    .First(d => d.Table_schema == schemaname && d.Table_name == tablename);
             else
                 layer = GetLayers()
-                    .FirstOrDefault(d => d.Table_schema == schemaname && d.Table_name == tablename);
+                    .First(d => d.Table_schema == schemaname && d.Table_name == tablename);
             ViewBag.Title = "Редактирование параметров таблицы";
             return View(layer);
         }
