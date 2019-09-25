@@ -1,12 +1,12 @@
 ﻿@model User
 
-<td><a asp-action="EditUser" asp-controller="User" asp-route-userid=@Model.Usesysid>@Model.Usename</a></td>
+<td><a asp-action="EditUser" asp-controller="User" asp-route-id=@Model.Usesysid>@Model.Usename</a></td>
 <td>@Model.Descript</td>
 <td>@Model.Usesuper</td>
 <td>@Model.Isrole</td>
 <td>
     <div>
-        <a asp-action="EditUser" asp-controller="User" asp-route-userid=@Model.Usesysid class="btn-sm btn-outline-info">
+        <a asp-action="EditUser" asp-controller="User" asp-route-id=@Model.Usesysid class="btn-sm btn-outline-info">
             <i class="fas fa-pen"></i>
         </a>
         |
