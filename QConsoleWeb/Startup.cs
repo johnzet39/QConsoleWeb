@@ -28,7 +28,7 @@ namespace QConsoleWeb
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            string _connectionString = Configuration.GetConnectionString("QGIS_BASE");
+            string _connectionString = Configuration.GetConnectionString("CONNECTION_BASE");
 
             services.AddMvc();
             //services.AddTransient<IUserService, FakeUserService>();
@@ -45,17 +45,32 @@ namespace QConsoleWeb
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseStatusCodePages();
             }
-
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
+            //app.UseExceptionHandler("/Home/Error");
             app.UseStaticFiles();
-            //app.UseMvcWithDefaultRoute();
 
             app.UseMvc(routes =>
             {
+
+                routes.MapRoute(
+                    name: null,
+                    template: "{controller}/{action}/{schemaname}/{tablename}/{geomtype?}"
+                    );
+
+
+
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=LogRow}/{action=List}/{id?}");
+                    template: "{controller=User}/{action=List}/{id?}"
+                    //defaults: new { action = "List"}
+                    );
             });
+
         }
     }
 }
