@@ -42,13 +42,13 @@ namespace QConsoleWeb.Controllers
             return View(model);
         }
 
-        public IActionResult LogRowHistory(string gid)
+        public ViewResult LogRowHistory(string id)
         {
             LogRowViewModel model = new LogRowViewModel();
             ViewBag.Title = "История изменений";
             LogRowHistoryViewModel hismodel = new LogRowHistoryViewModel();
             var logrows = GetLogRows(model, onlyLastRows:false);
-            hismodel.CurrentLogRow = logrows.FirstOrDefault(g => g.Gid == gid);
+            hismodel.CurrentLogRow = logrows.FirstOrDefault(g => g.Gid == id);
             var cur = hismodel.CurrentLogRow;
             hismodel.HitoriedLogRows = logrows
                                         .Where(h => h.Gidnum == cur.Gidnum && h.Gid != cur.Gid)
