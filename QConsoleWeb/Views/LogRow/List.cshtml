@@ -73,7 +73,7 @@
             {
                 var rowNo = (Model.PagedLogRows.CurrentPage - 1) * Model.PagedLogRows.PageSize + i;
                 i++;
-            <tr class="ButtonClass" onclick="location.href = '@(Url.Action("LogRowHistory", "LogRow", new { gid = @p.Gid }))'">
+            <tr class="ButtonClass" onclick="location.href = '@(Url.Action("LogRowHistory", "LogRow", new { id = @p.Gid }))'">
                 @*<td><a asp-action="LogRowHistory" asp-controller="LogRow" asp-route-gid=@p.Gid>Детали</a></td>*@
                 <td>@rowNo</td>
                 <td>@p.Gid</td>
