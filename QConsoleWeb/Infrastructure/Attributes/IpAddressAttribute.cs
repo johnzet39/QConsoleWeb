@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace QConsoleWeb.Helpers.Attributes
+namespace QConsoleWeb.Infrastructure.Attributes
 {
     public class IpAddressAttribute : RegularExpressionAttribute
     {

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace QConsoleWeb.Helpers
+namespace QConsoleWeb.Infrastructure.Helpers
 {
     public static class HtmlHelpers
     {

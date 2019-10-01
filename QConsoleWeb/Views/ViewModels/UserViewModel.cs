@@ -1,4 +1,4 @@
-﻿using QConsoleWeb.Helpers.Attributes;
+﻿using QConsoleWeb.Infrastructure.Attributes;
 using QConsoleWeb.Models;
 using System;
 using System.Collections.Generic;
