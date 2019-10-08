@@ -89,16 +89,18 @@ namespace QConsoleWeb.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateUser(UserViewModel model, List<string> ischeckedlist)
+        public ActionResult CreateUser(UserViewModel model, List<string> ischeckedlist)
         {
+            if (model.CurrentUser.Isrole == false && string.IsNullOrEmpty(model.CurrentUser.Password)) //заглушка если не введен пароль для нового пользователя
+            {
+                //model.Roles = GetUsers().Where(m => m.Isrole);
+                //return View(model);
+                ModelState.AddModelError("CurrentUser.Password",
+                    "Введите пароль");
+            }
+
             if (ModelState.IsValid)
             {
-                if (model.CurrentUser.Isrole == false && (model.CurrentUser.Password == null || model.CurrentUser.Password.Length <= 0)) //заглушка если не введен пароль для нового пользователя
-                {
-                    model.Roles = GetUsers().Where(m => m.Isrole);
-                    return View(model);
-                }
-
                 try
                 {
                     _service.CreateUserOrRole(model.CurrentUser.Usename, model.CurrentUser.Password, model.CurrentUser.Descript);

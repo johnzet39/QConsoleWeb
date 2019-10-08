@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using QConsoleWeb.Infrastructure.Attributes;
 
 namespace QConsoleWeb.Models
 {
@@ -22,6 +23,8 @@ namespace QConsoleWeb.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Пароль")]
+        [RequiredIf("IsRole", "false",
+                    ErrorMessageResourceName="Введите пароль!111")]
         public string Password { get; set; }
 
         [Display(Name = "Подтверждение пароля")]

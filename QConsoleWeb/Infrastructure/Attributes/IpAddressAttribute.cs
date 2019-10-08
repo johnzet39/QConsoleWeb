@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -6,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace QConsoleWeb.Infrastructure.Attributes
 {
-    public class IpAddressAttribute : RegularExpressionAttribute
+    public class IpAddressAttribute : RegularExpressionAttribute, IClientModelValidator
     {
         public IpAddressAttribute()
             : base(@"^([\d]{1,3}\.){3}[\d]{1,3}$")
@@ -47,6 +49,14 @@ namespace QConsoleWeb.Infrastructure.Attributes
         public override string FormatErrorMessage(string name)
         {
             return string.Format("The '{0}' field has an invalid format.", name);
+        }
+
+
+        public void AddValidation(ClientModelValidationContext context)
+        {
+            context.Attributes.Add("data-val", "true");
+            context.Attributes.Add("data-val-ipformat",
+                "Ip-адрес имеет неверный формат");
         }
     }
 }

@@ -1,0 +1,42 @@
+﻿<nav class="col-md-2 d-none d-md-block bg-light sidebar" style="position:fixed">
+    <div class="sidebar-sticky">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link @Html.IsActiveController("Session")" asp-controller="Session" asp-action="List">
+                    <i class="fas fa-list-ul"></i>
+                    Сессии
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @Html.IsActiveController("User")" asp-controller="User" asp-action="List">
+                    <i class="fas fa-user"></i>
+                    Пользователи
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @Html.IsActiveController("Layer")" asp-controller="Layer" asp-action="List">
+                    <i class="fas fa-layer-group"></i>
+                    Слои
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @Html.IsActiveController("Grant")" asp-controller="Grant" asp-action="List">
+                    <i class="fas fa-unlock"></i>
+                    Привилегии
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @Html.IsActiveController("List")" asp-controller="Stat" asp-action="List">
+                    <i class="fas fa-chart-line"></i>
+                    Статистика
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @Html.IsActiveController("LogRow")" asp-controller="LogRow" asp-action="List">
+                    <i class="fas fa-list-alt"></i>
+                    Аудит
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
