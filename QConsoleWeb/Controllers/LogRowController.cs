@@ -59,8 +59,17 @@ namespace QConsoleWeb.Controllers
 
         private IEnumerable<LogRow> GetLogRows(LogRowViewModel model, bool onlyLastRows = true)
         {
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<LogRowDTO, LogRow>()).CreateMapper();
-            return mapper.Map<IEnumerable<LogRowDTO>, List<LogRow>>(_service.GetLogList(model.DateFrom, model.DateTo, model.SubQuery, onlyLastRows));
+            try
+            {
+                var mapper = new MapperConfiguration(cfg => cfg.CreateMap<LogRowDTO, LogRow>()).CreateMapper();
+                return mapper.Map<IEnumerable<LogRowDTO>, List<LogRow>>(_service.GetLogList(model.DateFrom, model.DateTo, model.SubQuery, onlyLastRows));
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("SubQuery", e.Message);
+                return Enumerable.Empty<LogRow>();
+            }
+            
         }
     }
 }
