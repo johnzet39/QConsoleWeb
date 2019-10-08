@@ -91,10 +91,8 @@ namespace QConsoleWeb.Controllers
         [HttpPost]
         public ActionResult CreateUser(UserViewModel model, List<string> ischeckedlist)
         {
-            if (model.CurrentUser.Isrole == false && string.IsNullOrEmpty(model.CurrentUser.Password)) //заглушка если не введен пароль для нового пользователя
+            if (model.CurrentUser.Isrole == false && string.IsNullOrEmpty(model.CurrentUser.Password))
             {
-                //model.Roles = GetUsers().Where(m => m.Isrole);
-                //return View(model);
                 ModelState.AddModelError("CurrentUser.Password",
                     "Введите пароль");
             }
@@ -190,7 +188,6 @@ namespace QConsoleWeb.Controllers
             User user = GetUsers().FirstOrDefault(p => p.Usesysid == userid);
                 try
                 {
-
                     _service.RemoveRoleOrUser(user.Usename);
                     TempData["message"] = $"Пользователь {user.Usename} был удален.";
 
