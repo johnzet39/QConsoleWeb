@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace QConsoleWeb.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class StatController : Controller
     {
         private readonly ILoggerService _service;
