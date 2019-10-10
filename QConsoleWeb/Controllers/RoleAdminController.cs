@@ -13,7 +13,7 @@ namespace QConsoleWeb.Controllers
         {
             roleManager = roleMgr;
         }
-        public ViewResult List() => View(roleManager.Roles);
+        public ViewResult Index() => View(roleManager.Roles);
         public IActionResult Create() => View();
         [HttpPost]
         public async Task<IActionResult> Create([Required]string name)
@@ -23,7 +23,7 @@ namespace QConsoleWeb.Controllers
                 IdentityResult result = await roleManager.CreateAsync(new IdentityRole(name));
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("List");
+                    return RedirectToAction("Index");
                 }
                 else
                 {
@@ -41,7 +41,7 @@ namespace QConsoleWeb.Controllers
                 IdentityResult result = await roleManager.DeleteAsync(role);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("List");
+                    return RedirectToAction("Index");
                 }
                 else
                 {
@@ -52,7 +52,7 @@ namespace QConsoleWeb.Controllers
             {
                 ModelState.AddModelError("", "No role found");
             }
-            return View("List", roleManager.Roles);
+            return View("Index", roleManager.Roles);
         }
         private void AddErrorsFromResult(IdentityResult result)
         {

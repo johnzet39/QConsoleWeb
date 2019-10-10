@@ -20,7 +20,7 @@ namespace QConsoleWeb.Controllers
             _service = serv;
         }
 
-        public IActionResult List()
+        public IActionResult Index()
         {
             ViewBag.Title = "Слои и справочники";
             LayerViewModel model = new LayerViewModel();
@@ -81,7 +81,7 @@ namespace QConsoleWeb.Controllers
                     TempData["error"] = $"Warning: {e.Message}";
                 }
 
-                return RedirectToAction("List");
+                return RedirectToAction("Index");
             }
             return View(layer);
         }

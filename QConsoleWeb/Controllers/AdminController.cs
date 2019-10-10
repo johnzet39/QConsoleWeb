@@ -27,7 +27,7 @@ namespace QConsoleWeb.Controllers
             passwordHasher = passwordHash;
         }
 
-        public ViewResult List() => View(userManager.Users);
+        public ViewResult Index() => View(userManager.Users);
 
         public ViewResult Create() => View();
         [HttpPost]
@@ -43,7 +43,7 @@ namespace QConsoleWeb.Controllers
                     = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("List");
+                    return RedirectToAction("Index");
                 }
                 else
                 {
@@ -65,7 +65,7 @@ namespace QConsoleWeb.Controllers
                 IdentityResult result = await userManager.DeleteAsync(user);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("List");
+                    return RedirectToAction("Index");
                 }
                 else
                 {
@@ -76,7 +76,7 @@ namespace QConsoleWeb.Controllers
             {
                 ModelState.AddModelError("", "User Not Found");
             }
-            return View("List", userManager.Users);
+            return View("Index", userManager.Users);
         }
         private void AddErrorsFromResult(IdentityResult result)
         {
@@ -126,7 +126,7 @@ namespace QConsoleWeb.Controllers
                     IdentityResult result = await userManager.UpdateAsync(user);
                     if (result.Succeeded)
                     {
-                        return RedirectToAction("List");
+                        return RedirectToAction("Index");
                     }
                     else
                     {

@@ -20,7 +20,7 @@ namespace QConsoleWeb.Controllers
             _service = serv;
         }
 
-        public ViewResult List()
+        public ViewResult Index()
         {
             ViewBag.Title = "Привилегии";
             var groups = GetGroups();
@@ -70,7 +70,7 @@ namespace QConsoleWeb.Controllers
                     TempData["error"] = $"Warning. {e.Message}";
                 }
             }
-            return RedirectToAction("List");
+            return RedirectToAction("Index");
         }
 
         private List<Granter> CompareGrants(List<Grant> old_layers, List<Grant> layers)

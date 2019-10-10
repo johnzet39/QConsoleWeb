@@ -30,7 +30,7 @@ namespace QConsoleWeb.Controllers
         }
 
         [HttpGet]
-        public ViewResult List(LogRowViewModel modelview = null, int page = 1)
+        public ViewResult Index(LogRowViewModel modelview = null, int page = 1)
         {
             LogRowViewModel model;
             if (modelview == null)

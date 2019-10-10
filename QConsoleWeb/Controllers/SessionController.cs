@@ -19,7 +19,7 @@ namespace QConsoleWeb.Controllers
             _service = serv;
         }
 
-        public ViewResult List()
+        public ViewResult Index()
         {
             ViewBag.Title = "Сессии";
             var sessions = GetSessions();

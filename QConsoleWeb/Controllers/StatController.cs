@@ -16,7 +16,7 @@ namespace QConsoleWeb.Controllers
             _service = serv;
         }
 
-        public IActionResult List()
+        public IActionResult Index()
         {
             return View();
         }
