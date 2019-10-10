@@ -5,11 +5,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using QConsoleWeb.BLL.Interfaces;
 using QConsoleWeb.BLL.Services;
 using QConsoleWeb.Data;
+using QConsoleWeb.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace QConsoleWeb
 {
@@ -29,6 +33,20 @@ namespace QConsoleWeb
         public void ConfigureServices(IServiceCollection services)
         {
             string _connectionString = Configuration.GetConnectionString("CONNECTION_BASE");
+            string _connectionIdentity = Configuration.GetConnectionString("CONNECTION_IDENTITY");
+
+            services.AddEntityFrameworkNpgsql()
+                .AddDbContext<AppEntityDbContext>(opt =>
+                    opt.UseNpgsql(_connectionIdentity));
+
+            services.AddIdentity<AppUser, IdentityRole>(opts => {
+                opts.Password.RequiredLength = 1;
+                opts.Password.RequireNonAlphanumeric = false;
+                opts.Password.RequireLowercase = false;
+                opts.Password.RequireUppercase = false;
+                opts.Password.RequireDigit = false;
+            }).AddEntityFrameworkStores<AppEntityDbContext>()
+                .AddDefaultTokenProviders();
 
             services.AddMvc();
             //services.AddTransient<IUserService, FakeUserService>();
@@ -53,6 +71,7 @@ namespace QConsoleWeb
             }
             //app.UseExceptionHandler("/Home/Error");
             app.UseStaticFiles();
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
@@ -61,8 +80,6 @@ namespace QConsoleWeb
                     name: null,
                     template: "{controller}/{action}/{schemaname}/{tablename}/{geomtype?}"
                     );
-
-
 
                 routes.MapRoute(
                     name: "default",

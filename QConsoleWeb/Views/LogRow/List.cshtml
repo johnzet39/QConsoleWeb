@@ -65,28 +65,32 @@
                 <th>Таблица</th>
                 <th>gidnum</th>
                 <th>Содержание</th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
-            @{var i = 1;}
-            @foreach (var p in Model.PagedLogRows.Results)
+            @if (Model.PagedLogRows.Results.Count() == 0)
             {
-                var rowNo = (Model.PagedLogRows.CurrentPage - 1) * Model.PagedLogRows.PageSize + i;
-                i++;
-                <tr class="ButtonClass" onclick="location.href = '@(Url.Action("LogRowHistory", "LogRow", new { id = @p.Gid }))'">
-                    @*<td><a asp-action="LogRowHistory" asp-controller="LogRow" asp-route-gid=@p.Gid>Детали</a></td>*@
-                    <td>@rowNo</td>
-                    <td>@p.Gid</td>
-                    <td>@p.Action</td>
-                    <td>@p.Username</td>
-                    <td>@p.Address</td>
-                    <td>@p.Timechange</td>
-                    <td>@p.Tableschema</td>
-                    <td>@p.Tablename</td>
-                    <td>@p.Gidnum</td>
-                    <td class="text"><span>@p.Context</span></td>
-                </tr>
+                <tr><td colspan="10" class="text-center">Нет записей</td></tr>
+            }else{
+                var i = 1;
+                foreach (var p in Model.PagedLogRows.Results)
+                {
+                    var rowNo = (Model.PagedLogRows.CurrentPage - 1) * Model.PagedLogRows.PageSize + i;
+                    i++;
+                    <tr class="ButtonClass" onclick="location.href = '@(Url.Action("LogRowHistory", "LogRow", new { id = @p.Gid }))'">
+                        @*<td><a asp-action="LogRowHistory" asp-controller="LogRow" asp-route-gid=@p.Gid>Детали</a></td>*@
+                        <td>@rowNo</td>
+                        <td>@p.Gid</td>
+                        <td>@p.Action</td>
+                        <td>@p.Username</td>
+                        <td>@p.Address</td>
+                        <td>@p.Timechange</td>
+                        <td>@p.Tableschema</td>
+                        <td>@p.Tablename</td>
+                        <td>@p.Gidnum</td>
+                        <td class="text"><span>@p.Context</span></td>
+                    </tr>
+                }
             }
         </tbody>
     </table>
