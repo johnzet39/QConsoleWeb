@@ -11,9 +11,11 @@ using QConsoleWeb.Views.ViewModels;
 using Microsoft.Extensions.Configuration;
 using System.Text;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QConsoleWeb.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         private readonly IUserService _service;
@@ -25,7 +27,7 @@ namespace QConsoleWeb.Controllers
             _service = serv;
         }
 
-        public ViewResult List()
+        public ViewResult Index()
         {
             ViewBag.Title = "Список пользователей";
             var users = GetUsers();
@@ -69,7 +71,7 @@ namespace QConsoleWeb.Controllers
                 {
                     TempData["error"] = $"Warning: {e.Message}";
                 }
-                return RedirectToAction("List");
+                return RedirectToAction("Index");
             }
             else
             {
@@ -110,7 +112,7 @@ namespace QConsoleWeb.Controllers
                 {
                     TempData["error"] = $"Warning: {e.Message}";
                 }
-                return RedirectToAction("List");
+                return RedirectToAction("Index");
             }
             ViewBag.MethodDefault = _config.GetSection("AppSettings:UserTab:Pg_hba:method_default").Get<string>();
             model.Roles = GetUsers().Where(m => m.Isrole);
@@ -277,7 +279,7 @@ namespace QConsoleWeb.Controllers
                 TempData["error"] = errors;
 
 
-            return RedirectToAction("List");
+            return RedirectToAction("Index");
         }
 
         private string GetFileDate(string filePath)
