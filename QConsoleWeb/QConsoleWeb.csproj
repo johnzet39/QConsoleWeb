@@ -24,7 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\TagHelpers\" />
     <Folder Include="wwwroot\images\icons\" />
   </ItemGroup>
 

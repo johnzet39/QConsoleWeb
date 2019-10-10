@@ -48,6 +48,9 @@ namespace QConsoleWeb
             }).AddEntityFrameworkStores<AppEntityDbContext>()
                 .AddDefaultTokenProviders();
 
+            //services.ConfigureApplicationCookie(opts =>
+            //    opts.LoginPath = "/Account/Login");
+
             services.AddMvc();
             //services.AddTransient<IUserService, FakeUserService>();
             services.AddTransient<IUserService, UserService>(serviceProvider => new UserService(_connectionString));
@@ -83,7 +86,7 @@ namespace QConsoleWeb
 
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=User}/{action=List}/{id?}"
+                    template: "{controller=User}/{action=Index}/{id?}"
                     //defaults: new { action = "List"}
                     );
             });

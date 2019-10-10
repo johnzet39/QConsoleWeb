@@ -14,4 +14,14 @@ namespace QConsoleWeb.Models
         [DataType(DataType.Password)]
         public string Password { get; set; }
     }
+
+    public class LoginModel
+    {
+        [Required]
+        public string Username { get; set; }
+
+        [Required]
+        [UIHint("password")]
+        public string Password { get; set; }
+    }
 }
