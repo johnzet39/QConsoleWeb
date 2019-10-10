@@ -22,7 +22,13 @@
             <li class="nav-item text-nowrap">
                 @if (User?.Identity?.IsAuthenticated ?? false)
                 {
-                    <a asp-controller="Account" asp-action="Logout"class="nav-link">Logout</a>
+                    <div class="form-inline">
+                        <label class="text-info">@User?.Identity?.Name</label>
+                        <a asp-controller="Account" asp-action="Logout"class="nav-link">
+                            <i class="fa fa-sign-out-alt" aria-hidden="true"></i>
+                            Выйти
+                        </a>
+                    </div>
                 }
             </li>
         </ul>

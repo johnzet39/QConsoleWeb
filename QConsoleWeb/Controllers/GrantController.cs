@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 using AutoMapper;
 using QConsoleWeb.Models;
 using QConsoleWeb.Views.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QConsoleWeb.Controllers
 {
+    [Authorize]
     public class GrantController : Controller
     {
         private readonly IGrantService _service;

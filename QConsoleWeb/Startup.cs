@@ -14,6 +14,7 @@ using QConsoleWeb.BLL.Services;
 using QConsoleWeb.Data;
 using QConsoleWeb.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace QConsoleWeb
 {
@@ -36,7 +37,7 @@ namespace QConsoleWeb
             string _connectionIdentity = Configuration.GetConnectionString("CONNECTION_IDENTITY");
 
             services.AddEntityFrameworkNpgsql()
-                .AddDbContext<AppEntityDbContext>(opt =>
+                .AddDbContext<AppIdentityDbContext>(opt =>
                     opt.UseNpgsql(_connectionIdentity));
 
             services.AddIdentity<AppUser, IdentityRole>(opts => {
@@ -45,13 +46,19 @@ namespace QConsoleWeb
                 opts.Password.RequireLowercase = false;
                 opts.Password.RequireUppercase = false;
                 opts.Password.RequireDigit = false;
-            }).AddEntityFrameworkStores<AppEntityDbContext>()
+            }).AddEntityFrameworkStores<AppIdentityDbContext>()
                 .AddDefaultTokenProviders();
 
+            // Changing the loging URL
             //services.ConfigureApplicationCookie(opts =>
             //    opts.LoginPath = "/Account/Login");
 
-            services.AddMvc();
+            //services.AddMvc();
+            services.AddMvc()
+                .AddMvcOptions(options =>
+                {
+                    options.Filters.Add(new AuthorizeFilter()); //set [Autorizate] global
+                });
             //services.AddTransient<IUserService, FakeUserService>();
             services.AddTransient<IUserService, UserService>(serviceProvider => new UserService(_connectionString));
             services.AddTransient<ISessionService, SessionService>(serviceProvider => new SessionService(_connectionString));
@@ -75,10 +82,10 @@ namespace QConsoleWeb
             //app.UseExceptionHandler("/Home/Error");
             app.UseStaticFiles();
             app.UseAuthentication();
+            AppIdentityDbContext.CreateAdminAccount(app.ApplicationServices, Configuration).Wait();
 
             app.UseMvc(routes =>
             {
-
                 routes.MapRoute(
                     name: null,
                     template: "{controller}/{action}/{schemaname}/{tablename}/{geomtype?}"

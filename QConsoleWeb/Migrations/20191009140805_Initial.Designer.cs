@@ -9,7 +9,7 @@ using QConsoleWeb.Models;
 
 namespace QConsoleWeb.Migrations
 {
-    [DbContext(typeof(AppEntityDbContext))]
+    [DbContext(typeof(AppIdentityDbContext))]
     [Migration("20191009140805_Initial")]
     partial class Initial
     {

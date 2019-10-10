@@ -1,6 +1,32 @@
 ﻿<nav class="col-md-2 d-none d-md-block bg-light sidebar" style="position:fixed">
     <div class="sidebar-sticky">
         <ul class="nav flex-column">
+
+            @if (User?.IsInRole("Admins") ?? false)
+            {
+                <li class="nav-item">
+                    <a class="nav-link @Html.IsActiveController("Admin") @Html.IsActiveController("RoleAdmin")" asp-controller="Admin" asp-action="Index">
+                        <i class="fas fa-users-cog"></i>
+                        Администрирование
+                    </a>
+                    <div class="pl-4">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link @Html.IsActiveController("Admin")" asp-controller="Admin" asp-action="Index">
+                                    Аккаунты
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @Html.IsActiveController("RoleAdmin")" asp-controller="RoleAdmin" asp-action="Index">
+                                    Роли
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            }
+
+
             <li class="nav-item">
                 <a class="nav-link @Html.IsActiveController("Session")" asp-controller="Session" asp-action="Index">
                     <i class="fas fa-list-ul"></i>

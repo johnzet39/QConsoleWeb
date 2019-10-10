@@ -8,7 +8,7 @@ using QConsoleWeb.Models;
 
 namespace QConsoleWeb.Migrations
 {
-    [DbContext(typeof(AppEntityDbContext))]
+    [DbContext(typeof(AppIdentityDbContext))]
     partial class AppEntityDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

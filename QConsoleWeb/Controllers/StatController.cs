@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QConsoleWeb.BLL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace QConsoleWeb.Controllers
 {
+    //[Authorize]
     public class StatController : Controller
     {
         private readonly ILoggerService _service;

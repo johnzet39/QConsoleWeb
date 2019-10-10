@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using AutoMapper;
 using QConsoleWeb.BLL.DTO;
 using QConsoleWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QConsoleWeb.Controllers
 {
+    //[Authorize]
     public class SessionController : Controller
     {
         private ISessionService _service;

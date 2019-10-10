@@ -10,9 +10,11 @@ using QConsoleWeb.Models;
 using QConsoleWeb.Views.ViewModels;
 using Microsoft.Extensions.Configuration;
 using QConsoleWeb.Components.Paging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QConsoleWeb.Controllers
 {
+    [Authorize]
     public class LogRowController : Controller
     {
         private readonly ILoggerService _service;
