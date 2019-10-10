@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace QConsoleWeb.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class SessionController : Controller
     {
         private ISessionService _service;
