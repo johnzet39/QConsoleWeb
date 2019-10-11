@@ -24,7 +24,7 @@ namespace QConsoleWeb.Models
         [DataType(DataType.Password)]
         [Display(Name = "Пароль")]
         [RequiredIf("IsRole", "false",
-                    ErrorMessageResourceName="Введите пароль!111")]
+                    ErrorMessageResourceName="Введите пароль!")]
         public string Password { get; set; }
 
         [Display(Name = "Подтверждение пароля")]
