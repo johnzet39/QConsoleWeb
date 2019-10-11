@@ -83,28 +83,24 @@ namespace QConsoleWeb.Controllers
                 bool hasChanges = false;
                 List<string> grantsList = new List<string>();
                 
-                if (layers[i].IsSelect)
-                    grantsList.Add("SELECT");
-                if (layers[i].IsSelect != old_layers[i].IsSelect)
-                        hasChanges = true;
                 
-                if (layers[i].IsUpdate)
-                    grantsList.Add("UPDATE");
-                if (layers[i].IsUpdate != old_layers[i].IsUpdate)
-                        hasChanges = true;      
-                
-                if (layers[i].IsInsert)
-                    grantsList.Add("INSERT");
-                if (layers[i].IsInsert != old_layers[i].IsInsert)
+                if ((layers[i].IsSelect != old_layers[i].IsSelect)
+                    || (layers[i].IsUpdate != old_layers[i].IsUpdate)
+                    || (layers[i].IsInsert != old_layers[i].IsInsert)
+                    || (layers[i].IsDelete != old_layers[i].IsDelete))
                         hasChanges = true;
 
-                if (layers[i].IsDelete)
-                    grantsList.Add("DELETE");
-                if (layers[i].IsDelete != old_layers[i].IsDelete)
-                        hasChanges = true;
-                
                 if (hasChanges)
                 {
+                    if (layers[i].IsSelect)
+                        grantsList.Add("SELECT");
+                    if (layers[i].IsUpdate)
+                        grantsList.Add("UPDATE");
+                    if (layers[i].IsInsert)
+                        grantsList.Add("INSERT");
+                    if (layers[i].IsDelete)
+                        grantsList.Add("DELETE");
+
                     granters.Add(new Granter
                     {
                         TableSchema = old_layers[i].Table_schema,
