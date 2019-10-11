@@ -201,7 +201,7 @@ namespace QConsoleWeb.Controllers
                 {
                     TempData["error"] = $"Пользователь {user.Usename} не был удален. {e.Message}";
                 }
-            return RedirectToAction("List");
+            return RedirectToAction("Index");
         }
 
         private IEnumerable<User> GetAvailableRoles(string oid)
