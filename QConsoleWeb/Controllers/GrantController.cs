@@ -80,17 +80,30 @@ namespace QConsoleWeb.Controllers
             List<Granter> granters = new List<Granter>();
             for (int i = 0; i < layers.Count(); i++)
             {
+                bool hasChanges = false;
                 List<string> grantsList = new List<string>();
-                if (layers[i].IsSelect != old_layers[i].IsSelect)
+                
+                if (layers[i].IsSelect)
                     grantsList.Add("SELECT");
-                if (layers[i].IsUpdate != old_layers[i].IsUpdate)
+                if (layers[i].IsSelect != old_layers[i].IsSelect)
+                        hasChanges = true;
+                
+                if (layers[i].IsUpdate)
                     grantsList.Add("UPDATE");
-                if (layers[i].IsInsert != old_layers[i].IsInsert)
+                if (layers[i].IsUpdate != old_layers[i].IsUpdate)
+                        hasChanges = true;      
+                
+                if (layers[i].IsInsert)
                     grantsList.Add("INSERT");
-                if (layers[i].IsDelete != old_layers[i].IsDelete)
-                    grantsList.Add("DELETE");
+                if (layers[i].IsInsert != old_layers[i].IsInsert)
+                        hasChanges = true;
 
-                if (grantsList.Count() > 0)
+                if (layers[i].IsDelete)
+                    grantsList.Add("DELETE");
+                if (layers[i].IsDelete != old_layers[i].IsDelete)
+                        hasChanges = true;
+                
+                if (hasChanges)
                 {
                     granters.Add(new Granter
                     {
