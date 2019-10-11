@@ -75,6 +75,9 @@ namespace QConsoleWeb.Controllers
             }
             else
             {
+                model.AssignedRoles = GetAssignedRoles(model.CurrentUser.Usesysid);
+                model.Roles = GetUsers().Where(m => m.Isrole && m.Usesysid != model.CurrentUser.Usesysid);
+                ViewBag.Title = "Редактирование пользователя";
                 return View(model);
             }
         }

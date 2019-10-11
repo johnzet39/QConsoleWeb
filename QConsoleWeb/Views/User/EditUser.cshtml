@@ -1,5 +1,17 @@
 ﻿@model UserViewModel
 
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("input.input-validation-error")
+                .closest(".form-group").addClass("has-danger");
+        });
+    </script>
+    <script src="/lib/jquery/jquery.min.js"></script>
+    <script src="/lib/jquery-validate/jquery.validate.min.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
+
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 <form asp-action="EditUser" method="post">
     <input type="hidden" asp-for="@Model.CurrentUser.Usesysid" />
@@ -7,7 +19,7 @@
         <label asp-for="@Model.CurrentUser.Usename"></label>
         <div><span asp-validation-for="@Model.CurrentUser.Usename" class="text-danger"></span></div>
         @*@Html.TextBoxFor(m => m.CurrentUser.Usename, HtmlHelpers.GetHtmlAttributes(new { @class = "form-control form-control-sm" }, dicUserName))*@
-        <input asp-for="@Model.CurrentUser.Usename" class="form-control form-control-sm" readonly="readonly"/>
+        <input asp-for="@Model.CurrentUser.Usename" class="form-control form-control-sm" readonly="readonly" />
     </div>
     <div class="form-group">
         <label asp-for="@Model.CurrentUser.Descript"></label>
@@ -18,7 +30,7 @@
         <label asp-for="@Model.CurrentUser.Isrole"></label>
         <div><span asp-validation-for="@Model.CurrentUser.Isrole" class="text-danger"></span></div>
         @*@Html.CheckBoxFor(m => m.CurrentUser.Isrole, HtmlHelpers.GetHtmlAttributes(new { @class = "form-check", @id = "role_checkbox" }, dicCheckBoxIsRole))*@
-        <input type="checkbox" asp-for="@Model.CurrentUser.Isrole" id = "role_checkbox" class="form-check" disabled="disabled"/>
+        <input type="checkbox" asp-for="@Model.CurrentUser.Isrole" id="role_checkbox" class="form-check" disabled="disabled" />
     </div>
 
     <div class="form-group" id="only_user_group">
