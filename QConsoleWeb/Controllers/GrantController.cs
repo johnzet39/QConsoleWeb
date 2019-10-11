@@ -40,7 +40,7 @@ namespace QConsoleWeb.Controllers
             model.LayersList = GetLayers(rolename).ToList();
             model.DictsList = GetDicts(rolename).ToList();
 
-            ViewBag.Title = "Редактирование пользователя";
+            ViewBag.Title = "Редактирование группы";
             ViewBag.Rolename = rolename;
             return View(model);
         }
