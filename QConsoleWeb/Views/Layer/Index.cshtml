@@ -2,12 +2,15 @@
 
 
 <div class="text-center">
-    <h5>Слои и справочники</h5>
+    <h5>Слои</h5>
 </div>
 
 <div>
 
     @Html.Partial("LayerSummary", Model.Layers)
+
+    <h5>Справочники</h5>
+    <a asp-action="DictListManage" class="nav-link">Управление справочниками</a>
 
     @Html.Partial("LayerSummary", Model.Dictionaries)
 

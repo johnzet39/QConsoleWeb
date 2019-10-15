@@ -1,0 +1,52 @@
+﻿
+@model LayerDictManageViewModel
+
+<h5>Справочники</h5>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+<form asp-action="AddDictManage" method="post">
+
+    <div class="form-group">
+        <label asp-for="@Model.SchemaName"></label>
+        <div><span asp-validation-for="@Model.SchemaName" class="text-danger"></span></div>
+        <input asp-for="@Model.SchemaName" class="form-control form-control-sm" />
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.TableName"></label>
+        <div><span asp-validation-for="@Model.TableName" class="text-danger"></span></div>
+        <input asp-for="@Model.TableName" class="form-control form-control-sm" />
+    </div>
+
+    <div class="text-center">
+        <button class="btn btn-primary" type="submit">Добавить</button>
+    </div>
+</form>
+
+
+    <div class="table-responsive">
+        <table class="table table-striped table-sm">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Схема</th>
+                    <th>Таблица</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int rowNumber = 0;}
+                @foreach (var p in Model.DictList)
+                {
+                    <tr>
+                        <td>@(rowNumber += 1)</td>
+                        <td>@p.Schema_name</td>
+                        <td>@p.Table_name</td>
+                        <td>
+                            <a asp-action="RemoveDictManage" asp-route-id=@p.Id class="btn-outline-danger btn-sm" onclick="return confirm('Подтвердите удаление');">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>

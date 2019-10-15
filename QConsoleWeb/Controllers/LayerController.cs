@@ -9,6 +9,7 @@ using AutoMapper;
 using QConsoleWeb.Models;
 using QConsoleWeb.Views.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel.DataAnnotations;
 
 namespace QConsoleWeb.Controllers
 {
@@ -87,6 +88,48 @@ namespace QConsoleWeb.Controllers
             }
             return View(layer);
         }
+
+        public ViewResult DictListManage()
+        {
+            var model = new LayerDictManageViewModel();
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<DictionaryDTO, Dict>()).CreateMapper();
+            var orderlist = mapper.Map<IEnumerable<DictionaryDTO>, List<Dict>>(_service.GetListOfDictionaries())
+                .OrderBy(x => x.Schema_name)
+                .ThenBy(x => x.Table_name);
+            model.DictList = orderlist.ToList();
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult AddDictManage(LayerDictManageViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                _service.AddTableToDictionaries(model.SchemaName, model.TableName);
+                return RedirectToAction(nameof(DictListManage));
+            }
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<DictionaryDTO, Dict>()).CreateMapper();
+            model.DictList = mapper.Map<IEnumerable<DictionaryDTO>, List<Dict>>(_service.GetListOfDictionaries())
+                .OrderBy(x => x.Schema_name)
+                .ThenBy(x => x.Table_name)
+                .ToList();
+            return View("DictListManage", model);
+            
+        }
+
+        public IActionResult RemoveDictManage(int id)
+        {
+            try
+            {
+                _service.RemoveTableFromDictionaries(id);
+            }
+            catch (Exception e)
+            {
+                TempData["error"] = $"Warning: {e.Message}";
+            }
+            return RedirectToAction(nameof(DictListManage));
+        }
+
 
         private IEnumerable<Layer> GetLayers()
         {

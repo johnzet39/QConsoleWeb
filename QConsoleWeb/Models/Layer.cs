@@ -23,6 +23,13 @@ namespace QConsoleWeb.Models
         public Boolean Islogger { get; set; }
     }
 
+    public class Dict
+    {
+        public int Id { get; set; }
+        public string Schema_name { get; set; }
+        public string Table_name { get; set; }
+    }
+
     public class InformationSchemaTable
     {
         [Display(Name = "Наименование схемы")]
