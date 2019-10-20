@@ -1,19 +1,23 @@
 ﻿@model IEnumerable<User>
 
-
 <div class="text-center">
     <h5>Список пользователей</h5>
 </div>
 
-<a asp-action="EditPgHba" asp-controller="User">pg_hba</a>
+<div>
+    <a asp-action="CreateUser" asp-controller="User" class="btn btn-sm btn-outline-primary">
+        <span style="color:green"><i class="fas fa-plus"></i></span>
+        Новый пользователь
+    </a>
+    <a asp-action="EditPgHba" asp-controller="User" class="btn btn-sm btn-outline-secondary">
+        <span><i class="fas fa-list"></i></span>
+        pg_hba
+    </a>
+</div>
 
-<a asp-action="CreateUser" asp-controller="User" class="btn btn-sm btn-outline-primary">
-    <span style="color:green"><i class="fas fa-plus"></i></span>
-    Создать
-</a>
-
-<div class="table-responsive">
-    <table class="table table-striped table-sm table-hover text-nowrap " >
+<br />
+<div>
+    <table class="table table-sm table-hover text-nowrap">
         <thead class="thead-dark">
             <tr>
                 <th>#</th>
@@ -30,9 +34,68 @@
             {
                 <tr>
                     <td>@(rowNumber += 1)</td>
-                    @Html.Partial("UserSummary", p)
+                    @*@Html.Partial("UserSummary", p)*@
+                    <td><a asp-action="EditUser" asp-controller="User" asp-route-id=@p.Usesysid>@p.Usename</a></td>
+                    <td>
+                        <table class="fixed-table">
+                            <tr>
+                                <td>@p.Descript</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>@p.Usesuper</td>
+                    <td>@p.Isrole</td>
+                    <td>
+                        <div>
+                            <a class="btn btn-info delete"
+                               data-id="@p.Usesysid"
+                               data-controller="User"
+                               data-action="DeleteUser"
+                               data-body-message="Are you sure to delete?"
+                               @*data-redirect-url="User/Index"*@>
+                                Modal
+                            </a>
+                            |
+                            <a asp-action="EditUser" asp-controller="User" asp-route-id=@p.Usesysid class="btn-sm btn-outline-secondary" style="text-decoration: none;">
+                                <i class="fas fa-pen"></i>
+                            </a>
+                            |
+                            <a asp-action="DeleteUser" asp-controller="User" asp-route-id=@p.Usesysid class="btn-outline-secondary btn-sm" onclick="return confirm('Подтвердите удаление');">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Warning</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body delete-modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel-delete">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/delete.js"></script>
+
+<script>
+    $('td:contains("True")').html("<i class='fa fa-check' aria-hidden='true' style='color: green;'></i>").addClass("text-center");
+    $('td:contains("False")').html("<i class='fa fa-times' aria-hidden='true' style='color: #cccccc;'></i>").addClass("text-center");
+</script>
+
+@section scripts{
+
+}

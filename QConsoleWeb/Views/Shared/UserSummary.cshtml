@@ -1,18 +1,40 @@
 ﻿@model User
 
 <td><a asp-action="EditUser" asp-controller="User" asp-route-id=@Model.Usesysid>@Model.Usename</a></td>
-<td>@Model.Descript</td>
+<td>
+    <table class="fixed-table">
+        <tr>
+            <td>@Model.Descript</td>
+        </tr>
+    </table>
+</td>
+@*<td><input type="checkbox" asp-for="@Model.Usesuper" onclick="return false" /></td>*@
+@*<td><input type="checkbox" asp-for="@Model.Isrole" onclick="return false" /></td>*@
 <td>@Model.Usesuper</td>
 <td>@Model.Isrole</td>
 <td>
     <div>
-        <a asp-action="EditUser" asp-controller="User" asp-route-id=@Model.Usesysid class="btn-sm btn-outline-info">
+        <a class="btn btn-info delete"
+           data-id="@Model.Usesysid"
+           data-controller="User"
+           data-action="DeleteUser"
+           data-body-message="Are you sure to delete?"
+           data-redirect-url="User/Index">
+            Modal
+        </a>
+        |
+        <a asp-action="EditUser" asp-controller="User" asp-route-id=@Model.Usesysid class="btn-sm btn-outline-secondary" style="text-decoration: none;">
             <i class="fas fa-pen"></i>
         </a>
         |
-        <a asp-action="DeleteUser" asp-controller="User" asp-route-userid=@Model.Usesysid class="btn-outline-danger btn-sm" onclick="return confirm('Подтвердите удаление');">
+        <a asp-action="DeleteUser" asp-controller="User" asp-route-id=@Model.Usesysid class="btn-outline-secondary btn-sm" onclick="return confirm('Подтвердите удаление');">
             <i class="fas fa-trash"></i>
         </a>
     </div>
 </td>
 
+
+<script>
+    $('td:contains("True")').html("<i class='fa fa-check' aria-hidden='true' style='color: green;'></i>").addClass("text-center");
+    $('td:contains("False")').html("<i class='fa fa-times' aria-hidden='true' style='color: transparent;'></i>").addClass("text-center");
+</script>

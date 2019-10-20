@@ -28,6 +28,40 @@
     max-width: 100%;
 }
 
+.fixed-table {
+    /* magic */
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 0;
+}
+
+.fixed-table td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fixed-table tbody tr,
+.fixed-table tbody tr:hover,
+.fixed-table tbody td {
+    background-color: transparent;
+    border: none;
+}
+
+.table > tbody > tr > td {
+    vertical-align: middle;
+}
+
+/*.fa-check {
+    color: green;
+}
+
+.fa-times {
+    color: red;
+}*/
+
 /* BEGIN styles for validation helpers */
 .field-validation-error {
     color: #b94a48;
