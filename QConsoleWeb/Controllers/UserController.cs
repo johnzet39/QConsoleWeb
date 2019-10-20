@@ -188,9 +188,9 @@ namespace QConsoleWeb.Controllers
         }
 
         [HttpGet]
-        public IActionResult DeleteUser(string userid)
+        public IActionResult DeleteUser(string id)
         {
-            User user = GetUsers().FirstOrDefault(p => p.Usesysid == userid);
+            User user = GetUsers().FirstOrDefault(p => p.Usesysid == id);
                 try
                 {
                     _service.RemoveRoleOrUser(user.Usename);
