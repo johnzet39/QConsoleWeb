@@ -1,18 +1,16 @@
 ﻿@model LayerViewModel
 
 
-<div class="text-center">
+<div class="card-header">
     <h5>Слои</h5>
 </div>
-
 <div>
-
     @Html.Partial("LayerSummary", Model.Layers)
+</div>
 
-    <h5>Справочники</h5>
-    <a asp-action="DictListManage" class="nav-link">Управление справочниками</a>
-
+<div class="card-header">
+    <h5>Справочники <a asp-action="DictListManage" class="btn btn-link">Управление справочниками</a></h5>
+</div>
+<div>
     @Html.Partial("LayerSummary", Model.Dictionaries)
-
-
 </div>
