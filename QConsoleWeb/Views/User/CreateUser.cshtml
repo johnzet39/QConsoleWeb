@@ -22,6 +22,8 @@
     <script src="~/js/RequiredIf.js"></script>
 }
 
+<h6 class="card-header" mb-2>@ViewBag.Title</h6>
+
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 <form asp-action="CreateUser" method="post">
     <input type="hidden" asp-for="@Model.CurrentUser.Usesysid" />
@@ -42,8 +44,9 @@
         <div><span asp-validation-for="@Model.CurrentUser.Isrole" class="text-danger"></span></div>
         @*@Html.CheckBoxFor(m => m.CurrentUser.Isrole, HtmlHelpers.GetHtmlAttributes(new { @class = "form-check", @id = "role_checkbox" }, dicCheckBoxIsRole))*@
     </div>
-    <hr/>
+
     <div class="form-group" id="only_user_group">
+        <hr />
         <div class="form-group">
             <label asp-for="@Model.CurrentUser.Password"></label>
             <div><span asp-validation-for="@Model.CurrentUser.Password" class="text-danger"></span></div>
@@ -54,18 +57,20 @@
             <div><span asp-validation-for="@Model.CurrentUser.ConfirmPassword" class="text-danger"></span></div>
             <input asp-for="@Model.CurrentUser.ConfirmPassword" class="form-control form-control-sm" placeholder="Повторите пароль" id="conf_pass" />
         </div>
-    </div>   
-    <hr/>
+        <hr />
+
+
+        <div class="form-check">
+            <input type="checkbox" asp-for="ToPgHba" id="checkboxPgHba" class="checkboxPgHba form-check-input" checked="checked" />
+            <label>Добавить запись в pg_hba.conf</label>
+        </div>
         <div class="form-group" id="pghba_group">
             @*//to pg_hba*@
-            <div class="form-check">
-                <input type="checkbox" asp-for="ToPgHba" id="checkboxPgHba" class="checkboxPgHba form-check-input" checked="checked" />
-                <label>Добавить запись в pg_hba.conf</label>
-            </div>
+
             <div class="form-group">
                 <label asp-for="@Model.Ip"></label>
                 <div><span asp-validation-for="@Model.Ip" class="text-danger"></span></div>
-                <input asp-for="@Model.Ip" class="form-control form-control-sm" />
+                <input id="ipinput" asp-for="@Model.Ip" class="form-control form-control-sm" />
             </div>
             <div class="form-group">
                 <label asp-for="@Model.Method"></label>
@@ -86,13 +91,15 @@
                 </select>
             </div>
         </div>
+    </div>
 
     <div>
-        <h5>Доступные роли</h5>
+        <h6 class="card-header">Доступные роли</h6>
         <table id="DataTableAsi" style="width:100%;" class="table table-striped table-sm table-hover table-bordered text-nowrap">
             <thead class="thead-dark">
                 <tr>
-                    <th><input type="checkbox" id="checkBoxAll" class="custom-checkbox" /> Роль</th>
+                    <th><input type="checkbox" id="checkBoxAll" class="custom-checkbox" /></th>
+                    <th>Роль</th>
                     <th style="width:100%">Описание</th>
                 </tr>
             </thead>
@@ -102,7 +109,8 @@
                     //var dicrole = new Dictionary<string, object>();
                     <tr>
                         @*<td>@Html.CheckBox("ischeckedlist", HtmlHelpers.GetHtmlAttributes(new { @class = "custom-checkbox chkCheckBoxId", @value = @p.Usename }, dicrole))</td>*@
-                        <td><div class="form</div>"><input type="checkbox" name="ischeckedlist" value=@p.Usename class="custom-checkbox chkCheckBoxId"> @p.Usename </div ></td>
+                        <td><input type="checkbox" name="ischeckedlist" value=@p.Usename class="custom-checkbox chkCheckBoxId"></td>
+                        <td>@p.Usename</td>
                         <td>@p.Descript</td>
                     </tr>
                 }
@@ -126,23 +134,27 @@
     $(document).ready(function () {
 
         $('#role_checkbox').before(function () {
-            if (!this.checked) {
-                $('#only_user_group').show();
+            if (this.checked) {
+                $('#only_user_group').hide();
             }
             else {
-                $('#only_user_group').hide();
+                $('#only_user_group').show();
             }
         });
 
         $('#role_checkbox').change(function () {
-            if (!this.checked) {
-                $('#only_user_group').show();
-            }
-            else {
+            if (this.checked) {
                 $('#only_user_group').hide();
                 document.getElementById('pass').value = '';
                 document.getElementById('conf_pass').value = '';
                 $(".checkboxPgHba").prop("checked", false)
+                $('#pghba_group').hide();
+                document.getElementById('ipinput').value = '';
+            }
+            else {
+                $('#only_user_group').show();
+                $(".checkboxPgHba").prop("checked", true)
+                $('#pghba_group').show();
             }
         });
     });
@@ -158,6 +170,7 @@
             }
             else {
                 $('#pghba_group').hide();
+                document.getElementById('ipinput').value = '';
             }
         });
 
@@ -167,6 +180,7 @@
             }
             else {
                 $('#pghba_group').hide();
+                document.getElementById('ipinput').value = '';
             }
         });
     });

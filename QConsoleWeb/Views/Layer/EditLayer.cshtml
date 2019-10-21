@@ -1,8 +1,7 @@
 ﻿@model Layer
 
-<div class="card-header mb-2">
-    <h5>Редактирование слоя</h5>
-</div>
+<h6 class="card-header" mb-2>@ViewBag.Title</h6>
+
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 <form asp-action="EditLayer" asp-controller="Layer" method="post">
     <div class="form-group">
