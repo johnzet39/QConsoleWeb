@@ -5,8 +5,8 @@
 </div>
 
 <div class="table-responsive">
-    <table class="table table-striped table-sm">
-        <thead>
+    <table class="table table-sm table-hover text-nowrap">
+        <thead class="thead-dark">
             <tr>
                 <th>#</th>
                 <th>Приложение</th>
@@ -26,7 +26,13 @@
                     <td>@p.Application_name</td>
                     <td>@p.Starttime</td>
                     <td>@p.Usename</td>
-                    <td>@p.Descript</td>
+                    <td>
+                        <table class="fixed-table">
+                            <tr>
+                                <td>@p.Descript</td>
+                            </tr>
+                        </table>
+                    </td>
                     <td>@p.Client_addr</td>
                 </tr>
             }
