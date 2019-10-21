@@ -39,7 +39,13 @@ namespace QConsoleWeb.Controllers
                 model = new LogRowViewModel();
             else
                 model = modelview;
-            ViewBag.Title = "Логгер";
+
+            if (model.PageRowCount > 0)
+                pageRowCount = model.PageRowCount;
+            else
+                model.PageRowCount = pageRowCount;
+
+            ViewBag.Title = "Аудит";
             model.PagedLogRows = GetLogRows(model).GetPaged(page, pageRowCount);
             return View(model);
         }

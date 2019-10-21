@@ -1,105 +1,102 @@
 ﻿@model LogRowViewModel
 @using QConsoleWeb.Components
 
+<h6 class="card-header" mb-2>@ViewBag.Title</h6>
 
-
-<div class="card-header">
-    <h5>Аудит операций</h5>
-</div>
-
-
-<form asp-action="Index" asp-route-subquery=@Model.SubQuery method="get" class="mt-2 row">
-
-    <div class="input-group input-group-sm mb-1 col-md-4 date-picker">
-        <div class="input-group-prepend">
-            <span class="input-group-text small" id="inputGroup-sizing-default">Период</span>
+<form asp-action="Index" method="get" class="mt-2">
+    <div class="row">
+        <div class="input-group input-group-sm mb-1 col-md-4 date-picker">
+            <div class="input-group-prepend">
+                <span class="input-group-text small" id="inputGroup-sizing-default">Период</span>
+            </div>
+            <input asp-for="DateFrom" type="date" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-sm">
+            <input asp-for="DateTo" type="date" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-sm">
         </div>
-        <input asp-for="DateFrom" type="date" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-sm">
-        <input asp-for="DateTo" type="date" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-sm">
-    </div>
 
-    <div class="input-group input-group-sm mb-1 col-sm-12 col-md-8">
-        <input asp-for="SubQuery" type="search" class="form-control SubQueryId" id="SubQueryId" placeholder="Дополнительные условия" aria-label="Default" aria-describedby="inputGroup-sizing-sm">
-        <div class="input-group-prepend">
-            <button class="btn btn-primary" type="submit">Применить</button>
+        <div class="input-group input-group-sm mb-1 col-sm-12 col-md-8">
+            <input asp-for="SubQuery" type="search" class="form-control SubQueryId" id="SubQueryId" placeholder="Дополнительные условия" aria-label="Default" aria-describedby="inputGroup-sizing-sm">
+            <div class="input-group-prepend">
+                <button class="btn btn-primary" type="submit">Применить</button>
+            </div>
         </div>
     </div>
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <br />
+
+    <div class="input-group">
+        <div class="mr-3">
+            @(await Component.InvokeAsync<PagerViewComponent>(Model.PagedLogRows))
+        </div>
+        <div class="">
+            <select id="rowscountpage" asp-for="@Model.PageRowCount" class="form-control form-control-sm">
+                <option value=0>...</option>
+                <option>10</option>
+                <option>50</option>
+                <option>100</option>
+                <option>250</option>
+                <option>500</option>
+                <option>1000</option>
+            </select>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-sm table-hover text-nowrap table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    @*<th></th>*@
+                    <th>#</th>
+                    <th>gid</th>
+                    <th>Операция</th>
+                    <th>Пользователь</th>
+                    <th>Адрес</th>
+                    <th>Дата изм.</th>
+                    <th>Схема</th>
+                    <th>Таблица</th>
+                    <th>gidnum</th>
+                    <th>Содержание</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.PagedLogRows.Results.Count() == 0)
+                {
+                    <tr><td colspan="10" class="text-center">Нет записей</td></tr>
+                }
+                else
+                {
+                    var i = 1;
+                    foreach (var p in Model.PagedLogRows.Results)
+                    {
+                        var rowNo = (Model.PagedLogRows.CurrentPage - 1) * Model.PagedLogRows.PageSize + i;
+                        i++;
+                        <tr class="ButtonClass" onclick="location.href = '@(Url.Action("LogRowHistory", "LogRow", new { id = @p.Gid }))'">
+                            @*<td><a asp-action="LogRowHistory" asp-controller="LogRow" asp-route-gid=@p.Gid>Детали</a></td>*@
+                            <td>@rowNo</td>
+                            <td>@p.Gid</td>
+                            <td>@p.Action</td>
+                            <td>@p.Username</td>
+                            <td>@p.Address</td>
+                            <td>@p.Timechange</td>
+                            <td>@p.Tableschema</td>
+                            <td>@p.Tablename</td>
+                            <td>@p.Gidnum</td>
+                            @*<td class="text"><span>@p.Context</span></td>*@
+                            <td><table class="fixed-table"><tr><td>@p.Context</td></tr></table></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+    @(await Component.InvokeAsync<PagerViewComponent>(Model.PagedLogRows))
 
 </form>
-<div asp-validation-summary="All" class="text-danger"></div>
-<br/>
-
-<div class="input-group">
-    <div class="mr-3">
-        @(await Component.InvokeAsync<PagerViewComponent>(Model.PagedLogRows))
-    </div>
-    <div class="">
-        <select name="rowscount" class="form-control form-control-sm">
-            <option value="">...</option>
-            <option>10</option>
-            <option>50</option>
-            <option>100</option>
-            <option>250</option>
-            <option>500</option>
-            <option>1000</option>
-        </select>
-    </div>
-</div>
-<div class="table-responsive">
-    <table class="table table-sm table-hover text-nowrap table-bordered">
-        <thead class="thead-dark">
-            <tr>
-                @*<th></th>*@
-                <th>#</th>
-                <th>gid</th>
-                <th>Операция</th>
-                <th>Пользователь</th>
-                <th>Адрес</th>
-                <th>Дата изм.</th>
-                <th>Схема</th>
-                <th>Таблица</th>
-                <th>gidnum</th>
-                <th>Содержание</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.PagedLogRows.Results.Count() == 0)
-            {
-                <tr><td colspan="10" class="text-center">Нет записей</td></tr>
-            }else{
-                var i = 1;
-                foreach (var p in Model.PagedLogRows.Results)
-                {
-                    var rowNo = (Model.PagedLogRows.CurrentPage - 1) * Model.PagedLogRows.PageSize + i;
-                    i++;
-        <tr class="ButtonClass" onclick="location.href = '@(Url.Action("LogRowHistory", "LogRow", new { id = @p.Gid }))'">
-            @*<td><a asp-action="LogRowHistory" asp-controller="LogRow" asp-route-gid=@p.Gid>Детали</a></td>*@
-            <td>@rowNo</td>
-            <td>@p.Gid</td>
-            <td>@p.Action</td>
-            <td>@p.Username</td>
-            <td>@p.Address</td>
-            <td>@p.Timechange</td>
-            <td>@p.Tableschema</td>
-            <td>@p.Tablename</td>
-            <td>@p.Gidnum</td>
-            @*<td class="text"><span>@p.Context</span></td>*@
-            <td>
-                <table class="fixed-table">
-                    <tr>
-                        <td>@p.Context</td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-                }
-            }
-        </tbody>
-    </table>
-</div>
-@(await Component.InvokeAsync<PagerViewComponent>(Model.PagedLogRows))
-
-@section scripts{
 
 
-}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#rowscountpage').change(function () {
+            document.forms[0].submit();
+        });
+    });
+</script>

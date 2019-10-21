@@ -21,5 +21,6 @@ namespace QConsoleWeb.Views.ViewModels
         [Display(Name = "Дополнительные условия")]
         public string SubQuery { get; set; }
 
+        public int PageRowCount { get; set; }
     }
 }
