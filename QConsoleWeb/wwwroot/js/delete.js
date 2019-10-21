@@ -40,27 +40,33 @@
     });
 
     $("#confirm-delete").on('click', () => {
+
+
         $.get(url)
             .done((result) => {
-                //swal("Success", "Your pet has been removed!", "success");
 
                 if (!redirectUrl) {
                     return $(target).parents('tr').hide("slow");
                     //return $(target).parent().parent().parent().hide("slow");
                 }
-                
                 window.location.href = redirectUrl;
             })
             .fail((error) => {
-                //swal("Error", "Your pet could not be removed!", "error");
-                if ('@TempData["error"]' != null) {
-                    alert('@TempData["error"]');
-                }
+
+                $('#errorAlert').show('fade');
+                setTimeout(function () {
+                    $('#errorAlert').hide('fade');
+                }, 6000);
+
                 if (redirectUrl)
                     window.location.href = redirectUrl;
             }).always(() => {
                 $("#deleteModal").modal('hide');
             });
+    });
+
+    $('#linkClose').click(function () {
+        $('#errorAlert').hide('fade');
     });
 
 }()));
