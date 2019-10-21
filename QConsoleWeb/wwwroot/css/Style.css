@@ -58,6 +58,10 @@
     margin: 0px !important;
 }
 
+.date-picker {
+    min-width: 320px;
+}
+
 
 
 /*.fa-check {
