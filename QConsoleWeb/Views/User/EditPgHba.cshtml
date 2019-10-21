@@ -2,18 +2,26 @@
 
 <h4>pg_hba</h4>
 
-<p>Дата последнего изменения файла: @Model.FileDate</p>
+@if (Model.FileDate.Length > 0)
+{
+    <p>Последние изменения: @Model.FileDate</p>
+}
 
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 <form asp-action="EditPgHba" method="post">
+    <div class="text-center m-2">
+        <button class="btn btn-primary btn-sm" type="submit" >Сохранить</button>
+        <a asp-action="Index" class="btn btn-secondary btn-sm">Отмена</a>
+    </div>
+
     <div class="form-group">
         <textarea class="form-control rounded-0" style="font-size: 0.825rem" asp-for=@Model.PgHbaContext rows=@Model.PgHbaContext.ToString().Split('\n').Length>  </textarea>
     </div>
 
 
-    <div class="text-center">
-        <button class="btn btn-primary" type="submit">Сохранить</button>
-        <a asp-action="Index" class="btn btn-secondary">Отмена</a>
+    <div class="text-center m2">
+        <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
+        <a asp-action="Index" class="btn btn-secondary btn-sm">Отмена</a>
     </div>
 </form>
 
