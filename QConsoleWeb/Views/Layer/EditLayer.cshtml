@@ -2,10 +2,12 @@
 
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 <form asp-action="EditLayer" asp-controller="Layer" method="post">
-    <div class="form-group">
-        <label asp-for="@Model.Table_schema"></label>
+    <div class="form-group row">
+        <label asp-for="@Model.Table_schema" class="col-sm-3 col-form-label"></label>
         <div><span asp-validation-for="@Model.Table_schema" class="text-danger"></span></div>
-        <input asp-for="@Model.Table_schema" class="form-control form-control-sm" readonly />
+        <div class="col-sm-9">
+            <input asp-for="@Model.Table_schema" class="form-control form-control-sm" readonly />
+        </div>
     </div>
 
     <div class="form-group">
@@ -20,22 +22,26 @@
         <input asp-for="@Model.Descript" class="form-control form-control-sm" />
     </div>
 
-    <div class="form-group">
-        <label asp-for="@Model.Geomtype"></label>
-        <div><span asp-validation-for="@Model.Geomtype" class="text-danger"></span></div>
-        <input asp-for="@Model.Geomtype" class="form-control form-control-sm" readonly />
-    </div>
+    @if (@Model.Geomtype.Length > 0)
+    {
+        <div class="form-group">
+            <label asp-for="@Model.Geomtype"></label>
+            <div><span asp-validation-for="@Model.Geomtype" class="text-danger"></span></div>
+            <input asp-for="@Model.Geomtype" class="form-control form-control-sm" readonly />
+        </div>
+    }
 
-    <div class="form-group">
+
+    <div class="form-check">
+        <input type="checkbox" asp-for="@Model.Isupdater" class="form-check-input" id="role_checkbox2" />
         <label asp-for="@Model.Isupdater"></label>
         <div><span asp-validation-for="@Model.Isupdater" class="text-danger"></span></div>
-        <input type="checkbox" asp-for="@Model.Isupdater" class="form-check" id="role_checkbox2" />
     </div>
 
-    <div >
+    <div class="form-check">
+        <input type="checkbox" asp-for="@Model.Islogger" class="form-check-input" id="role_checkbox2" />
         <label asp-for="@Model.Islogger"></label>
         <div><span asp-validation-for="@Model.Islogger" class="text-danger"></span></div>
-        <input type="checkbox" asp-for="@Model.Islogger" class="form-check" id="role_checkbox2" />
     </div>
 
 
