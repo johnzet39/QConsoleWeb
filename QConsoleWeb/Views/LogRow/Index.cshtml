@@ -3,14 +3,14 @@
 
 
 
-<div>
+<div class="card-header">
     <h5>Аудит операций</h5>
 </div>
-<br/>
 
-<form asp-action="Index" asp-route-subquery=@Model.SubQuery method="get" class="form-row row">
 
-    <div class="input-group input-group-sm mb-1">
+<form asp-action="Index" asp-route-subquery=@Model.SubQuery method="get" class="mt-2 row">
+
+    <div class="input-group input-group-sm mb-1 col-md-4 date-picker">
         <div class="input-group-prepend">
             <span class="input-group-text small" id="inputGroup-sizing-default">Период</span>
         </div>
@@ -18,7 +18,7 @@
         <input asp-for="DateTo" type="date" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-sm">
     </div>
 
-    <div class="input-group input-group-sm mb-1">
+    <div class="input-group input-group-sm mb-1 col-sm-12 col-md-8">
         <input asp-for="SubQuery" type="search" class="form-control SubQueryId" id="SubQueryId" placeholder="Дополнительные условия" aria-label="Default" aria-describedby="inputGroup-sizing-sm">
         <div class="input-group-prepend">
             <button class="btn btn-primary" type="submit">Применить</button>
@@ -27,6 +27,7 @@
 
 </form>
 <div asp-validation-summary="All" class="text-danger"></div>
+<br/>
 
 <div class="input-group">
     <div class="mr-3">
