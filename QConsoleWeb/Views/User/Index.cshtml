@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<User>
 
-<div class="text-center">
+<div class="card-header">
     <h5>Список пользователей</h5>
 </div>
 
@@ -9,7 +9,7 @@
     <strong>Ошибка</strong>sssadasdasd
 </div>
 
-<div>
+<div class="mb-2 mt-2">
     <a asp-action="CreateUser" asp-controller="User" class="btn btn-sm btn-outline-primary">
         <span style="color:green"><i class="fas fa-plus"></i></span>
         Новый пользователь
@@ -20,7 +20,6 @@
     </a>
 </div>
 
-<br />
 <div class="table-responsive">
     <table class="table table-sm table-hover text-nowrap">
         <thead class="thead-dark">
@@ -53,14 +52,14 @@
                     <td>
                         <div>
                             @*<a class="btn btn-info delete"
-                               data-id="@p.Usesysid"
-                               data-controller="User"
-                               data-action="DeleteUser"
-                               data-body-message="Are you sure to delete?"
-                               data-redirect-url="User/Index">
-                                Modal
-                            </a>
-                            |*@
+                                   data-id="@p.Usesysid"
+                                   data-controller="User"
+                                   data-action="DeleteUser"
+                                   data-body-message="Are you sure to delete?"
+                                   data-redirect-url="User/Index">
+                                    Modal
+                                </a>
+                                |*@
                             <a asp-action="EditUser" asp-controller="User" asp-route-id=@p.Usesysid class="btn-sm btn-outline-secondary" style="text-decoration: none;">
                                 <i class="fas fa-pen"></i>
                             </a>

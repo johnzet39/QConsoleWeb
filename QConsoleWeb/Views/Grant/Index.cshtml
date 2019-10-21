@@ -1,14 +1,12 @@
 ﻿@model IEnumerable<User>
 
 
-<div class="text-center">
+<div class="card-header">
     <h5>Группы пользователей</h5>
 </div>
 
-
-
 <div class="table-responsive">
-    <table class="table table-striped table-sm table-hover text-nowrap ">
+    <table class="table table-sm table-hover text-nowrap">
         <thead class="thead-dark">
             <tr>
                 <th>#</th>
@@ -23,7 +21,13 @@
             <tr>
                 <td>@(rowNumber += 1)</td>
                 <td><a asp-action="EditGroup" asp-controller="Grant" asp-route-rolename=@p.Usename asp-route-userid=@p.Usesysid>@p.Usename</a></td>
-                <td>@p.Descript</td>
+                <td>
+                    <table class="fixed-table">
+                        <tr>
+                            <td>@p.Descript</td>
+                        </tr>
+                    </table>
+                </td>
             </tr>
     }
         </tbody>

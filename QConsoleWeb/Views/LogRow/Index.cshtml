@@ -3,55 +3,49 @@
 
 
 
-<div class="text-center">
+<div>
     <h5>Аудит операций</h5>
 </div>
+<br/>
 
 <form asp-action="Index" asp-route-subquery=@Model.SubQuery method="get" class="form-row row">
 
-    <div class="input-group mb-1">
+    <div class="input-group input-group-sm mb-1">
         <div class="input-group-prepend">
-            <span class="input-group-text" id="inputGroup-sizing-default">Период</span>
+            <span class="input-group-text small" id="inputGroup-sizing-default">Период</span>
         </div>
         <input asp-for="DateFrom" type="date" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-sm">
         <input asp-for="DateTo" type="date" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-sm">
     </div>
 
-    <div class="input-group mb-1">
+    <div class="input-group input-group-sm mb-1">
+        <input asp-for="SubQuery" type="search" class="form-control SubQueryId" id="SubQueryId" placeholder="Дополнительные условия" aria-label="Default" aria-describedby="inputGroup-sizing-sm">
         <div class="input-group-prepend">
-            <button class="btn btn-outline-primary" type="submit">Применить</button>
-        </div>
-            <input asp-for="SubQuery" type="search" class="form-control SubQueryId" id="SubQueryId" placeholder="Дополнительные условия" aria-label="Default" aria-describedby="inputGroup-sizing-sm">
-        </div>
-        @*<div class="form-group">
-            <label asp-for="SubQuery"></label>
-            <div class="form-inline">
-                <input asp-for="SubQuery" class="form-control form-control-sm SubQueryId" id="SubQueryId" placeholder="Дополнительные условия" />
-                <button class="btn btn-outline-secondary btn-sm" type="submit">Применить</button>
-            </div>
-        </div>*@
-</form>
-<div asp-validation-summary="All" class="text-danger"></div>
-
-<div class="row">
-    <div class="col">
-        @(await Component.InvokeAsync<PagerViewComponent>(Model.PagedLogRows))
-        <div class="col">
-            <select name="rowscount" class="form-control form-control-sm">
-                <option value="">...</option>
-                <option>10</option>
-                <option>50</option>
-                <option>100</option>
-                <option>250</option>
-                <option>500</option>
-                <option>1000</option>
-            </select>
+            <button class="btn btn-primary" type="submit">Применить</button>
         </div>
     </div>
 
+</form>
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<div class="input-group">
+    <div class="mr-3">
+        @(await Component.InvokeAsync<PagerViewComponent>(Model.PagedLogRows))
+    </div>
+    <div class="">
+        <select name="rowscount" class="form-control form-control-sm">
+            <option value="">...</option>
+            <option>10</option>
+            <option>50</option>
+            <option>100</option>
+            <option>250</option>
+            <option>500</option>
+            <option>1000</option>
+        </select>
+    </div>
 </div>
-<div>
-    <table class="table table-striped table-sm table-hover text-nowrap">
+<div class="table-responsive">
+    <table class="table table-sm table-hover text-nowrap table-bordered">
         <thead class="thead-dark">
             <tr>
                 @*<th></th>*@
@@ -77,19 +71,26 @@
                 {
                     var rowNo = (Model.PagedLogRows.CurrentPage - 1) * Model.PagedLogRows.PageSize + i;
                     i++;
-                    <tr class="ButtonClass" onclick="location.href = '@(Url.Action("LogRowHistory", "LogRow", new { id = @p.Gid }))'">
-                        @*<td><a asp-action="LogRowHistory" asp-controller="LogRow" asp-route-gid=@p.Gid>Детали</a></td>*@
-                        <td>@rowNo</td>
-                        <td>@p.Gid</td>
-                        <td>@p.Action</td>
-                        <td>@p.Username</td>
-                        <td>@p.Address</td>
-                        <td>@p.Timechange</td>
-                        <td>@p.Tableschema</td>
-                        <td>@p.Tablename</td>
-                        <td>@p.Gidnum</td>
-                        <td class="text"><span>@p.Context</span></td>
+        <tr class="ButtonClass" onclick="location.href = '@(Url.Action("LogRowHistory", "LogRow", new { id = @p.Gid }))'">
+            @*<td><a asp-action="LogRowHistory" asp-controller="LogRow" asp-route-gid=@p.Gid>Детали</a></td>*@
+            <td>@rowNo</td>
+            <td>@p.Gid</td>
+            <td>@p.Action</td>
+            <td>@p.Username</td>
+            <td>@p.Address</td>
+            <td>@p.Timechange</td>
+            <td>@p.Tableschema</td>
+            <td>@p.Tablename</td>
+            <td>@p.Gidnum</td>
+            @*<td class="text"><span>@p.Context</span></td>*@
+            <td>
+                <table class="fixed-table">
+                    <tr>
+                        <td>@p.Context</td>
                     </tr>
+                </table>
+            </td>
+        </tr>
                 }
             }
         </tbody>

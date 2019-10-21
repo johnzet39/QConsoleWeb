@@ -54,6 +54,12 @@
     vertical-align: middle;
 }
 
+.pagination {
+    margin: 0px !important;
+}
+
+
+
 /*.fa-check {
     color: green;
 }
@@ -61,7 +67,6 @@
 .fa-times {
     color: red;
 }*/
-
 /* BEGIN styles for validation helpers */
 .field-validation-error {
     color: #b94a48;
