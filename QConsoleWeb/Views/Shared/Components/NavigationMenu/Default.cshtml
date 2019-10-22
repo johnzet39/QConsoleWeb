@@ -17,13 +17,13 @@
     </nav>*@
 
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">QConsole</a>
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/">QConsole</a>
         <ul class="navbar-nav px-3">
             <li class="nav-item text-nowrap">
                 @if (User?.Identity?.IsAuthenticated ?? false)
                 {
                     <div class="form-inline">
-                        <label class="text-info">@User?.Identity?.Name</label>
+                        <label class="text-info mr-2">@User?.Identity?.Name</label>
                         <a asp-controller="Account" asp-action="Logout"class="nav-link">
                             <i class="fa fa-sign-out-alt" aria-hidden="true"></i>
                             Выйти
