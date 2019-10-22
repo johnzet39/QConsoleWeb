@@ -8,25 +8,15 @@
 
     <link href="~/css/dashboard.css" rel="stylesheet">
 
-    @*<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"
-        asp-fallback-href="~/lib/bootstrap/css/bootstrap.min.css" asp-fallback-test-class="hidden" asp-fallback-test-property="visibility" asp-fallback-test-value="hidden">*@
     <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css">
     <link href="~/css/Style.css" rel="stylesheet" type="text/css" />
-
-    @*<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"
-        asp-fallback-src="~/lib/jquery/jquery.min.js" asp-fallback-test="window.jQuery" type="text/javascript"></script>*@
-
-    @*<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"
-        asp-fallback-src="~/lib/bootstrap/js/bootstrap.min.js"></script>*@
-
-    <script src="~/lib/jquery/jquery.min.js" type="text/javascript"></script>
-    <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
 
     <link href="~/images/awesome/css/fontawesome.min.css" rel="stylesheet">
     @*<link href="~/images/awesome/css/brands.min.css" rel="stylesheet">*@
     <link href="~/images/awesome/css/solid.min.css" rel="stylesheet">
+
+    <script src="~/lib/jquery/jquery.min.js" type="text/javascript"></script>
+    <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
 
 </head>
 
@@ -38,10 +28,11 @@
 
     <div class="container-fluid">
         <div class="row">
-            
-            @await  Component.InvokeAsync("LeftNavigationMenu")
+            <div class="col-md-3 ml-sm-auto col-lg-2">
+                @await Component.InvokeAsync("LeftNavigationMenu")
+            </div>
 
-            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10">
                 @if (TempData["message"] != null)
                 {
                     <div class="alert alert-success">@TempData["message"]</div>
@@ -55,6 +46,15 @@
         </div>
     </div>
 
+    <footer class="footer card-footer text-muted">
+        <div class="navbar-inner col-md-9 ml-sm-auto col-lg-10">
+            <h6>johnzet (c) 2019</h6>
+        </div>
+    </footer>
+
+
+
 </body>
 </html>
-<footer class="card-footer text-muted col-md-9 ml-sm-auto col-lg-10 px-4" style="margin-top: 10px"><h6>johnzet (c) 2019</h6></footer>
+
+
