@@ -38,7 +38,6 @@
             {
                 <tr>
                     <td>@(rowNumber += 1)</td>
-                    @*@Html.Partial("UserSummary", p)*@
                     <td><a asp-action="EditUser" asp-controller="User" asp-route-id=@p.Usesysid>@p.Usename</a></td>
                     <td>
                         <table class="fixed-table">
@@ -48,7 +47,7 @@
                         </table>
                     </td>
                     <td>@p.Usesuper</td>
-                    <td>@p.Isrole</td>
+                    <td class="isrole">@p.Isrole</td>
                     <td>
                         <div>
                             @*<a class="btn btn-info delete"
@@ -99,6 +98,7 @@
     $('td:contains("True")').html("<i class='fa fa-check' aria-hidden='true' style='color: green;'></i>").addClass("text-center");
     $('td:contains("False")').html("<i class='fa fa-times' aria-hidden='true' style='color: #cccccc;'></i>").addClass("text-center");
 </script>
+
 
 @section scripts{
 

@@ -22,5 +22,8 @@ namespace QConsoleWeb.Views.ViewModels
         public string SubQuery { get; set; }
 
         public int PageRowCount { get; set; }
+
+        [Display(Name = "Лимит")]
+        public bool OnlyLastRows { get; set; } = true;
     }
 }

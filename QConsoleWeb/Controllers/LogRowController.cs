@@ -46,7 +46,7 @@ namespace QConsoleWeb.Controllers
                 model.PageRowCount = pageRowCount;
 
             ViewBag.Title = "Аудит";
-            model.PagedLogRows = GetLogRows(model).GetPaged(page, pageRowCount);
+            model.PagedLogRows = GetLogRows(model, model.OnlyLastRows).GetPaged(page, pageRowCount);
             return View(model);
         }
 

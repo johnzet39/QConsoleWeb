@@ -1,102 +1,130 @@
 ﻿@model LogRowViewModel
 @using QConsoleWeb.Components
 
-<h6 class="card-header" mb-2>@ViewBag.Title</h6>
 
-<form asp-action="Index" method="get" class="mt-2">
-    <div class="row">
-        <div class="input-group input-group-sm mb-1 col-md-4 date-picker">
-            <div class="input-group-prepend">
-                <span class="input-group-text small" id="inputGroup-sizing-default">Период</span>
-            </div>
-            <input asp-for="DateFrom" type="date" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-sm">
-            <input asp-for="DateTo" type="date" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-sm">
-        </div>
+    <form asp-action="Index" method="get">
 
-        <div class="input-group input-group-sm mb-1 col-sm-12 col-md-8">
-            <input asp-for="SubQuery" type="search" class="form-control SubQueryId" id="SubQueryId" placeholder="Дополнительные условия" aria-label="Default" aria-describedby="inputGroup-sizing-sm">
-            <div class="input-group-prepend">
-                <button class="btn btn-primary" type="submit">Применить</button>
+        <div class="card-header mb-2 ">
+            <div class="row">
+                <div class="col-12">
+                    <h6 class="float-left">@ViewBag.Title</h6>
+                    <div class="form-check float-right">
+                        <input type="checkbox" asp-for="@Model.OnlyLastRows" class="form-check-input" data-toggle="tooltip" title="Отображать только последние n-записей"/>
+                        <label asp-for="@Model.OnlyLastRows"></label>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div asp-validation-summary="All" class="text-danger"></div>
-    <br />
+        <div class="row">
+            <div class="input-group input-group-sm mb-1 col-md-4 date-picker">
+                <div class="input-group-prepend">
+                    <span class="input-group-text small" id="inputGroup-sizing-default">Период</span>
+                </div>
+                <input asp-for="DateFrom" type="date" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-sm">
+                <input asp-for="DateTo" type="date" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-sm">
+            </div>
 
-    <div class="input-group">
-        <div class="mr-3">
-            @(await Component.InvokeAsync<PagerViewComponent>(Model.PagedLogRows))
+            <div class="input-group input-group-sm mb-1 col-sm-12 col-md-8">
+                <input asp-for="SubQuery" type="search" class="form-control SubQueryId" id="SubQueryId" placeholder="Дополнительные условия" aria-label="Default" aria-describedby="inputGroup-sizing-sm">
+                <div class="input-group-prepend">
+                    <button class="btn btn-primary" type="submit">Применить</button>
+                </div>
+            </div>
         </div>
-        <div class="">
-            <select id="rowscountpage" asp-for="@Model.PageRowCount" class="form-control form-control-sm">
-                <option value=0>...</option>
-                <option>10</option>
-                <option>50</option>
-                <option>100</option>
-                <option>250</option>
-                <option>500</option>
-                <option>1000</option>
-            </select>
-        </div>
-    </div>
-    <div class="table-responsive">
-        <table class="table table-sm table-hover text-nowrap table-bordered">
-            <thead class="thead-dark">
-                <tr>
-                    @*<th></th>*@
-                    <th>#</th>
-                    <th>gid</th>
-                    <th>Операция</th>
-                    <th>Пользователь</th>
-                    <th>Адрес</th>
-                    <th>Дата изм.</th>
-                    <th>Схема</th>
-                    <th>Таблица</th>
-                    <th>gidnum</th>
-                    <th>Содержание</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model.PagedLogRows.Results.Count() == 0)
-                {
-                    <tr><td colspan="10" class="text-center">Нет записей</td></tr>
-                }
-                else
-                {
-                    var i = 1;
-                    foreach (var p in Model.PagedLogRows.Results)
+
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <br />
+
+        @if (Model.PagedLogRows.Results.Count() != 0)
+        {
+            <div class="input-group">
+                <div class="mr-3">
+                    @(await Component.InvokeAsync<PagerViewComponent>(Model.PagedLogRows))
+                </div>
+                <div class="mb-2">
+                    <select id="rowscountpage" asp-for="@Model.PageRowCount" class="form-control form-control-sm">
+                        <option value=0> ...</option>
+                        <option>10</option>
+                        <option>25</option>
+                        <option>50</option>
+                        <option>100</option>
+                        <option>250</option>
+                        <option>500</option>
+                        <option>1000</option>
+                    </select>
+                </div>
+            </div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-sm table-hover text-nowrap table-bordered">
+                <thead class="thead-dark">
+                    <tr class="ButtonClass">
+                        <th>#</th>
+                        <th data-toggle="tooltip" title=@nameof(LogRow.Gid).ToLower()>gid</th>
+                        <th data-toggle="tooltip" title=@nameof(LogRow.Action).ToLower()>Операция</th>
+                        <th data-toggle="tooltip" title=@nameof(LogRow.Username).ToLower()>Пользователь</th>
+                        <th data-toggle="tooltip" title=@nameof(LogRow.Address).ToLower()>Адрес</th>
+                        <th data-toggle="tooltip" title=@nameof(LogRow.Timechange).ToLower()>Дата изм.</th>
+                        <th data-toggle="tooltip" title=@nameof(LogRow.Tableschema).ToLower()>Схема</th>
+                        <th data-toggle="tooltip" title=@nameof(LogRow.Tablename).ToLower()>Таблица</th>
+                        <th data-toggle="tooltip" title=@nameof(LogRow.Gidnum).ToLower()>gidnum</th>
+                        <th data-toggle="tooltip" title=@nameof(LogRow.Context).ToLower()>Содержание</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.PagedLogRows.Results.Count() == 0)
                     {
-                        var rowNo = (Model.PagedLogRows.CurrentPage - 1) * Model.PagedLogRows.PageSize + i;
-                        i++;
-                        <tr class="ButtonClass" onclick="location.href = '@(Url.Action("LogRowHistory", "LogRow", new { id = @p.Gid }))'">
-                            @*<td><a asp-action="LogRowHistory" asp-controller="LogRow" asp-route-gid=@p.Gid>Детали</a></td>*@
-                            <td>@rowNo</td>
-                            <td>@p.Gid</td>
-                            <td>@p.Action</td>
-                            <td>@p.Username</td>
-                            <td>@p.Address</td>
-                            <td>@p.Timechange</td>
-                            <td>@p.Tableschema</td>
-                            <td>@p.Tablename</td>
-                            <td>@p.Gidnum</td>
-                            @*<td class="text"><span>@p.Context</span></td>*@
-                            <td><table class="fixed-table"><tr><td>@p.Context</td></tr></table></td>
-                        </tr>
+                        <tr><td colspan="10" class="text-center">Нет записей</td></tr>
                     }
-                }
-            </tbody>
-        </table>
-    </div>
-    @(await Component.InvokeAsync<PagerViewComponent>(Model.PagedLogRows))
+                    else
+                    {
+                        var i = 1;
+                        foreach (var p in Model.PagedLogRows.Results)
+                        {
+                            var rowNo = (Model.PagedLogRows.CurrentPage - 1) * Model.PagedLogRows.PageSize + i;
+                            i++;
+                            <tr class="ButtonClass" onclick="location.href = '@(Url.Action("LogRowHistory", "LogRow", new { id = @p.Gid }))'">
+                                <td>@rowNo</td>
+                                <td>@p.Gid</td>
+                                <td>@p.Action</td>
+                                <td>@p.Username</td>
+                                <td>@p.Address</td>
+                                <td>@p.Timechange</td>
+                                <td>@p.Tableschema</td>
+                                <td>@p.Tablename</td>
+                                <td>@p.Gidnum</td>
+                                @*<td class="text"><span>@p.Context</span></td>*@
+                                <td><table class="fixed-table"><tr><td>@p.Context</td></tr></table></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
 
-</form>
+        @if (Model.PagedLogRows.Results.Count() != 0)
+        {
+            @(await Component.InvokeAsync<PagerViewComponent>(Model.PagedLogRows))
+        }
+    </form>
 
 
 <script type="text/javascript">
     $(document).ready(function () {
         $('#rowscountpage').change(function () {
             document.forms[0].submit();
+        });
+    });
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        $(".table th").click(function () {
+            document.getElementById("SubQueryId").value =
+                document.getElementById("SubQueryId").value + '"' + $(this).prop("title") + '"';
         });
     });
 </script>

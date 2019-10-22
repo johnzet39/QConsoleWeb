@@ -13,8 +13,8 @@
                 <th>Приложение</th>
                 <th>Начало сеанса</th>
                 <th>Пользователь</th>
-                <th>Описание</th>
                 <th>Адрес клиента</th>
+                <th>Описание</th>
                 <th></th>
             </tr>
         </thead>
@@ -27,6 +27,7 @@
                     <td>@p.Application_name</td>
                     <td>@p.Starttime</td>
                     <td>@p.Usename</td>
+                    <td>@p.Client_addr</td>
                     <td>
                         <table class="fixed-table">
                             <tr>
@@ -34,7 +35,6 @@
                             </tr>
                         </table>
                     </td>
-                    <td>@p.Client_addr</td>
                 </tr>
             }
         </tbody>

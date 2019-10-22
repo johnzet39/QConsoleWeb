@@ -17,6 +17,13 @@
     var finishIndex = Math.Min(Model.CurrentPage + 5, Model.PageCount);
 }
 
+<style>
+    div#child {
+    margin: 0 auto;
+}
+</style>
+
+<div class="d-inline-block">
     <div class="input-group">
         <div class="row">
             <div class="col-md-8 col-sm-8">
@@ -44,8 +51,7 @@
         </div>
     </div>
 
-<div class="row">
-    <div class="col-md-8 col-sm-8 items-info">
-        Строки @Model.FirstRowOnPage - @Model.LastRowOnPage из @Model.RowCount
+    <div class="items-info small">
+        @Model.FirstRowOnPage - @Model.LastRowOnPage из @Model.RowCount
     </div>
 </div>
