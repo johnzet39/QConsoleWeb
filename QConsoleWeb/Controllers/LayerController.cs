@@ -28,15 +28,7 @@ namespace QConsoleWeb.Controllers
             ViewBag.Title = "Слои и справочники";
             LayerViewModel model = new LayerViewModel();
             model.Layers = GetLayers();
-            try
-            {
-                model.Dictionaries = GetDictionaries();
-            }
-            catch (Exception e)
-            {
-                model.Dictionaries = null;
-                ModelState.AddModelError("", e.Message);
-            }
+            model.Dictionaries = GetDictionaries();
 
             return View(model);
         }
@@ -148,8 +140,16 @@ namespace QConsoleWeb.Controllers
 
         private IEnumerable<Layer> GetDictionaries()
         {
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<LayerDTO, Layer>()).CreateMapper();
-            return mapper.Map<IEnumerable<LayerDTO>, List<Layer>>(_service.GetDicts());
-        }
+            try
+            {
+                var mapper = new MapperConfiguration(cfg => cfg.CreateMap<LayerDTO, Layer>()).CreateMapper();
+                return mapper.Map<IEnumerable<LayerDTO>, List<Layer>>(_service.GetDicts());
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("", e.Message);
+                return null;
+            }
+}
     }
 }
