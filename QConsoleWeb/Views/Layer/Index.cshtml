@@ -1,6 +1,5 @@
 ﻿@model LayerViewModel
 
-
 <div class="card-header">
     <h5>Слои</h5>
 </div>
@@ -8,9 +7,18 @@
     @Html.Partial("LayerSummary", Model.Layers)
 </div>
 
-<div class="card-header">
-    <h5>Справочники <a asp-action="DictListManage" class="btn btn-link">Управление справочниками</a></h5>
-</div>
-<div>
-    @Html.Partial("LayerSummary", Model.Dictionaries)
-</div>
+<hr />
+<div asp-validation-summary="All" class="text-danger px-5"></div>
+<br />
+
+@if (Model.Dictionaries != null)
+{
+    <div class="card-header">
+        <h5>Справочники <a asp-action="DictListManage" class="btn btn-link">Управление справочниками</a></h5>
+    </div>
+
+    <div>
+        @Html.Partial("LayerSummary", Model.Dictionaries)
+    </div>
+}
+

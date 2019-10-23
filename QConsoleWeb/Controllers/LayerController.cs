@@ -28,7 +28,16 @@ namespace QConsoleWeb.Controllers
             ViewBag.Title = "Слои и справочники";
             LayerViewModel model = new LayerViewModel();
             model.Layers = GetLayers();
-            model.Dictionaries = GetDictionaries();
+            try
+            {
+                model.Dictionaries = GetDictionaries();
+            }
+            catch (Exception e)
+            {
+                model.Dictionaries = null;
+                ModelState.AddModelError("", e.Message);
+            }
+
             return View(model);
         }
 
