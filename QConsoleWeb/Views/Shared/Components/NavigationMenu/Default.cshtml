@@ -19,7 +19,8 @@
 
 
     <div class="navbar-brand col-5 col-sm-3 col-md-3 col-lg-2 mr-0">
-        <button class="openbtn" onclick="openNav()">☰</button>
+        @*<button class="openbtn" onclick="openNav()">☰</button>*@
+        <a role="button" class="text-white p-1" onclick="openNav()"><i class="fa fa-bars fa-lg"></i></a>
         <a class="navbar-brand-title" href="/">QConsole</a>
     </div>
 
@@ -61,13 +62,16 @@
 
 <script>
     function openNav() {
-        document.getElementById("mainSidebar").style.display = "block!important";
-        //document.getElementById("mainSidebar").style.removeAttribute("width");
-        document.getElementById("mainSidebar").style.width = "";
+        document.getElementById("mainSidebar").setAttribute("style",
+            "display:block!important; position:fixed; width:fit-content");
+        // document.getElementById("mainSidebar").setAttribute("style", "width:''");
+        //document.getElementById("mainSidebar").removeAttribute("style", "width");
+        console.log(document.getElementById("mainSidebar").style.display);
     }
 
     function closeNav() {
         document.getElementById("mainSidebar").style.display = "none!important";
     }
 </script>
+
 
