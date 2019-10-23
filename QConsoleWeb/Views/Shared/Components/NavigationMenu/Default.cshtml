@@ -1,5 +1,4 @@
-﻿
-    @*<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+﻿@*<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
         <a class="navbar-brand" href="#">QConsole</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -16,22 +15,59 @@
         </div>
     </nav>*@
 
-    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-        <a class="navbar-brand col-sm-3 col-md-3 col-lg-2 mr-0" href="/">QConsole</a>
-        <ul class="navbar-nav px-3">
-            <li class="nav-item text-nowrap">
-                @if (User?.Identity?.IsAuthenticated ?? false)
-                {
-                    <div class="form-inline">
-                        <label class="text-info mr-2">@User?.Identity?.Name</label>
-                        <a asp-controller="Account" asp-action="Logout"class="nav-link">
-                            <i class="fa fa-sign-out-alt" aria-hidden="true"></i>
-                            Выйти
-                        </a>
-                    </div>
-                }
-            </li>
-        </ul>
-    </nav>
+<nav id="navbar" class="navbar navbar-dark navbar-slide fixed-top bg-dark flex-md-nowrap p-0 shadow">
 
-    
+
+    <div class="navbar-brand col-5 col-sm-3 col-md-3 col-lg-2 mr-0">
+        <button class="openbtn" onclick="openNav()">☰</button>
+        <a class="navbar-brand-title" href="/">QConsole</a>
+    </div>
+
+    <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+            @if (User?.Identity?.IsAuthenticated ?? false)
+            {
+                <div class="form-inline">
+                    <label class="text-info mr-2">@User?.Identity?.Name</label>
+                    <a asp-controller="Account" asp-action="Logout" class="nav-link">
+                        <i class="fa fa-sign-out-alt" aria-hidden="true"></i>
+                        <span id="quittext">Выйти</span>
+                    </a>
+                </div>
+            }
+        </li>
+    </ul>
+</nav>
+
+
+<script>
+    /*
+    slide navbar with scrolling
+    */
+    if (window.matchMedia('(max-width: 768px)').matches) {
+        var prevScrollpos = window.pageYOffset;
+        window.onscroll = function () {
+            var currentScrollPos = window.pageYOffset;
+            if (prevScrollpos > currentScrollPos) {
+                document.getElementById("navbar").style.top = "0";
+            } else {
+                document.getElementById("navbar").style.top = "-48px";
+            }
+            prevScrollpos = currentScrollPos;
+        }
+    }
+</script>
+
+
+<script>
+    function openNav() {
+        document.getElementById("mainSidebar").style.display = "block!important";
+        //document.getElementById("mainSidebar").style.removeAttribute("width");
+        document.getElementById("mainSidebar").style.width = "";
+    }
+
+    function closeNav() {
+        document.getElementById("mainSidebar").style.display = "none!important";
+    }
+</script>
+
