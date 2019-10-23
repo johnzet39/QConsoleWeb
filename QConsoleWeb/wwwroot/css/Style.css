@@ -35,6 +35,7 @@ body {
 
 .date-picker {
     min-width: 320px;
+    width:30%;
 }
 
 .ButtonClass {
