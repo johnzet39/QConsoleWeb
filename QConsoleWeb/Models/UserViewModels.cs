@@ -19,10 +19,12 @@ namespace QConsoleWeb.Models
 
     public class LoginModel
     {
-        [Required]
+        [Required(ErrorMessage = "Введите логин")]
+        [Display(Name = "Логин")]
         public string Username { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Введите пароль")]
+        [Display(Name = "Пароль")]
         [UIHint("password")]
         public string Password { get; set; }
     }
