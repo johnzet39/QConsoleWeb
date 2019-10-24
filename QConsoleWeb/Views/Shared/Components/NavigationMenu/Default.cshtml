@@ -19,8 +19,8 @@
 
 
     <div class="navbar-brand col-5 col-sm-3 col-md-3 col-lg-2 mr-0">
-        @*<button class="openbtn" onclick="openNav()">☰</button>*@
-        <a role="button" class="text-white p-1" onclick="openNav()"><i class="fa fa-bars fa-lg"></i></a>
+        @*<a role="button" class="text-white p-1" onclick="openNav()"><i class="fa fa-bars fa-lg"></i></a>*@
+        <a role="button" id="sidebarCollapse" class="text-white p-1 d-md-none"><i class="fa fa-bars fa-lg small"></i></a>
         <a class="navbar-brand-title" href="/">QConsole</a>
     </div>
 
@@ -59,19 +59,20 @@
     }
 </script>
 
+<script type="text/javascript">
+    $(document).ready(function () {
 
-<script>
-    function openNav() {
-        document.getElementById("mainSidebar").setAttribute("style",
-            "display:block!important; position:fixed; width:fit-content");
-        // document.getElementById("mainSidebar").setAttribute("style", "width:''");
-        //document.getElementById("mainSidebar").removeAttribute("style", "width");
-        console.log(document.getElementById("mainSidebar").style.display);
-    }
+        $('#dismissSidebar, .overlay').on('click', function () {
+            // hide sidebar
+            $('#mainSidebar').removeClass('active');
+            $('.overlay').removeClass('active');
+        });
 
-    function closeNav() {
-        document.getElementById("mainSidebar").style.display = "none!important";
-    }
+        $('#sidebarCollapse').on('click', function () {
+            // open sidebar
+            $('#mainSidebar').addClass('active');
+            $('.overlay').addClass('active');
+        });
+    });
 </script>
-
 

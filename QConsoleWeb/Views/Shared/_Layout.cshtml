@@ -26,10 +26,13 @@
 <body>
     @await Component.InvokeAsync("NavigationMenu")
 
+    
+
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-3 ml-sm-auto col-lg-2" >
+            <div class="col-md-3 ml-sm-auto col-lg-2">
                 @await Component.InvokeAsync("LeftNavigationMenu")
+                <div class="overlay"></div>
             </div>
 
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10">
@@ -53,8 +56,6 @@
             </div>
         </div>
     </footer>
-
-
 
 </body>
 </html>
