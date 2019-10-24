@@ -21,7 +21,7 @@
 </div>
 
 <div class="table-responsive">
-    <table class="table table-sm table-hover text-nowrap">
+    <table id="usersTable" class="table table-sm table-hover text-nowrap">
         <thead class="thead-dark">
             <tr>
                 <th>#</th>
@@ -95,18 +95,23 @@
 <script src="~/js/delete.js"></script>
 
 <script>
-    $('td:contains("True")').html("<i class='fa fa-check' aria-hidden='true' style='color: green;'></i>").addClass("text-center");
-    $('td:contains("False")').html("<i class='fa fa-times' aria-hidden='true' style='color: #cccccc;'></i>").addClass("text-center");
+    $('#usersTable tr').each(function () {
+        
+        var isFlagged = $(this).find(".isrole").html();
+        if (isFlagged == 'True') {
+            $(this).addClass('yellowrow');
+        }
+        $(this).find('td:contains("True")').html("<i class='fa fa-check' aria-hidden='true' style='color: green;'></i>").addClass("text-center");
+        $(this).find('td:contains("False")').html("<i class='fa fa-times' aria-hidden='true' style='color: #cccccc;'></i>").addClass("text-center");
+    });
 </script>
 
 <script>
-    $(function () {
-        var isFlagged = $('.isrole').text();
-        if (isFlagged.length = 4) {
-            $('.isrole').parent().addClass('yellowrow');
-        }
-    });
+    //$('td:contains("True")').html("<i class='fa fa-check' aria-hidden='true' style='color: green;'></i>").addClass("text-center");
+    //$('td:contains("False")').html("<i class='fa fa-times' aria-hidden='true' style='color: #cccccc;'></i>").addClass("text-center");
 </script>
+
+
 
 @section scripts{
 

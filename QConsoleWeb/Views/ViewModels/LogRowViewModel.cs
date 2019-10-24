@@ -23,7 +23,6 @@ namespace QConsoleWeb.Views.ViewModels
 
         public int PageRowCount { get; set; }
 
-        [Display(Name = "Лимит")]
         public bool OnlyLastRows { get; set; } = true;
     }
 }
