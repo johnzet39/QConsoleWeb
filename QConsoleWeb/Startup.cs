@@ -35,6 +35,7 @@ namespace QConsoleWeb
         {
             string _connectionString = Configuration.GetConnectionString("CONNECTION_BASE");
             string _connectionIdentity = Configuration.GetConnectionString("CONNECTION_IDENTITY");
+            int _loginTimeout = Configuration.GetValue<int>("AppSettings:Login:LoginTimeout");
 
             services.AddEntityFrameworkNpgsql()
                 .AddDbContext<AppIdentityDbContext>(opt =>
@@ -50,8 +51,12 @@ namespace QConsoleWeb
                 .AddDefaultTokenProviders();
 
             // Changing the loging URL
-            //services.ConfigureApplicationCookie(opts =>
-            //    opts.LoginPath = "/Account/Login");
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(_loginTimeout);
+                options.SlidingExpiration = true;
+            });
 
             //services.AddMvc();
             services.AddMvc()
@@ -59,6 +64,7 @@ namespace QConsoleWeb
                 {
                     options.Filters.Add(new AuthorizeFilter()); //set [Autorizate] global
                 });
+
             //services.AddTransient<IUserService, FakeUserService>();
             services.AddTransient<IUserService, UserService>(serviceProvider => new UserService(_connectionString));
             services.AddTransient<ISessionService, SessionService>(serviceProvider => new SessionService(_connectionString));
@@ -77,9 +83,9 @@ namespace QConsoleWeb
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error");
             }
-            //app.UseExceptionHandler("/Home/Error");
+
             app.UseStaticFiles();
             app.UseAuthentication();
             AppIdentityDbContext.CreateAdminAccount(app.ApplicationServices, Configuration).Wait();

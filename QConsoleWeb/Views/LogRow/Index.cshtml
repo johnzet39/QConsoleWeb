@@ -106,6 +106,7 @@
 
         @if (Model.PagedLogRows.Results.Count() != 0)
         {
+            <br />
             @(await Component.InvokeAsync<PagerViewComponent>(Model.PagedLogRows))
         }
     </form>
