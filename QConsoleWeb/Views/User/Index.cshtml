@@ -99,6 +99,14 @@
     $('td:contains("False")').html("<i class='fa fa-times' aria-hidden='true' style='color: #cccccc;'></i>").addClass("text-center");
 </script>
 
+<script>
+    $(function () {
+        var isFlagged = $('.isrole').text();
+        if (isFlagged.length = 4) {
+            $('.isrole').parent().addClass('yellowrow');
+        }
+    });
+</script>
 
 @section scripts{
 

@@ -27,6 +27,13 @@ body {
 }
 
 /*
+    Users table yellow row
+    if role is group
+*/
+.yellowrow {
+    background-color: #ffface;
+}
+/*
     Context
 */
 .pagination {
