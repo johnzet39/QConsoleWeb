@@ -106,10 +106,24 @@ namespace QConsoleWeb.Controllers
             {
                 try
                 {
+                    string message = string.Empty;
                     _service.CreateUserOrRole(model.CurrentUser.Usename, model.CurrentUser.Password, model.CurrentUser.Descript);
-                    AcceptPrivilegies(model.CurrentUser.Usename, ischeckedlist);
-                    if (model.ToPgHba)
-                        CreateUserPgHba(model);
+                    TempData["message"] = $"{model.CurrentUser.Usename} добавлен.";
+                    try
+                    {
+                        message = message + $"Присвоение привилегий: ";
+                        AcceptPrivilegies(model.CurrentUser.Usename, ischeckedlist);
+                        message = message + $"ОК. " + Environment.NewLine;
+                        if (model.ToPgHba) {
+                            message = message + $" Создание записи в pg_hba: ";
+                            CreateUserPgHba(model);
+                            message = message + $"ОК. " + Environment.NewLine;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        TempData["error"] = message + $" Warning: {e.Message}";
+                    }  
                 }
                 catch (Exception e)
                 {
