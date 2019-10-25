@@ -26,7 +26,7 @@
 <body>
     @await Component.InvokeAsync("NavigationMenu")
 
-    
+
 
     <div class="container-fluid">
         <div class="row">
@@ -36,16 +36,27 @@
             </div>
 
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10">
-                <div class="alertdiv alert alert-success">asdasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss sssssssssssssssssssssssssssssssssssssssssssssssdasdad</div>
-                @if (TempData["message"] != null)
-                {
-                    <div class="alert alert-success">@TempData["message"]</div>
-                }
-                @if (TempData["error"] != null)
-                {
-                    <div class="alert alert-warning">@TempData["error"]</div>
-                }
+
+                <div class="abs-center-x">
+                    @if (TempData["message"] != null)
+                    {
+                        <div class="hidded alert alert-success">
+                            @TempData["message"]
+                            <button class="closeAlert close"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                    }
+                    @if (TempData["error"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            @TempData["error"]
+                            <button class="closeAlert close"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                    }
+                </div>
+
+                @* RENDER BODY *@
                 @RenderBody()
+
             </main>
         </div>
     </div>
@@ -60,5 +71,23 @@
 
 </body>
 </html>
+
+<script>
+    //close alert immediately by clicking close button
+    $('.closeAlert').click(function () {
+        $(this).parent().addClass('hide-alert');
+    });
+</script>
+
+<script>
+    //auto close alert for hidded class
+     $(document).ready(function () {
+         var elem = $('.hidded');
+         elem.addClass("hidded-alert");
+         setTimeout(function() {
+            elem.addClass("hide-alert");
+         }, 5000);
+    });
+</script>
 
 

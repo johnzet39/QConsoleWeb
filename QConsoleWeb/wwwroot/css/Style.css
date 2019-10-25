@@ -42,12 +42,20 @@ body {
 /*
     Context
 */
-.alertdiv {
+.abs-center-x {
     position: absolute;
-    left: 20%;
-    right: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.hidded-alert {
     webkit-animation: cssAnimation 5s forwards;
     animation: cssAnimation 5s forwards;
+}
+
+.hide-alert {
+    animation: cssAnimation 0.5s forwards;
+    display :none;
 }
 
 @keyframes cssAnimation {
@@ -57,10 +65,10 @@ body {
 }
 
 @-webkit-keyframes cssAnimation {
-    0% {opacity: 1;}
-    90% {opacity: 1;}
+    0% { opacity: 1;}
+    90% { opacity: 1;}
     100% {opacity: 0;}
-
+}
     .pagination {
         margin: 0px !important;
     }
