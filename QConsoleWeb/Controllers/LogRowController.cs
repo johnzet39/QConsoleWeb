@@ -34,6 +34,16 @@ namespace QConsoleWeb.Controllers
         [HttpGet]
         public IActionResult Index(LogRowViewModel modelview = null, int page = 1)
         {
+            if (!ModelState.IsValid)
+            {
+                string errors = string.Join("; ",
+                    ModelState.Values.Where(E => E.Errors.Count > 0)
+                    .SelectMany(E => E.Errors)
+                    .Select(E => E.ErrorMessage)
+                    .ToArray());
+                return BadRequest(errors);
+            }
+
             LogRowViewModel model;
             if (modelview == null)
                 model = new LogRowViewModel();
