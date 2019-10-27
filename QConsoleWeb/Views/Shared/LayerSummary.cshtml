@@ -11,7 +11,6 @@
                 <th>Тип геометрии</th>
                 <th>Логгер</th>
                 <th>Аудит</th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -38,15 +37,6 @@
                 <td>@p.Geomtype</td>
                 <td>@p.Isupdater</td>
                 <td>@p.Islogger</td>
-                <td>
-                    <a asp-action="EditLayer" asp-controller="Layer"
-                       asp-route-schemaname=@p.Table_schema
-                       asp-route-tablename=@p.Table_name
-                       asp-route-geomtype=@p.Geomtype
-                       class="btn-sm btn-outline-secondary">
-                        <i class="fas fa-pen"></i>
-                    </a>
-                </td>
             </tr>
             }
         </tbody>

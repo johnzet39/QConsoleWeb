@@ -25,9 +25,6 @@
 
 <body>
     @await Component.InvokeAsync("NavigationMenu")
-
-
-
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-3 ml-sm-auto col-lg-2">
@@ -35,9 +32,9 @@
                 <div class="overlay"></div>
             </div>
 
-            <main role="main" class="col-md-9 ml-sm-auto col-lg-10">
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-8">
 
-                <div class="abs-center-x">
+                <div class="fixed">
                     @if (TempData["message"] != null)
                     {
                         <div class="hidded alert alert-success">
@@ -58,6 +55,7 @@
                 @RenderBody()
 
             </main>
+            <div class="sidebar-right d-none d-md-block ml-sm-auto col-lg-2 bg-light"></div>
         </div>
     </div>
 

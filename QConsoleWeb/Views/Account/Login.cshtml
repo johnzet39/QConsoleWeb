@@ -41,22 +41,22 @@
                     <h5>Авторизация</h5>
                 </div>
                 <div class="text-danger" asp-validation-summary="ModelOnly"></div>
-                <form asp-action="Login" method="post">
+                <form asp-action="Login" name="loginForm" method="post">
                     <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
 
                     <div class="form-group">
                         @*<label asp-for="Username"></label>*@
-                        <input asp-for="Username" class="form-control" placeholder="Логин" autofocus/>
+                        <input asp-for="Username" id="lgn" class="form-control" placeholder="Логин"/>
                         <div><span asp-validation-for="Username" class="text-danger"></span></div>
                     </div>
 
                     <div class="form-group">
                         @*<label asp-for="Password"></label>*@
-                        <input asp-for="Password" class="form-control" placeholder="Пароль" />
+                        <input asp-for="Password" id="pwd" class="form-control" placeholder="Пароль" />
                         <div><span asp-validation-for="Password" class="text-danger"></span></div>
                     </div>
                     <div class="text-center">
-                        <button class="btn btn-dark" type="submit">Войти</button>
+                        <button class="btn btn-dark" id="submitBtn" type="submit">Войти</button>
                     </div>
                 </form>
             </div>
@@ -64,3 +64,25 @@
         </div>
 </body>
 </html>
+
+<script>
+    function saveUsername(e) {
+        var loginTxt = document.loginForm.Username;
+        localStorage.setItem("login", loginTxt.value);
+    }
+
+    function loadUsername() {
+        var loginTxt = document.loginForm.Username;
+        var loc = localStorage.getItem("login");
+        loginTxt.value = loc;
+        if (loc!= null && loc.length > 0)
+            document.getElementById("pwd").focus();
+        else 
+            document.getElementById("lgn").focus();
+    }
+
+    loadUsername();
+
+    var btn = document.getElementById("submitBtn");
+    btn.addEventListener("click", saveUsername);
+</script>

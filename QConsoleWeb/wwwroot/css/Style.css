@@ -48,6 +48,12 @@ body {
     transform: translateX(-50%);
 }
 
+.fixed {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 .hidded-alert {
     webkit-animation: cssAnimation 5s forwards;
     animation: cssAnimation 5s forwards;
