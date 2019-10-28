@@ -55,16 +55,21 @@
                 @RenderBody()
 
             </main>
-            <div class="sidebar-right d-none d-md-block ml-sm-auto col-lg-2 bg-light"></div>
-        </div>
+            <div class="ml-sm-auto col-lg-2">
+                <nav class="sidebar-right col-lg-2 d-none d-lg-block bg-light " style="position:fixed">
+                    <div class="sidebar-sticky">
+                    </div>
+                </nav>
+            </div>
     </div>
 
-    <footer class="footer card-footer text-muted">
-        <div class="col-md-9 ml-sm-auto col-lg-10  text-right">
+    <footer class="row footer card-footer text-muted">
+        <div class="col-md-9 ml-sm-auto col-lg-8  text-right">
             <div class="d-inline">
-                <h6 class="d-inline">Консоль управления пользователями и данными PostGIS</h6> © Zlatanov Evgeniy  2019
+                <h6 class="d-inline">Консоль управления пользователями и данными PostGIS</h6> © 2019 Zlatanov Evgeniy
             </div>
         </div>
+        <div class="col-lg-2"></div>
     </footer>
 
 </body>
