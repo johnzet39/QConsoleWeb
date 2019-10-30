@@ -15,5 +15,8 @@ namespace QConsoleWeb.BLL.DTO
         public Boolean IsUpdate { get; set; }
         public Boolean IsInsert { get; set; }
         public Boolean IsDelete { get; set; }
+        public string ColumnsSelect { get; set; }
+        public string ColumnsUpdate { get; set; }
+        public string ColumnsInsert { get; set; }
     }
 }
