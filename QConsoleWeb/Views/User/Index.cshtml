@@ -1,12 +1,9 @@
 ﻿@model IEnumerable<User>
+@*Modal placeholder*@
+<div id="modal-placeholder"></div>
 
 <div class="card-header">
     <h5>Список пользователей</h5>
-</div>
-
-<div id="errorAlert" class="alert alert-danger collapse">
-    <a id="linkClose" href="#" class="close">&times;</a>
-    <strong>Ошибка</strong>sssadasdasd
 </div>
 
 <div class="mb-2 mt-2">
@@ -20,27 +17,27 @@
     </a>
 </div>
 
-    <div class="table-responsive">
-        <table id="usersTable" class="table table-sm table-hover text-nowrap">
-            <thead class="thead-dark">
-                <tr>
-                    <th>#</th>
-                    <th>Имя</th>
-                    <th>
-                        <table class="fixed-table">
-                            <tr>
-                                <td>Описание</td>
-                            </tr>
-                        </table>
-                    </th>
-                    <th>Админ</th>
-                    <th>Группа</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @{ int rowNumber = 0;}
-                @foreach (var p in Model)
+<div class="table-responsive">
+    <table id="usersTable" class="table table-sm table-hover text-nowrap">
+        <thead class="thead-dark">
+            <tr>
+                <th>#</th>
+                <th>Имя</th>
+                <th>
+                    <table class="fixed-table">
+                        <tr>
+                            <td>Описание</td>
+                        </tr>
+                    </table>
+                </th>
+                <th>Админ</th>
+                <th>Группа</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int rowNumber = 0;}
+            @foreach (var p in Model)
             {
                 <tr>
                     <td>@(rowNumber += 1)</td>
@@ -57,49 +54,51 @@
                     <td>
                         <div>
                             @*<a class="btn btn-info delete"
-                                   data-id="@p.Usesysid"
-                                   data-controller="User"
-                                   data-action="DeleteUser"
-                                   data-body-message="Are you sure to delete?"
-                                   data-redirect-url="User/Index">
-                                    Modal
-                                </a>
-                                |*@
+           data-id="@p.Usesysid"
+           data-controller="User"
+           data-action="DeleteUser"
+           data-body-message="Are you sure to delete?"
+           data-redirect-url="User/Index">
+            Modal
+        </a>
+        |*@
                             <a asp-action="DeleteUser" asp-controller="User" asp-route-id=@p.Usesysid class="btn-outline-secondary btn-sm" onclick="return confirm('Подтвердите удаление');">
                                 <i class="fas fa-trash"></i>
                             </a>
+                            <button type="button" class="btn btn-primary" data-toggle="ajax-delete-modal" data-target="#deleteUser" data-userid=@p.Usesysid data-url="@Url.Action("DeleteUser")">Delete</button>
+
                         </div>
                     </td>
                 </tr>
             }
-            </tbody>
-        </table>
-    </div>
-
-
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">Warning</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="modal-body delete-modal-body">
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel-delete">Cancel</button>
-                <button type="button" class="btn btn-danger" id="confirm-delete">Delete</button>
-            </div>
-        </div>
-    </div>
+        </tbody>
+    </table>
 </div>
 
-<script src="~/js/delete.js"></script>
+
+@*<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Warning</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body delete-modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel-delete">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+@*<script src="~/js/delete.js"></script>*@
 
 <script>
     $('#usersTable tr').each(function () {
-        
+
         var isFlagged = $(this).find(".isrole").html();
         if (isFlagged == 'True') {
             $(this).addClass('yellowrow');
@@ -114,7 +113,7 @@
     //$('td:contains("False")').html("<i class='fa fa-times' aria-hidden='true' style='color: #cccccc;'></i>").addClass("text-center");
 </script>
 
-
+<script src="~/js/deleteUserPartial.js"></script>
 
 @section scripts{
 

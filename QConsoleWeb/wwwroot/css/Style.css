@@ -159,3 +159,25 @@ body {
     /* END styles for validation helpers */
 
 
+    /*
+        Grants page
+    */
+
+.splitter {
+    display: flex;
+}
+
+.firstSplitter {
+    min-width: 10px;
+}
+
+.secondSplitter {
+    min-width: 10px;
+}
+
+.separator {
+    cursor: col-resize;
+    background: url(../images/splitter_separ.png) center center no-repeat #535353;
+    width: 10px;
+    min-width: 10px;
+}

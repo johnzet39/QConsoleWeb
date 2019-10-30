@@ -201,21 +201,27 @@ namespace QConsoleWeb.Controllers
             textLines.Insert(textLines.Count(), lineToAdd);
         }
 
+        //[HttpGet]
+        //public IActionResult DeleteUser(string id)
+        //{
+        //    User user = GetUsers().FirstOrDefault(p => p.Usesysid == id);
+        //        try
+        //        {
+        //            _service.RemoveRoleOrUser(user.Usename);
+        //            TempData["message"] = $"Пользователь {user.Usename} был удален.";
+
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            TempData["error"] = $"Пользователь {user.Usename} не был удален. {e.Message}";
+        //        }
+        //    return RedirectToAction("Index");
+        //}
+
         [HttpGet]
         public IActionResult DeleteUser(string id)
         {
-            User user = GetUsers().FirstOrDefault(p => p.Usesysid == id);
-                try
-                {
-                    _service.RemoveRoleOrUser(user.Usename);
-                    TempData["message"] = $"Пользователь {user.Usename} был удален.";
-
-                }
-                catch (Exception e)
-                {
-                    TempData["error"] = $"Пользователь {user.Usename} не был удален. {e.Message}";
-                }
-            return RedirectToAction("Index");
+            return PartialView("DeleteUserModalPartial", id);
         }
 
         private IEnumerable<User> GetAvailableRoles(string oid)
