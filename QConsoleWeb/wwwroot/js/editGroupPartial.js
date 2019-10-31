@@ -1,7 +1,11 @@
 ﻿$(function () {
+    const first = $("#splitterGroups");
+    const second = $("#splitterDetails");
 
     $('tr[data-toggle="ajax-edit-group"]').click(function (event) {
         event.preventDefault();
+
+        addClassToSplitters();
 
         if ($(this).hasClass('active')) {
             $(this).removeClass('active');
@@ -24,4 +28,20 @@
             });
     });
 
+    function addClassToSplitters() {
+        
+        //if (!first.classList.contains("firstSplitter") && !second.classList.contains("secondSplitter")) {
+        //    console.log("addClass");
+        //    first.classList.add('firstSplitter');
+        //    second.classList.add('secondSplitter');
+        if (!first.hasClass("animated") && !second.hasClass("animated")) {
+            console.log("addClass");
+            first.addClass('animated');
+            second.addClass('aniamted');
+
+            $('#splitterGroups').animate({
+                width: '20%'
+            }, 500);
+        }
+    }
 });

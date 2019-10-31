@@ -180,14 +180,17 @@ tr.active {
 
 .splitter {
     display: flex;
+    width: 100%;
 }
 
 .firstSplitter {
     min-width: 10px;
+    width: 20%;
 }
 
 .secondSplitter {
     min-width: 10px;
+    width: 80%;
 }
 
 .separator {

@@ -1,8 +1,8 @@
 ﻿@model IEnumerable<User>
 <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
 
-<div class="splitter">
-    <div id="splitterGroups" class="firstSplitter" style="min-width: 20%">
+<div id="splitter" class="splitter">
+    <div id="splitterGroups" class="">
 
         <div class="card-header">
             <h5>Группы пользователей</h5>
@@ -39,7 +39,7 @@
 
     </div>
     <div id="separator" class="separator bg-light"></div>
-    <div id="splitterDetails" class="secondSplitter">
+    <div id="splitterDetails" class="">
         <div id="detailsContainer">
 
         </div>
@@ -49,7 +49,7 @@
 
 <script src="~/js/splitter.js"></script>
 <script>
-    splitter("splitterGroups", "splitterDetails", "separator", "H");
+    splitter("splitterGroups", "splitterDetails", "separator", "splitter", true, "H");
 </script>
 
 <script>

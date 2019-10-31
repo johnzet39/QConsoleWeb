@@ -4,8 +4,8 @@
 
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<div class="splitter">
-    <div id="UsersTable" class="firstSplitter" style="min-width: 20%">
+<div id="DetailsSplitter" class="splitter">
+    <div id="UsersTable" class="firstSplitter">
         <div class="card-header">
             <h6>Члены группы:</h6>
         </div>
@@ -170,5 +170,5 @@
 
 <script src="~/js/splitter.js"></script>
 <script>
-    splitter("UsersTable", "RightsTable", "SeparatorRights", "H");
+    splitter("UsersTable", "RightsTable", "SeparatorRights", "DetailsSplitter", true, "H");
 </script>
