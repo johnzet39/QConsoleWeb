@@ -1,4 +1,4 @@
-﻿@model string
+﻿@model Dictionary<string, string>
 <!-- Modal -->
 <div class="modal fade" id="deleteUser" tabindex="-1" role="dialog" aria-labelledby="deleteUserLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -6,19 +6,21 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="deleteUserLabel">Удаление пользователя</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
+                    <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-
-                <div>
-                    Удалить пользователя @Model?
-                </div>
+                <form asp-action="DeleteUser">
+                    <div>
+                        Удалить пользователя @Model["username"]?
+                    </div>
+                    <input type="hidden" name="id" value=@Model["userid"] />
+                </form>
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" data-save="modal">Удалить</button>
             </div>
         </div>
     </div>

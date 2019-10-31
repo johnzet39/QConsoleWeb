@@ -201,27 +201,32 @@ namespace QConsoleWeb.Controllers
             textLines.Insert(textLines.Count(), lineToAdd);
         }
 
-        //[HttpGet]
-        //public IActionResult DeleteUser(string id)
-        //{
-        //    User user = GetUsers().FirstOrDefault(p => p.Usesysid == id);
-        //        try
-        //        {
-        //            _service.RemoveRoleOrUser(user.Usename);
-        //            TempData["message"] = $"Пользователь {user.Usename} был удален.";
-
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            TempData["error"] = $"Пользователь {user.Usename} не был удален. {e.Message}";
-        //        }
-        //    return RedirectToAction("Index");
-        //}
-
         [HttpGet]
+        public IActionResult DeleteUser(string id, string name)
+        {
+            Dictionary<string, string> dict = new Dictionary<string, string>
+            {
+                { "userid", id},
+                { "username", name }
+            };
+            return PartialView("DeleteUserModalPartial", dict);
+        }
+
+        [HttpPost]
         public IActionResult DeleteUser(string id)
         {
-            return PartialView("DeleteUserModalPartial", id);
+            User user = GetUsers().FirstOrDefault(p => p.Usesysid == id);
+            try
+            {
+                _service.RemoveRoleOrUser(user.Usename);
+                TempData["message"] = $"Пользователь {user.Usename} был удален.";
+                return Json(new { ok = true, newurl = Url.Action("Index") });
+            }
+            catch (Exception e)
+            {
+                //TempData["error"] = $"Пользователь {user.Usename} не был удален. {e.Message}";
+                return Json(new { ok = false, message = e.Message });
+            }
         }
 
         private IEnumerable<User> GetAvailableRoles(string oid)

@@ -54,18 +54,20 @@
                     <td>
                         <div>
                             @*<a class="btn btn-info delete"
-           data-id="@p.Usesysid"
-           data-controller="User"
-           data-action="DeleteUser"
-           data-body-message="Are you sure to delete?"
-           data-redirect-url="User/Index">
-            Modal
-        </a>
-        |*@
-                            <a asp-action="DeleteUser" asp-controller="User" asp-route-id=@p.Usesysid class="btn-outline-secondary btn-sm" onclick="return confirm('Подтвердите удаление');">
-                                <i class="fas fa-trash"></i>
+                               data-id="@p.Usesysid"
+                               data-controller="User"
+                               data-action="DeleteUser"
+                               data-body-message="Are you sure to delete?"
+                               data-redirect-url="User/Index">
+                                Modal
                             </a>
-                            <button type="button" class="btn btn-primary" data-toggle="ajax-delete-modal" data-target="#deleteUser" data-userid=@p.Usesysid data-url="@Url.Action("DeleteUser")">Delete</button>
+                            |*@
+                            @*<a asp-action="DeleteUser" asp-controller="User" asp-route-id=@p.Usesysid class="btn-outline-secondary btn-sm" onclick="return confirm('Подтвердите удаление');">
+                                <i class="fas fa-trash"></i>
+                            </a>*@
+                            <button class="btn btn-outline-secondary btn-sm" style="border: 0" data-toggle="ajax-delete-modal" data-target="#deleteUser" data-username=@p.Usename data-userid=@p.Usesysid data-url="@Url.Action("DeleteUser")">
+                                <i class="fas fa-trash"></i>
+                            </button>
 
                         </div>
                     </td>

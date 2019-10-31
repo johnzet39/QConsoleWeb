@@ -158,6 +158,10 @@ body {
     }
     /* END styles for validation helpers */
 
+.modal-error {
+    color: #b94a48;
+    padding: 5px;
+}
 
     /*
         Grants page
