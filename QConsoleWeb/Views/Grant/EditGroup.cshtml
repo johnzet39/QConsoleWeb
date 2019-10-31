@@ -1,189 +1,174 @@
 ﻿@model GrantViewModel
-
-
-<script src="~/js/modalPartial.js"></script>
-
- @*Modal placeholder*@
+@*Modal placeholder*@
 <div id="modal-placeholder"></div>
-
-
-
 
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<div>
-    <h5>Привилегии группы @ViewBag.Rolename</h5>
-</div>
-
-<br />
-
-<div id="accordion">
-    <div class="card">
-        <div class="card-header" id="headingOne" style="padding: 0rem 1.25rem">
-            <h5 class="mb-0">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Пользователи группы
-                </button>
-            </h5>
+<div class="splitter">
+    <div id="UsersTable" class="firstSplitter" style="min-width: 20%">
+        <div class="card-header">
+            <h6>Члены группы:</h6>
         </div>
+        <div class="table-responsive">
+            <table class="table table-sm text-nowrap ">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Имя</th>
+                        <th>Описание</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var rowNum = 0;
+                    }
+                    @foreach (var n in Model.UserList)
+                    {
+                        <tr>
+                            <td>@(rowNum + 1)</td>
+                            <td>@n.Usename</td>
+                            <td>
+                                <table class="fixed-table">
+                                    <tr>
+                                        <td>@n.Descript</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        @Html.HiddenFor(m => m.UserList[@rowNum].Usename);
+                        @Html.HiddenFor(m => m.UserList[@rowNum].Descript);
+                        @Html.HiddenFor(m => m.UserList[@rowNum].Usesysid);
+                        rowNum++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-        <div id="collapseOne" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordion">
-            <div>
-                <div class="container-fluid">
-                    <table class="table table-sm text-nowrap ">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Имя</th>
-                                <th>Описание</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @{
-                                var rowNum = 0;
-                            }
-                            @foreach (var n in Model.UserList)
-                            {
-                                <tr>
-                                    <td>@(rowNum + 1)</td>
-                                    <td>@n.Usename</td>
-                                    <td>
-                                        <table class="fixed-table">
-                                            <tr>
-                                                <td>@n.Descript</td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                                @Html.HiddenFor(m => m.UserList[@rowNum].Usename);
-                                @Html.HiddenFor(m => m.UserList[@rowNum].Descript);
-                                @Html.HiddenFor(m => m.UserList[@rowNum].Usesysid);
-                                rowNum++;
-                            }
-                        </tbody>
-                    </table>
-                </div>
+    <div id="SeparatorRights" class="separator bg-light"></div>
+
+    <div id="RightsTable" class="secondSplitter" >
+        <form asp-action="EditGroup" asp-controller="Grant" asp-route-rolename=@ViewBag.Rolename method="post">
+
+            <div class="card-header">
+                <h6>Привилегии группы <strong>@ViewBag.Rolename</strong>. Слои:</h6>
             </div>
-        </div>
+            <div class="table-responsive">
+                <table id="DataTableLayers" style="width:100%;" class="table table-sm table-hover text-nowrap">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Схема</th>
+                            <th>Таблица</th>
+                            <th>Описание</th>
+                            <th>SELECT</th>
+                            <th>UPDATE</th>
+                            <th>INSERT</th>
+                            <th>DELETE</th>
+                            <th data-toggle="tooltip" title="GRANT SELECT(columns)">S+</th>
+                            <th data-toggle="tooltip" title="GRANT UPDATE(columns)">U+</th>
+                            <th data-toggle="tooltip" title="GRANT INSERT(columns)">I+</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var rowNo = 0;
+                        }
+                        @foreach (var p in Model.LayersList)
+                        {
+                            <tr>
+                                <td>@(rowNo + 1)</td>
+                                <td>@p.Table_schema</td>
+                                <td>@p.Table_name</td>
+                                <td>
+                                    <table class="fixed-table">
+                                        <tr>
+                                            <td>@p.Descript</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>@Html.CheckBoxFor(m => m.LayersList[@rowNo].IsSelect)</td>
+                                <td>@Html.CheckBoxFor(m => m.LayersList[@rowNo].IsUpdate)</td>
+                                <td>@Html.CheckBoxFor(m => m.LayersList[@rowNo].IsInsert)</td>
+                                <td>@Html.CheckBoxFor(m => m.LayersList[@rowNo].IsDelete)</td>
+                                <td>@p.ColumnsSelect</td>
+                                <td>@p.ColumnsUpdate</td>
+                                <td>@p.ColumnsInsert</td>
+                            </tr>
+                            @Html.HiddenFor(m => m.LayersList[@rowNo].Table_schema)
+                            @Html.HiddenFor(m => m.LayersList[@rowNo].Table_name)
+                            @Html.HiddenFor(m => m.LayersList[@rowNo].Descript)
+                            rowNo++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card-header">
+                <h6>Справочники:</h6>
+            </div>
+            <div class="table-responsive">
+                <table id="DataTableDicts" style="width:100%;" class="table table-sm table-hover text-nowrap">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Схема</th>
+                            <th>Таблица</th>
+                            <th>Описание</th>
+                            <th>SELECT</th>
+                            <th>UPDATE</th>
+                            <th>INSERT</th>
+                            <th>DELETE</th>
+                            <th data-toggle="tooltip" title="GRANT SELECT(columns)">S+</th>
+                            <th data-toggle="tooltip" title="GRANT UPDATE(columns)">U+</th>
+                            <th data-toggle="tooltip" title="GRANT INSERT(columns)">I+</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var rowNoD = 0;
+                        }
+                        @foreach (var p in Model.DictsList)
+                        {
+                            <tr>
+                                <td>@(rowNoD + 1)</td>
+                                <td>@p.Table_schema</td>
+                                <td>@p.Table_name</td>
+                                <td>
+                                    <table class="fixed-table">
+                                        <tr>
+                                            <td>@p.Descript</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsSelect)</td>
+                                <td>@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsUpdate)</td>
+                                <td>@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsInsert)</td>
+                                <td>@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsDelete)</td>
+                                <td>@p.ColumnsSelect</td>
+                                <td>@p.ColumnsUpdate</td>
+                                <td>@p.ColumnsInsert</td>
+                            </tr>
+                            @Html.HiddenFor(m => m.LayersList[@rowNoD].Table_schema)
+                            @Html.HiddenFor(m => m.LayersList[@rowNoD].Table_name)
+                            @Html.HiddenFor(m => m.LayersList[@rowNoD].Descript)
+                            rowNoD++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-center">
+                <button class="btn btn-primary" type="submit">Сохранить</button>
+                <a asp-action="Index" class="btn btn-secondary">Отмена</a>
+            </div>
+
+
+        </form>
     </div>
 </div>
 
-<br />
-
-<form asp-action="EditGroup" asp-controller="Grant" asp-route-rolename=@ViewBag.Rolename method="post">
-
-    <div class="card-header">
-        <h6>Слои:</h6>
-    </div>
-    <div class="table-responsive">
-        <table id="DataTableLayers" style="width:100%;" class="table table-sm table-hover text-nowrap">
-            <thead class="thead-dark">
-                <tr>
-                    <th>#</th>
-                    <th>Схема</th>
-                    <th>Таблица</th>
-                    <th>Описание</th>
-                    <th>SELECT</th>
-                    <th>UPDATE</th>
-                    <th>INSERT</th>
-                    <th>DELETE</th>
-                    <th data-toggle="tooltip" title="GRANT SELECT(columns)">S+</th>
-                    <th data-toggle="tooltip" title="GRANT UPDATE(columns)">U+</th>
-                    <th data-toggle="tooltip" title="GRANT INSERT(columns)">I+</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                    var rowNo = 0;
-                }
-                @foreach (var p in Model.LayersList)
-                {
-                    <tr>
-                        <td>@(rowNo + 1)</td>
-                        <td>@p.Table_schema</td>
-                        <td>@p.Table_name</td>
-                        <td>
-                            <table class="fixed-table">
-                                <tr>
-                                    <td>@p.Descript</td>
-                                </tr>
-                            </table>
-                        </td>
-                        <td>@Html.CheckBoxFor(m => m.LayersList[@rowNo].IsSelect)</td>
-                        <td>@Html.CheckBoxFor(m => m.LayersList[@rowNo].IsUpdate)</td>
-                        <td>@Html.CheckBoxFor(m => m.LayersList[@rowNo].IsInsert)</td>
-                        <td>@Html.CheckBoxFor(m => m.LayersList[@rowNo].IsDelete)</td>
-                        <td>@p.ColumnsSelect</td>
-                        <td>@p.ColumnsUpdate</td>
-                        <td>@p.ColumnsInsert</td>
-                    </tr>
-                    @Html.HiddenFor(m => m.LayersList[@rowNo].Table_schema)
-                    @Html.HiddenFor(m => m.LayersList[@rowNo].Table_name)
-                    @Html.HiddenFor(m => m.LayersList[@rowNo].Descript)
-                    rowNo++;
-                }
-            </tbody>
-        </table>
-    </div>
-
-    <div class="card-header">
-        <h6>Справочники:</h6>
-    </div>
-    <div class="table-responsive">
-        <table id="DataTableDicts" style="width:100%;" class="table table-sm table-hover text-nowrap">
-            <thead class="thead-dark">
-                <tr>
-                    <th>#</th>
-                    <th>Схема</th>
-                    <th>Таблица</th>
-                    <th>Описание</th>
-                    <th>SELECT</th>
-                    <th>UPDATE</th>
-                    <th>INSERT</th>
-                    <th>DELETE</th>
-                    <th data-toggle="tooltip" title="GRANT SELECT(columns)">S+</th>
-                    <th data-toggle="tooltip" title="GRANT UPDATE(columns)">U+</th>
-                    <th data-toggle="tooltip" title="GRANT INSERT(columns)">I+</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                    var rowNoD = 0;
-                }
-                @foreach (var p in Model.DictsList)
-                {
-                    <tr>
-                        <td>@(rowNoD + 1)</td>
-                        <td>@p.Table_schema</td>
-                        <td>@p.Table_name</td>
-                        <td>
-                            <table class="fixed-table">
-                                <tr>
-                                    <td>@p.Descript</td>
-                                </tr>
-                            </table>
-                        </td>
-                        <td>@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsSelect)</td>
-                        <td>@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsUpdate)</td>
-                        <td>@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsInsert)</td>
-                        <td>@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsDelete)</td>
-                        <td>@p.ColumnsSelect</td>
-                        <td>@p.ColumnsUpdate</td>
-                        <td>@p.ColumnsInsert</td>
-                    </tr>
-                    @Html.HiddenFor(m => m.LayersList[@rowNoD].Table_schema)
-                    @Html.HiddenFor(m => m.LayersList[@rowNoD].Table_name)
-                    @Html.HiddenFor(m => m.LayersList[@rowNoD].Descript)
-                    rowNoD++;
-                }
-            </tbody>
-        </table>
-    </div>
-
-    <div class="text-center">
-        <button class="btn btn-primary" type="submit">Сохранить</button>
-        <a asp-action="Index" class="btn btn-secondary">Отмена</a>
-    </div>
-
-
-</form>
+<script src="~/js/splitter.js"></script>
+<script>
+    splitter("UsersTable", "RightsTable", "SeparatorRights", "H");
+</script>

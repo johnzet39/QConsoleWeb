@@ -32,8 +32,21 @@ namespace QConsoleWeb.Controllers
 
         
 
+        //[HttpGet]
+        //public ViewResult EditGroup(string userid, string rolename)
+        //{
+        //    GrantViewModel model = new GrantViewModel();
+        //    model.UserList = GetUsers(userid).ToList();
+        //    model.LayersList = GetLayers(rolename).ToList();
+        //    model.DictsList = GetDicts(rolename).ToList();
+
+        //    ViewBag.Title = "Редактирование группы";
+        //    ViewBag.Rolename = rolename;
+        //    return View(model);
+        //}
+
         [HttpGet]
-        public ViewResult EditGroup(string userid, string rolename)
+        public IActionResult EditGroup(string userid, string rolename)
         {
             GrantViewModel model = new GrantViewModel();
             model.UserList = GetUsers(userid).ToList();
@@ -42,7 +55,7 @@ namespace QConsoleWeb.Controllers
 
             ViewBag.Title = "Редактирование группы";
             ViewBag.Rolename = rolename;
-            return View(model);
+            return PartialView(model);
         }
 
         [HttpPost]

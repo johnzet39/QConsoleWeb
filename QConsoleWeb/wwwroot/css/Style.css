@@ -26,6 +26,16 @@ body {
     box-shadow:rgba(0, 0, 0, 0.40) 2px;
 }
 
+table.table-sm td{
+    padding: 0.1em;
+}
+/*
+    selected row in table
+*/
+tr.active {
+    background-color: #d4d3d3;
+}
+
 /*
     Users table yellow row
     if role is group
@@ -125,6 +135,7 @@ body {
     .table > tbody > tr > td {
         vertical-align: middle;
     }
+
     /* 
     BEGIN styles for validation helpers 
 */
