@@ -46,9 +46,28 @@ namespace QConsoleWeb.BLL.Services
             return mapper.Map<IEnumerable<User>, List<UserDTO>>(_managerDAL.GrantAccess.GetUsers(grosysid));
         }
 
-        public void GrantTableToRole(string table_schema, string table_name, string role, List<string> grants_list)
+        public void GrantTableToRole(string table_schema, string table_name, string role,
+                                     bool IsSelect, bool IsUpdate, bool IsInsert, bool IsDelete,
+                                     bool selChanged, bool updChanged, bool insChanged, bool delChanged)
         {
-            _managerDAL.GrantAccess.GrantTableToRole(table_schema, table_name, role, grants_list);
+            _managerDAL.GrantAccess.GrantTableToRole(table_schema, table_name, role, 
+                                                     IsSelect, IsUpdate, IsInsert, IsDelete,
+                                                     selChanged, updChanged, insChanged, delChanged);
+        }
+
+        public List<GrantColumnDTO> GetColumns(string table_schema, string table_name, string role_name)
+        {
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<GrantColumn, GrantColumnDTO>()).CreateMapper();
+            return mapper.Map<IEnumerable<GrantColumn>, List<GrantColumnDTO>>(_managerDAL.GrantAccess.GetColumns(table_schema, table_name, role_name));
+        }
+
+        public void GrantColumnsToRole(string schemaName, string tableName, string rolename, IEnumerable<string> selectList, 
+                                       IEnumerable<string> updateList, IEnumerable<string> insertList,
+                                       bool selChanged, bool updChanged, bool insChanged)
+        {
+            _managerDAL.GrantAccess.GrantColumnsToRole(schemaName, tableName, rolename, 
+                                                        selectList, updateList, insertList, 
+                                                        selChanged, updChanged, insChanged);
         }
     }
 }

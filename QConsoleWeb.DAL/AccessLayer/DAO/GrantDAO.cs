@@ -32,11 +32,32 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
         {
             return String.Format("GRANT ALL ON SEQUENCE \"{0}\".\"{1}\" TO GROUP {2};", tableschema, seq, role);
         }
+
+        public static string GrantActionOnColumns(string tableschema, string tablename, string rolename, string action, string columns)
+        {
+            return String.Format("GRANT {0}({1}) ON TABLE \"{2}\".\"{3}\" TO {4}", action, columns, tableschema, tablename, rolename);
+        }
+        public static string RevokeActionOnTable(string tableschema, string tablename, string role, string action)
+        {
+            return String.Format("REVOKE {3} ON TABLE \"{0}\".\"{1}\" FROM GROUP {2};", tableschema, tablename, role, action);
+        }
+        public static string RevokeActionOnSeq(string tableschema, string seq, string role, string action)
+        {
+            return String.Format("REVOKE {3} ON SEQUENCE \"{0}\".\"{1}\" FROM GROUP {2};", tableschema, seq, role, action);
+        }
+        public static string GrantActionOnSeq(string tableschema, string seq, string role, string action)
+        {
+            return String.Format("GRANT {3} ON SEQUENCE \"{0}\".\"{1}\" TO GROUP {2};", tableschema, seq, role, action);
+        }
+
+        internal static string GrantActionOnTable(string table_schema, string table_name, string role, string action)
+        {
+            return String.Format("GRANT {0} ON TABLE \"{1}\".\"{2}\" TO {3}", action, table_schema, table_name, role);
+        }
     }
 
     internal class GrantDAO : IGrantDAO
     {
-
         private string _connectionString;
 
         public GrantDAO(string connstring)
@@ -124,15 +145,15 @@ from
     case when gr.isinsert = 1 then true else false end as isinsert,  
     case when gr.isdelete = 1 then true else false end as isdelete,  gr.grantee ,
     --признаки наличия грантов для столбцов при отсутствии грантов на всю таблицу
-    case when gr.isselect = 0 and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT')              
+    case when (gr.isselect = 0 or gr.isselect is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT')              
         then (select string_agg(cp.column_name, ',') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT' group by cp.grantee, cp.table_schema, cp.table_name )
       else null
     end as columns_select,
-    case when gr.isupdate = 0 and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE')              
+    case when (gr.isupdate = 0 or gr.isupdate is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE')              
         then (select string_agg(cp.column_name, ',') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE' group by cp.grantee, cp.table_schema, cp.table_name )
       else null
     end as columns_update,
-    case when gr.isinsert = 0 and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT')              
+    case when (gr.isinsert = 0 or gr.isinsert is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT')              
         then (select string_agg(cp.column_name, ',') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT' group by cp.grantee, cp.table_schema, cp.table_name )
       else null
     end as columns_insert
@@ -171,15 +192,15 @@ FROM(SELECT t.table_schema, t.table_name , (select obj_description((quote_ident(
   case when gr.isdelete = 1 then true else false end as isdelete, 
     gr.grantee,
     --признаки наличия грантов для столбцов при отсутствии грантов на всю таблицу
-    case when gr.isselect = 0 and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT')              
+    case when (gr.isselect = 0 or gr.isselect is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT')              
         then (select string_agg(cp.column_name, ',') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT' group by cp.grantee, cp.table_schema, cp.table_name )
       else null
     end as columns_select,
-    case when gr.isupdate = 0 and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE')              
+    case when (gr.isupdate = 0 or gr.isupdate is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE')              
         then (select string_agg(cp.column_name, ',') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE' group by cp.grantee, cp.table_schema, cp.table_name )
       else null
     end as columns_update,
-    case when gr.isinsert = 0 and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT')              
+    case when (gr.isinsert = 0 or gr.isinsert is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT')              
         then (select string_agg(cp.column_name, ',') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT' group by cp.grantee, cp.table_schema, cp.table_name )
       else null
     end as columns_insert
@@ -225,6 +246,70 @@ FROM(SELECT t.table_schema, t.table_name , (select obj_description((quote_ident(
             return listOfObjects;
         }
 
+        public List<GrantColumn> GetColumns(string table_schema, string table_name, string role_name)
+        {
+            string sql_query = String.Format(
+@"WITH grants AS(SELECT   
+   rtg.grantee, rtg.table_schema, rtg.table_name, (select obj_description((quote_ident(rtg.table_schema) || '.' || quote_ident(rtg.table_name))::regclass, 'pg_class')) descript,  
+     CASE WHEN exists(select 1 from information_schema.role_table_grants where grantee = rtg.grantee AND rtg.table_schema=table_schema AND rtg.table_name=table_name and privilege_type = 'INSERT')  
+       THEN 1 ELSE 0 END AS isinsert, 
+     CASE WHEN exists(select 1 from information_schema.role_table_grants where grantee = rtg.grantee AND rtg.table_schema=table_schema AND rtg.table_name=table_name and privilege_type = 'SELECT')  
+       THEN 1 ELSE 0 END AS isselect,  
+     CASE WHEN exists(select 1 from information_schema.role_table_grants where grantee = rtg.grantee AND rtg.table_schema=table_schema AND rtg.table_name=table_name and privilege_type = 'UPDATE')  
+       THEN 1 ELSE 0 END AS isupdate,  
+     CASE WHEN exists(select 1 from information_schema.role_table_grants where grantee = rtg.grantee AND rtg.table_schema=table_schema AND rtg.table_name=table_name and privilege_type = 'DELETE')  
+       THEN 1 ELSE 0 END AS isdelete  
+ FROM    information_schema.role_table_grants rtg  
+ WHERE EXISTS  (select 1 from geometry_columns gc where gc.f_table_schema = rtg.table_schema and gc.f_table_name = rtg.table_name limit 1) AND(rtg.table_name <> 'logtable') AND rtg.grantee = '{2}'  
+ GROUP BY rtg.grantee, rtg.table_schema, rtg.table_name) 
+
+SELECT t.column_name, 
+	case when (gr.isselect = 0 or gr.isselect is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{2}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT' and cp.column_name=t.column_name)
+	then true else false
+	end as isselect,
+	case when (gr.isupdate = 0 or gr.isupdate is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{2}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE' and cp.column_name=t.column_name)
+	then true else false
+	end as isupdate,
+	case when (gr.isinsert = 0 or gr.isinsert is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{2}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT' and cp.column_name=t.column_name)
+	then true else false
+	end as isinsert
+  FROM information_schema.columns t
+  LEFT JOIN grants gr ON gr.table_schema||gr.table_name = t.table_schema||t.table_name  
+ WHERE t.table_schema = '{0}'
+   AND t.table_name   = '{1}'
+   ORDER BY t.column_name ", table_schema, table_name, role_name);
+
+            return GetListOfColumns(sql_query);
+        }
+
+        private List<GrantColumn> GetListOfColumns(string sql_query)
+        {
+            var listOfObjects = new List<GrantColumn>();
+
+            using (var conn = new NpgsqlConnection(_connectionString))
+            {
+                conn.Open();
+                using (var command = new NpgsqlCommand(sql_query, conn))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var objectpsql = new GrantColumn();
+
+                            objectpsql.Column_name = dataReader["column_name"].ToString();
+                            objectpsql.IsSelect = Convert.ToBoolean(dataReader["isselect"]);
+                            objectpsql.IsUpdate = Convert.ToBoolean(dataReader["isupdate"]);
+                            objectpsql.IsInsert = Convert.ToBoolean(dataReader["isinsert"]);
+
+                            listOfObjects.Add(objectpsql);
+                        }
+                    }
+                }
+            }
+            return listOfObjects;
+        }
+
         private List<List<string>> GetListOfSeq(string table_schema, string table_name)
         {
             string sql_query = String.Format(" WITH fq_objects AS (SELECT c.oid, c.relnamespace, n.nspname as nspace,c.relname AS fqname, c.relkind, c.relname AS relation   " +
@@ -261,32 +346,144 @@ FROM(SELECT t.table_schema, t.table_name , (select obj_description((quote_ident(
         }
 
         //Grant privileges to selected role
-        public void GrantTableToRole(string table_schema, string table_name, string role, List<string> grants_list)
+        public void GrantTableToRole(string table_schema, string table_name, string role,
+                                     bool IsSelect, bool IsUpdate, bool IsInsert, bool IsDelete,
+                                     bool selChanged, bool updChanged, bool insChanged, bool delChanged)
         {
             List<string> sql_queries = new List<String>();
-            sql_queries.Add(GrantsQueries.RevokeAllOnTable(table_schema, table_name, role));
-            //sequences list
             List<List<string>> seq_list = GetListOfSeq(table_schema, table_name);
-            foreach (List<string> seq in seq_list)
+
+            void revoke(string action) //revoke action from table and sequences
             {
-                string seqspace = seq[0];
-                string seqname = seq[1];
-                sql_queries.Add(GrantsQueries.RevokeAllOnSeq(seqspace, seqname, role)); //Revoke sequences
-            }
-
-            if (grants_list.Count > 0)
-            {
-                string grants = string.Join(", ", grants_list);
-
-                sql_queries.Add(GrantsQueries.GrantOnTable(table_schema, table_name, role, grants));
-
-                foreach (List<string> seq in seq_list)
+                sql_queries.Add(GrantsQueries.RevokeActionOnTable(table_schema, table_name, role, action));
+                if (action != "DELETE")
                 {
-                    string seqspace = seq[0];
-                    string seqname = seq[1];
-                    if (grants_list.Count > 0) sql_queries.Add(GrantsQueries.GrantOnSeq(seqspace, seqname, role)); //Grant sequences
+                    if (action == "INSERT")
+                        action = "USAGE";
+                    foreach (List<string> seq in seq_list)
+                        sql_queries.Add(GrantsQueries.RevokeActionOnSeq(seq[0], seq[1], role, action)); //Grant sequences
                 }
             }
+
+            void grant(string action)
+            {
+                sql_queries.Add(GrantsQueries.GrantActionOnTable(table_schema, table_name, role, action));
+                if (action != "DELETE")
+                {
+                    if (action == "INSERT")
+                        action = "USAGE";
+                    foreach (List<string> seq in seq_list)
+                        sql_queries.Add(GrantsQueries.GrantActionOnSeq(seq[0], seq[1], role, action)); //Grant sequences
+                }
+            }
+
+
+            if (selChanged)
+            {
+                if (IsSelect)
+                    grant("SELECT");
+                else
+                    revoke("SELECT");
+            }
+
+            if (updChanged)
+            {
+                if (IsUpdate)
+                    grant("UPDATE");
+                else
+                    revoke("UPDATE");
+            }
+
+            if (insChanged)
+            {
+                if (IsInsert)
+                    grant("INSERT");
+                else
+                    revoke("INSERT");
+            }
+
+            if (delChanged)
+            {
+                if (IsDelete)
+                    grant("DELETE");
+                else
+                    revoke("DELETE");
+            }
+            try
+            {
+                ExecuteSqlNonQuery(sql_queries);
+                //return sql_queries;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public void GrantColumnsToRole(string schemaName, string tableName, string rolename, 
+                                        IEnumerable<string> selectList, IEnumerable<string> updateList, 
+                                        IEnumerable<string> insertList,
+                                        bool selChanged, bool updChanged, bool insChanged)
+        {
+            List<string> sql_queries = new List<String>();
+            List<List<string>> seq_list = GetListOfSeq(schemaName, tableName);
+
+            void revoke(string action) //revoke action from table and sequences
+            {
+                sql_queries.Add(GrantsQueries.RevokeActionOnTable(schemaName, tableName, rolename, action));
+                if (action != "DELETE")
+                {
+                    if (action == "INSERT")
+                        action = "USAGE";
+                    foreach (List<string> seq in seq_list)
+                        sql_queries.Add(GrantsQueries.RevokeActionOnSeq(seq[0], seq[1], rolename, action)); //Grant sequences
+                }
+            }
+
+            void grant(string action, IEnumerable<string> columnsList)
+            {
+                sql_queries.Add(GrantsQueries.GrantActionOnColumns(schemaName, tableName, rolename, action, string.Join(", ", columnsList)));
+                if (action != "DELETE")
+                {
+                    if (action == "INSERT")
+                        action = "USAGE";
+                    foreach (List<string> seq in seq_list)
+                        sql_queries.Add(GrantsQueries.GrantActionOnSeq(seq[0], seq[1], rolename, action)); //Grant sequences
+                }
+            }
+
+            if (selChanged)
+            {
+                if (selectList.Count() > 0) {
+                    revoke("SELECT");
+                    grant("SELECT", selectList);
+                }
+                else
+                    revoke("SELECT");
+            }
+
+            if (updChanged)
+            {
+                if (updateList.Count() > 0)
+                {
+                    revoke("UPDATE");
+                    grant("UPDATE", updateList);
+                }
+                else
+                    revoke("UPDATE");
+            }
+
+            if (insChanged)
+            {
+                if (insertList.Count() > 0)
+                {
+                    revoke("INSERT");
+                    grant("INSERT", insertList);
+                }
+                else
+                    revoke("INSERT");
+            }
+
             try
             {
                 ExecuteSqlNonQuery(sql_queries);
@@ -322,5 +519,6 @@ FROM(SELECT t.table_schema, t.table_name , (select obj_description((quote_ident(
                 throw new Exception(current_query + "\nException: " + ex.Message.ToString());
             }
         }
+
     }
 }

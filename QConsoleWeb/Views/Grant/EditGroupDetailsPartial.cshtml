@@ -1,0 +1,135 @@
+﻿@model GrantViewModel
+
+<form asp-action="EditGroup" asp-controller="Grant" asp-route-rolename=@ViewBag.Rolename method="post">
+
+    <div class="card-header">
+        <h6>Привилегии группы <strong>@ViewBag.Rolename</strong>. Слои:</h6>
+    </div>
+    <div class="table-responsive">
+        <table id="DataTableLayers" style="width:100%;" class="table table-sm table-hover text-nowrap">
+            <thead class="thead-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Схема</th>
+                    <th>Таблица</th>
+                    <th>Описание</th>
+                    <th>SELECT</th>
+                    <th>UPDATE</th>
+                    <th>INSERT</th>
+                    <th>DELETE</th>
+                    <th data-toggle="tooltip" title="GRANT SELECT(columns)">S+</th>
+                    <th data-toggle="tooltip" title="GRANT UPDATE(columns)">U+</th>
+                    <th data-toggle="tooltip" title="GRANT INSERT(columns)">I+</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var rowNo = 0;
+                }
+                @foreach (var p in Model.LayersList)
+                {
+                    <tr>
+                        <td>@(rowNo + 1)</td>
+                        <td>@p.Table_schema</td>
+                        <td>@p.Table_name</td>
+                        <td>
+                            <table class="fixed-table">
+                                <tr>
+                                    <td>@p.Descript</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>@Html.CheckBoxFor(m => m.LayersList[@rowNo].IsSelect)</td>
+                        <td>@Html.CheckBoxFor(m => m.LayersList[@rowNo].IsUpdate)</td>
+                        <td>@Html.CheckBoxFor(m => m.LayersList[@rowNo].IsInsert)</td>
+                        <td>@Html.CheckBoxFor(m => m.LayersList[@rowNo].IsDelete)</td>
+                        <td class="ellipsis-100">@p.ColumnsSelect</td>
+                        <td class="ellipsis-100">@p.ColumnsUpdate</td>
+                        <td class="ellipsis-100">@p.ColumnsInsert</td>
+                        <td><button data-toggle="ajax-edit-modal" data-target="#grantsColumns" 
+                               data-schema=@p.Table_schema data-table=@p.Table_name data-rolename=@ViewBag.Rolename data-url="@Url.Action("EditColumns")"
+                               class="btn btn-outline-secondary btn-sm" style="border: 0">
+                            <i class="fas fa-pen"></i>
+                        </button></td>
+                    </tr>
+                    @Html.HiddenFor(m => m.LayersList[@rowNo].Table_schema)
+                    @Html.HiddenFor(m => m.LayersList[@rowNo].Table_name)
+                    @Html.HiddenFor(m => m.LayersList[@rowNo].Descript)
+                    rowNo++;
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card-header">
+        <h6>Справочники:</h6>
+    </div>
+    <div class="table-responsive">
+        <table id="DataTableDicts" style="width:100%;" class="table table-sm table-hover text-nowrap">
+            <thead class="thead-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Схема</th>
+                    <th>Таблица</th>
+                    <th>Описание</th>
+                    <th>SELECT</th>
+                    <th>UPDATE</th>
+                    <th>INSERT</th>
+                    <th>DELETE</th>
+                    <th data-toggle="tooltip" title="GRANT SELECT(columns)">S+</th>
+                    <th data-toggle="tooltip" title="GRANT UPDATE(columns)">U+</th>
+                    <th data-toggle="tooltip" title="GRANT INSERT(columns)">I+</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var rowNoD = 0;
+                }
+                @foreach (var p in Model.DictsList)
+                {
+                <tr>
+                    <td>@(rowNoD + 1)</td>
+                    <td>@p.Table_schema</td>
+                    <td>@p.Table_name</td>
+                    <td>
+                        <table class="fixed-table">
+                            <tr>
+                                <td>@p.Descript</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsSelect)</td>
+                    <td>@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsUpdate)</td>
+                    <td>@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsInsert)</td>
+                    <td>@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsDelete)</td>
+                    <td class="ellipsis-100">@p.ColumnsSelect</td>
+                    <td class="ellipsis-100">@p.ColumnsUpdate</td>
+                    <td class="ellipsis-100">@p.ColumnsInsert</td>
+                    <td>
+                    <td>
+                        <button data-toggle="ajax-edit-modal" data-target="#grantsColumns"
+                           data-schema=@p.Table_schema data-table=@p.Table_name data-rolename=@ViewBag.Rolename data-url="@Url.Action("EditColumns")"
+                           class="btn btn-outline-secondary btn-sm" style="border: 0">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                    </td>
+                </tr>
+                    @Html.HiddenFor(m => m.LayersList[@rowNoD].Table_schema)
+                    @Html.HiddenFor(m => m.LayersList[@rowNoD].Table_name)
+                    @Html.HiddenFor(m => m.LayersList[@rowNoD].Descript)
+                    rowNoD++;
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center">
+        <button class="btn btn-primary" type="submit">Сохранить</button>
+        <a asp-action="Index" class="btn btn-secondary">Отмена</a>
+    </div>
+
+</form>
+
+<script src="~/js/editGrantsColumns.js"></script>

@@ -19,4 +19,12 @@ namespace QConsoleWeb.BLL.DTO
         public string ColumnsUpdate { get; set; }
         public string ColumnsInsert { get; set; }
     }
+
+    public class GrantColumnDTO
+    {
+        public string Column_name { get; set; }
+        public Boolean IsSelect { get; set; }
+        public Boolean IsUpdate { get; set; }
+        public Boolean IsInsert { get; set; }
+    }
 }

@@ -35,7 +35,6 @@
         //    first.classList.add('firstSplitter');
         //    second.classList.add('secondSplitter');
         if (!first.hasClass("animated") && !second.hasClass("animated")) {
-            console.log("addClass");
             first.addClass('animated');
             second.addClass('aniamted');
 

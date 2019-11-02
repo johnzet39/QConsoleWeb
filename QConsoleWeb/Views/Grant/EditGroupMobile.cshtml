@@ -1,0 +1,30 @@
+﻿@model GrantViewModel
+
+@*Modal placeholder*@
+<div id="modal-placeholder"></div>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<div id="accordion">
+    <div class="card">
+        <div class="card-header" id="headingOne" style="padding: 0rem 1.25rem">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Члены группы:
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseOne" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordion">
+            <div>
+                <div class="container-fluid">
+                    @Html.Partial("UsersOfGroupPartial", @Model)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+
+@Html.Partial("EditGroupDetailsPartial", @Model)

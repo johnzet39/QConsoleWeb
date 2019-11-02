@@ -1,0 +1,36 @@
+﻿@model GrantViewModel
+
+<div class="table-responsive">
+    <table class="table table-sm text-nowrap ">
+        <thead class="thead-dark">
+            <tr>
+                <th>#</th>
+                <th>Имя</th>
+                <th>Описание</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var rowNum = 0;
+            }
+            @foreach (var n in Model.UserList)
+            {
+                <tr>
+                    <td>@(rowNum + 1)</td>
+                    <td>@n.Usename</td>
+                    <td>
+                        <table class="fixed-table">
+                            <tr>
+                                <td>@n.Descript</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                @Html.HiddenFor(m => m.UserList[@rowNum].Usename);
+                @Html.HiddenFor(m => m.UserList[@rowNum].Descript);
+                @Html.HiddenFor(m => m.UserList[@rowNum].Usesysid);
+                rowNum++;
+            }
+        </tbody>
+    </table>
+</div>

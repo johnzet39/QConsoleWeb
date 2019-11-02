@@ -199,3 +199,10 @@ tr.active {
     width: 10px;
     min-width: 10px;
 }
+
+td.ellipsis-100 {
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

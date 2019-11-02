@@ -19,6 +19,12 @@ namespace QConsoleWeb.BLL.Interfaces
         //dicts list for selected grantee (role)
         List<GrantDTO> GetDicts(string grantee);
         //Grant privileges to selected role
-        void GrantTableToRole(string table_schema, string table_name, string role, List<string> grants_list);
+        void GrantTableToRole(string table_schema, string table_name, string role, 
+                            bool IsSelect, bool IsUpdate, bool IsInsert, bool IsDelete,
+                            bool selChanged, bool updChanged, bool insChanged, bool delChanged);
+        List<GrantColumnDTO> GetColumns(string table_schema, string table_name, string role_name);
+        void GrantColumnsToRole(string schemaName, string tableName, string rolename, IEnumerable<string> selectList, 
+                                IEnumerable<string> updateList, IEnumerable<string> insertList,
+                                bool selChanged, bool updChanged, bool insChanged);
     }
 }
