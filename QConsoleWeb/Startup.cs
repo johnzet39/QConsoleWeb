@@ -58,7 +58,9 @@ namespace QConsoleWeb
                 options.SlidingExpiration = true;
             });
 
-            //services.AddMvc();
+            services.AddDetection();
+            services.AddDetectionCore() //device detection
+                .AddDevice();
             services.AddMvc()
                 .AddMvcOptions(options =>
                 {

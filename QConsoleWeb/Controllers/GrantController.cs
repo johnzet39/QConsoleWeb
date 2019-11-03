@@ -9,16 +9,19 @@ using AutoMapper;
 using QConsoleWeb.Models;
 using QConsoleWeb.Views.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Wangkanai.Detection;
 
 namespace QConsoleWeb.Controllers
 {
     [Authorize]
     public class GrantController : Controller
     {
+        private readonly IDevice _device;
         private readonly IGrantService _service;
 
-        public GrantController(IGrantService serv)
+        public GrantController(IGrantService serv, IDetection detection)
         {
+            _device = detection.Device;
             _service = serv;
         }
 
@@ -26,14 +29,14 @@ namespace QConsoleWeb.Controllers
         {
             ViewBag.Title = "Привилегии";
             var groups = GetGroups();
-            if (Request.Headers["User-Agent"].ToString().IndexOf("Windows NT", StringComparison.OrdinalIgnoreCase) >= 0)
+            if (_device.Type.ToString().ToLower() == "desktop")
                 return View(groups);
             else
                 return View("IndexMobile", groups);
         }
 
         [HttpGet]
-        public IActionResult EditGroup(string userid, string rolename, bool ismobile = false)
+        public IActionResult EditGroup(string userid, string rolename)
         {
             GrantViewModel model = new GrantViewModel();
             model.UserList = GetUsers(userid).ToList();
@@ -42,10 +45,11 @@ namespace QConsoleWeb.Controllers
 
             ViewBag.Title = "Редактирование группы";
             ViewBag.Rolename = rolename;
-            if (ismobile)
-                return View("EditGroupMobile", model);
-            else
+            if (_device.Type.ToString().ToLower() == "desktop")
                 return PartialView(model);
+            else
+                return View("EditGroupMobile", model);
+                
         }
 
         [HttpPost]
@@ -179,11 +183,13 @@ namespace QConsoleWeb.Controllers
                                                 selectList, updateList, insertList,
                                                 selChanged, updChanged, insChanged);
                     //TempData["message"] = $"Сохранено.";
-                    if (Request.Headers["User-Agent"].ToString().IndexOf("Windows NT", StringComparison.OrdinalIgnoreCase) >= 0)
-                        return Json(new { ok = true });
+                    if (_device.Type.ToString().ToLower() == "desktop")
+                        return Json(new { ok = true, mobile = false });
                     else
-                        return RedirectToAction("Index");
-                    
+                    {
+                        TempData["message"] = $"Сохранено.";
+                        return Json(new { ok = true, mobile = true,  newurl = Url.Action("Index") });
+                    }
                 }
                 catch (Exception e)
                 {

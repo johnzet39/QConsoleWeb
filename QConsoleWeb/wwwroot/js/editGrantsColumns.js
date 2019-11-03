@@ -32,15 +32,21 @@ $(function () {
             crossDomain: true,
             success: function (returndata) {
                 if (returndata.ok) {
-                    placeholderElement.find('.modal').modal('hide');
-
-                    var activeRow = $('tr[data-toggle="ajax-edit-group"].active');
-                    activeRow.click();
-                    if ($(activeRow).hasClass('active')) {
-                        $(activeRow).removeClass('active');
-                    } else {
-                        $(activeRow).addClass('active').siblings().removeClass('active');
+                    if (returndata.mobile == true) {
+                        window.location = returndata.newurl
                     }
+                    else {
+                        placeholderElement.find('.modal').modal('hide');
+
+                        var activeRow = $('tr[data-toggle="ajax-edit-group"].active');
+                        activeRow.click();
+                        if ($(activeRow).hasClass('active')) {
+                            $(activeRow).removeClass('active');
+                        } else {
+                            $(activeRow).addClass('active').siblings().removeClass('active');
+                        }
+                    }
+                    
                 }
                 else {
                     console.log('error');
