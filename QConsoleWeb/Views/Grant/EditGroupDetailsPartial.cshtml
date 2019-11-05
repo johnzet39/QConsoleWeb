@@ -17,9 +17,9 @@
                     <th>UPDATE</th>
                     <th>INSERT</th>
                     <th>DELETE</th>
-                    <th data-toggle="tooltip" title="GRANT SELECT(columns)">S+</th>
-                    <th data-toggle="tooltip" title="GRANT UPDATE(columns)">U+</th>
-                    <th data-toggle="tooltip" title="GRANT INSERT(columns)">I+</th>
+                    <th class="border-right" data-toggle="tooltip" title="GRANT SELECT(columns)">S+</th>
+                    <th class="border-right" data-toggle="tooltip" title="GRANT UPDATE(columns)">U+</th>
+                    <th class="border-right" data-toggle="tooltip" title="GRANT INSERT(columns)">I+</th>
                     <th></th>
                 </tr>
             </thead>
@@ -44,9 +44,9 @@
                         <td>@Html.CheckBoxFor(m => m.LayersList[@rowNo].IsUpdate)</td>
                         <td>@Html.CheckBoxFor(m => m.LayersList[@rowNo].IsInsert)</td>
                         <td>@Html.CheckBoxFor(m => m.LayersList[@rowNo].IsDelete)</td>
-                        <td class="ellipsis-100">@p.ColumnsSelect</td>
-                        <td class="ellipsis-100">@p.ColumnsUpdate</td>
-                        <td class="ellipsis-100">@p.ColumnsInsert</td>
+                        <td class="ellipsis-100 border-right">@p.ColumnsSelect</td>
+                        <td class="ellipsis-100 border-right">@p.ColumnsUpdate</td>
+                        <td class="ellipsis-100 border-right">@p.ColumnsInsert</td>
                         <td><button data-toggle="ajax-edit-modal" data-target="#grantsColumns" 
                                data-schema=@p.Table_schema data-table=@p.Table_name data-rolename=@ViewBag.Rolename data-url="@Url.Action("EditColumns")"
                                class="btn btn-outline-secondary btn-sm" style="border: 0">
@@ -77,9 +77,9 @@
                     <th>UPDATE</th>
                     <th>INSERT</th>
                     <th>DELETE</th>
-                    <th data-toggle="tooltip" title="GRANT SELECT(columns)">S+</th>
-                    <th data-toggle="tooltip" title="GRANT UPDATE(columns)">U+</th>
-                    <th data-toggle="tooltip" title="GRANT INSERT(columns)">I+</th>
+                    <th class="border-right" data-toggle="tooltip" title="GRANT SELECT(columns)">S+</th>
+                    <th class="border-right" data-toggle="tooltip" title="GRANT UPDATE(columns)">U+</th>
+                    <th class="border-right" data-toggle="tooltip" title="GRANT INSERT(columns)">I+</th>
                     <th></th>
                 </tr>
             </thead>
@@ -104,10 +104,9 @@
                     <td>@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsUpdate)</td>
                     <td>@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsInsert)</td>
                     <td>@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsDelete)</td>
-                    <td class="ellipsis-100">@p.ColumnsSelect</td>
-                    <td class="ellipsis-100">@p.ColumnsUpdate</td>
-                    <td class="ellipsis-100">@p.ColumnsInsert</td>
-                    <td>
+                    <td class="ellipsis-100 border-right">@p.ColumnsSelect</td>
+                    <td class="ellipsis-100 border-right">@p.ColumnsUpdate</td>
+                    <td class="ellipsis-100 border-right">@p.ColumnsInsert</td>
                     <td>
                         <button data-toggle="ajax-edit-modal" data-target="#grantsColumns"
                            data-schema=@p.Table_schema data-table=@p.Table_name data-rolename=@ViewBag.Rolename data-url="@Url.Action("EditColumns")"
