@@ -66,25 +66,32 @@ namespace QConsoleWeb.Controllers
             var dictGranters = CompareGrants(old_dicts, dicts, out bool dict_selChanged, out bool dict_updChanged,
                                                       out bool dict_insChanged, out bool dict_delChanged);
 
-            if (layerGranters?.Count() > 0 || dictGranters?.Count() > 0)
+
+
+            try
             {
-                try
+                if (layerGranters?.Count() > 0)
                 {
                     foreach (var gran in layerGranters)
-                        _service.GrantTableToRole(gran.TableSchema, gran.TableName, rolename, 
+                        _service.GrantTableToRole(gran.TableSchema, gran.TableName, rolename,
                             gran.IsSelect, gran.IsUpdate, gran.IsInsert, gran.IsDelete,
                             selChanged, updChanged, insChanged, delChanged);
+                }
+                if (dictGranters?.Count() > 0)
+                {
                     foreach (var gran in dictGranters)
                         _service.GrantTableToRole(gran.TableSchema, gran.TableName, rolename,
                             gran.IsSelect, gran.IsUpdate, gran.IsInsert, gran.IsDelete,
                             dict_selChanged, dict_updChanged, dict_insChanged, dict_delChanged);
+                }
+                if (layerGranters?.Count() > 0 || dictGranters?.Count() > 0)
                     TempData["message"] = $"Сохранено.";
-                }
-                catch (Exception e)
-                {
-                    TempData["error"] = $"Warning. {e.Message}";
-                }
             }
+            catch (Exception e)
+            {
+                TempData["error"] = $"Warning. {e.Message}";
+            }
+
             return RedirectToAction("Index");
         }
 
