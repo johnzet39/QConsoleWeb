@@ -85,12 +85,17 @@ namespace QConsoleWeb
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/error");
             }
 
             app.UseStaticFiles();
             app.UseAuthentication();
             AppIdentityDbContext.CreateAdminAccount(app.ApplicationServices, Configuration).Wait();
+
+            app.Map("/error", ap => ap.Run(async context =>
+            {
+                await context.Response.WriteAsync("Ops...");
+            }));
 
             app.UseMvc(routes =>
             {
