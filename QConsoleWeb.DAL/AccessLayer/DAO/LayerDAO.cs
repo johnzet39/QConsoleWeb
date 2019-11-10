@@ -17,12 +17,12 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
 
         public static string SetUpdater(string tableschema, string tablename, Boolean isupdater)
         {
-            return String.Format("SELECT qfunc_addupdatefields('{0}', '{1}', {2});", tableschema, tablename, isupdater.ToString().ToUpper());
+            return String.Format("SELECT logger.qfunc_addupdatefields('{0}', '{1}', {2});", tableschema, tablename, isupdater.ToString().ToUpper());
         }
 
         public static string SetLogger(string tableschema, string tablename, Boolean islogger)
         {
-            return String.Format("SELECT qfunc_loglogger('{0}', '{1}', {2});", tableschema, tablename, islogger.ToString().ToUpper());
+            return String.Format("SELECT logger.qfunc_loglogger('{0}', '{1}', {2});", tableschema, tablename, islogger.ToString().ToUpper());
         }
 
     }
@@ -81,7 +81,7 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
                                         " false " +
                                 " end as islogger " +
                                " FROM information_schema.tables t  " +
-                               " WHERE (t.table_schema = 'schema_spr' AND t.table_name <> 'dictionaries') OR t.table_schema||t.table_name in (select spr.schema_name||spr.table_name from schema_spr.dictionaries spr) " +
+                               " WHERE (t.table_schema = 'schema_spr') OR t.table_schema||t.table_name in (select spr.schema_name||spr.table_name from logger.dictionaries spr) " +
                                " ORDER BY t.table_schema, t.table_name ; ";
 
             return GetListOfObjects(sql_query);

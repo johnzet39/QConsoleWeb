@@ -180,7 +180,7 @@ from
        CASE WHEN exists(select 1 from information_schema.role_table_grants where grantee = rtg.grantee AND rtg.table_schema=table_schema AND rtg.table_name=table_name and privilege_type = 'DELETE')   
            THEN 1 ELSE 0 END AS isdelete   
 FROM    information_schema.role_table_grants rtg   
-WHERE ((rtg.table_schema = 'schema_spr' AND rtg.table_name <> 'dictionaries') OR rtg.table_schema||rtg.table_name in (select spr.schema_name||spr.table_name from schema_spr.dictionaries spr)) AND rtg.grantee = '{0}'   
+WHERE ((rtg.table_schema = 'schema_spr') OR rtg.table_schema||rtg.table_name in (select spr.schema_name||spr.table_name from logger.dictionaries spr)) AND rtg.grantee = '{0}'   
 GROUP BY rtg.grantee, rtg.table_schema, rtg.table_name)   
 
 (select table_schema, table_name, descript, isselect,isupdate,isinsert,isdelete,grantee, columns_select ,columns_update, columns_insert 
@@ -206,7 +206,7 @@ FROM(SELECT t.table_schema, t.table_name , (select obj_description((quote_ident(
     end as columns_insert
     -----
   FROM information_schema.tables t LEFT JOIN  grants gr ON gr.table_schema||gr.table_name = t.table_schema||t.table_name   
-  WHERE (t.table_schema = 'schema_spr' AND t.table_name <> 'dictionaries') OR t.table_schema||t.table_name in (select spr.schema_name||spr.table_name from schema_spr.dictionaries spr)  
+  WHERE (t.table_schema = 'schema_spr') OR t.table_schema||t.table_name in (select spr.schema_name||spr.table_name from logger.dictionaries spr)  
   ORDER BY t.table_schema, t.table_name) ps); ", grantee);
             return GetListOfTables(sql_query);
         }

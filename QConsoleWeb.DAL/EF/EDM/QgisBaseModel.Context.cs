@@ -42,13 +42,13 @@ namespace QConsoleWeb.DAL.EF.EDM
 
             modelBuilder.Entity<Dictionaries>(entity =>
             {
-                entity.ToTable("dictionaries", "schema_spr");
+                entity.ToTable("dictionaries", "logger");
 
                 entity.ForNpgsqlHasComment("Справочники для учета в QConsole");
 
                 entity.Property(e => e.id)
                     .HasColumnName("id")
-                    .HasDefaultValueSql("nextval('schema_spr.dictionaries_id_seq'::regclass)");
+                    .HasDefaultValueSql("nextval('logger.dictionaries_id_seq'::regclass)");
 
                 entity.Property(e => e.schema_name)
                     .IsRequired()
