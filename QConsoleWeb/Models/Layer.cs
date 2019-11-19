@@ -39,4 +39,18 @@ namespace QConsoleWeb.Models
         [Display(Name = "Тип")]
         public string Table_type { get; set; }
     }
+
+    public class LayerGrants
+    {
+        public string schemaname { get; set; }
+        public string tablename { get; set; }
+        public string groname { get; set; }
+        public bool isselect { get; set; }
+        public bool isinsert { get; set; }
+        public bool isupdate { get; set; }
+        public bool isdelete { get; set; }
+        public string columns_select { get; set; }
+        public string columns_update { get; set; }
+        public string columns_insert { get; set; }
+    }
 }

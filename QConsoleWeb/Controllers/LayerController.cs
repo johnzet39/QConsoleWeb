@@ -38,22 +38,26 @@ namespace QConsoleWeb.Controllers
                                     string tablename, 
                                     string geomtype)
         {
-            Layer layer;
+            LayerEditViewModel vm = new LayerEditViewModel();
             if (geomtype == null)
-                layer = GetDictionaries()
+                vm.CurrentLayer = GetDictionaries()
                     .First(d => d.Table_schema == schemaname && d.Table_name == tablename);
             else
-                layer = GetLayers()
+                vm.CurrentLayer = GetLayers()
                     .First(d => d.Table_schema == schemaname && d.Table_name == tablename);
+
+            vm.LayerGrantsList = GetGrantsToLayer(schemaname, tablename);
+
             ViewBag.Title = "Редактирование параметров таблицы";
-            return View(layer);
+            return View(vm);
         }
 
         [HttpPost]
-        public IActionResult EditLayer(Layer layer, string geomtype)
+        public IActionResult EditLayer(LayerEditViewModel model, string geomtype)
         {
             if (ModelState.IsValid)
             {
+                Layer layer = model.CurrentLayer;
                 Layer olrlayer;
                 if (geomtype == null)
                     olrlayer = GetDictionaries()
@@ -69,12 +73,19 @@ namespace QConsoleWeb.Controllers
                 if (layer.Islogger != olrlayer.Islogger)
                     isloggerCompare = layer.Islogger;
 
-                try
+                string descript = null;
+                if (layer.Descript != olrlayer.Descript)
+                    if (layer.Descript == null)
+                        descript = "";
+                    else
+                        descript = layer.Descript;
+
+                    try
                 {
                     _service.ChangeLayer(
                         layer.Table_schema,
                         layer.Table_name,
-                        (layer.Descript != olrlayer.Descript) ? layer.Descript : null,
+                        descript,
                         isupdaterCompare,
                         isloggerCompare
                         );
@@ -87,7 +98,7 @@ namespace QConsoleWeb.Controllers
 
                 return RedirectToAction("Index");
             }
-            return View(layer);
+            return View(model);
         }
 
         public ViewResult DictListManage()
@@ -136,6 +147,12 @@ namespace QConsoleWeb.Controllers
         {
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<LayerDTO, Layer>()).CreateMapper();
             return mapper.Map<IEnumerable<LayerDTO>, List<Layer>>(_service.GetLayers());
+        }
+
+        private IEnumerable<LayerGrants> GetGrantsToLayer(string schemaname, string tablename)
+        {
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<LayerGrantsDTO, LayerGrants>()).CreateMapper();
+            return mapper.Map<IEnumerable<LayerGrantsDTO>, List<LayerGrants>>(_service.GetGrantsToLayer(schemaname, tablename));
         }
 
         private IEnumerable<Layer> GetDictionaries()

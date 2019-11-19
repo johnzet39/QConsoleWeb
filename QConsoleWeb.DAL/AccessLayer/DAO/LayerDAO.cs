@@ -94,6 +94,41 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
             return GetListOfAllTables(sql_query);
         }
 
+        public List<LayerGrants> GetGrantsToLayer(string schemaname, string tablename)
+        {
+            string sql_query = String.Format(
+@"select schemaname, tablename, groname,
+	isselect,
+	isinsert,
+	isupdate,
+	isdelete,
+	case when isselect <> true then
+		(select string_agg(cp.column_name, ', ') from INFORMATION_SCHEMA.column_privileges cp 
+		 	where cp.privilege_type='SELECT' and cp.grantee=groname and cp.table_schema=schemaname and cp.table_name=tablename group by cp.grantee, cp.table_schema, cp.table_name)
+		else null
+	end as columns_select,
+	case when isinsert <> true then
+		(select string_agg(cp.column_name, ', ') from INFORMATION_SCHEMA.column_privileges cp 
+		 	where cp.privilege_type='UPDATE' and cp.grantee=groname and cp.table_schema=schemaname and cp.table_name=tablename group by cp.grantee, cp.table_schema, cp.table_name)
+		else null
+	end as columns_update,
+	case when isupdate <> true then
+		(select string_agg(cp.column_name, ', ') from INFORMATION_SCHEMA.column_privileges cp 
+		 	where cp.privilege_type='INSERT' and cp.grantee=groname and cp.table_schema=schemaname and cp.table_name=tablename group by cp.grantee, cp.table_schema, cp.table_name)
+		else null
+	end as columns_insert
+from
+(select
+	  a.schemaname,a.tablename,b.groname,
+	  HAS_TABLE_PRIVILEGE(b.groname,a.schemaname||'.'||a.tablename, 'select') as isselect,
+	  HAS_TABLE_PRIVILEGE(b.groname,a.schemaname||'.'||a.tablename, 'insert') as isinsert,
+	  HAS_TABLE_PRIVILEGE(b.groname,a.schemaname||'.'||a.tablename, 'update') as isupdate,
+	  HAS_TABLE_PRIVILEGE(b.groname,a.schemaname||'.'||a.tablename, 'delete') as isdelete
+	  from pg_tables a , pg_group b 
+	where a.tablename='{1}' and a.schemaname='{0}') sub", schemaname, tablename);
+            return GetListOfLayerGrants(sql_query);
+        }
+
         private List<Layer> GetListOfObjects(string sql_query)
         {
             var listOfObjects = new List<Layer>();
@@ -115,6 +150,41 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
                             objectpsql.Geomtype = dataReader["geomtype"].ToString();
                             objectpsql.Isupdater = Convert.ToBoolean(dataReader["isupdater"]);
                             objectpsql.Islogger = Convert.ToBoolean(dataReader["islogger"]);
+
+                            listOfObjects.Add(objectpsql);
+                        }
+                    }
+                }
+            }
+            return listOfObjects;
+        }
+
+
+        private List<LayerGrants> GetListOfLayerGrants(string sql_query)
+        {
+            var listOfObjects = new List<LayerGrants>();
+
+            using (var conn = new NpgsqlConnection(_connectionString))
+            {
+                conn.Open();
+                using (var command = new NpgsqlCommand(sql_query, conn))
+                {
+                    using (var dataReader = command.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var objectpsql = new LayerGrants();
+
+                            objectpsql.schemaname = dataReader["schemaname"].ToString();
+                            objectpsql.tablename = dataReader["tablename"].ToString();
+                            objectpsql.groname = dataReader["groname"].ToString();
+                            objectpsql.isselect = Convert.ToBoolean(dataReader["isselect"]);
+                            objectpsql.isupdate = Convert.ToBoolean(dataReader["isupdate"]);
+                            objectpsql.isinsert = Convert.ToBoolean(dataReader["isinsert"]);
+                            objectpsql.isdelete = Convert.ToBoolean(dataReader["isdelete"]);
+                            objectpsql.columns_select = dataReader["columns_select"].ToString();
+                            objectpsql.columns_update = dataReader["columns_update"].ToString();
+                            objectpsql.columns_insert = dataReader["columns_insert"].ToString();
 
                             listOfObjects.Add(objectpsql);
                         }

@@ -26,5 +26,6 @@ namespace QConsoleWeb.BLL.Interfaces
         void AddTableToDictionaries(string schemaname, string tablename);
         //Remove table from list of dictionaries (schema_spr.dictionaries)
         void RemoveTableFromDictionaries(int id);
+        List<LayerGrantsDTO> GetGrantsToLayer(string schemaname, string tablename);
     }
 }

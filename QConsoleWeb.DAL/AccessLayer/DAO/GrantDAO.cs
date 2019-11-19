@@ -145,16 +145,16 @@ from
     case when gr.isinsert = 1 then true else false end as isinsert,  
     case when gr.isdelete = 1 then true else false end as isdelete,  gr.grantee ,
     --признаки наличия грантов для столбцов при отсутствии грантов на всю таблицу
-    case when (gr.isselect = 0 or gr.isselect is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT')              
-        then (select string_agg(cp.column_name, ',') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT' group by cp.grantee, cp.table_schema, cp.table_name )
+    case when (gr.isselect = 0 or gr.isselect is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee=gr.grantee and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT')              
+        then (select string_agg(cp.column_name, ', ') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee=gr.grantee and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT' group by cp.grantee, cp.table_schema, cp.table_name )
       else null
     end as columns_select,
-    case when (gr.isupdate = 0 or gr.isupdate is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE')              
-        then (select string_agg(cp.column_name, ',') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE' group by cp.grantee, cp.table_schema, cp.table_name )
+    case when (gr.isupdate = 0 or gr.isupdate is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee=gr.grantee and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE')              
+        then (select string_agg(cp.column_name, ', ') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee=gr.grantee and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE' group by cp.grantee, cp.table_schema, cp.table_name )
       else null
     end as columns_update,
-    case when (gr.isinsert = 0 or gr.isinsert is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT')              
-        then (select string_agg(cp.column_name, ',') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT' group by cp.grantee, cp.table_schema, cp.table_name )
+    case when (gr.isinsert = 0 or gr.isinsert is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee=gr.grantee and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT')              
+        then (select string_agg(cp.column_name, ', ') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee=gr.grantee and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT' group by cp.grantee, cp.table_schema, cp.table_name )
       else null
     end as columns_insert
     -----
@@ -192,16 +192,16 @@ FROM(SELECT t.table_schema, t.table_name , (select obj_description((quote_ident(
   case when gr.isdelete = 1 then true else false end as isdelete, 
     gr.grantee,
     --признаки наличия грантов для столбцов при отсутствии грантов на всю таблицу
-    case when (gr.isselect = 0 or gr.isselect is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT')              
-        then (select string_agg(cp.column_name, ',') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT' group by cp.grantee, cp.table_schema, cp.table_name )
+    case when (gr.isselect = 0 or gr.isselect is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee=gr.grantee and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT')              
+        then (select string_agg(cp.column_name, ', ') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee=gr.grantee and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT' group by cp.grantee, cp.table_schema, cp.table_name )
       else null
     end as columns_select,
-    case when (gr.isupdate = 0 or gr.isupdate is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE')              
-        then (select string_agg(cp.column_name, ',') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE' group by cp.grantee, cp.table_schema, cp.table_name )
+    case when (gr.isupdate = 0 or gr.isupdate is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee=gr.grantee and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE')              
+        then (select string_agg(cp.column_name, ', ') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee=gr.grantee and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE' group by cp.grantee, cp.table_schema, cp.table_name )
       else null
     end as columns_update,
-    case when (gr.isinsert = 0 or gr.isinsert is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT')              
-        then (select string_agg(cp.column_name, ',') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT' group by cp.grantee, cp.table_schema, cp.table_name )
+    case when (gr.isinsert = 0 or gr.isinsert is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee=gr.grantee and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT')              
+        then (select string_agg(cp.column_name, ', ') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee=gr.grantee and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT' group by cp.grantee, cp.table_schema, cp.table_name )
       else null
     end as columns_insert
     -----
@@ -264,15 +264,15 @@ FROM(SELECT t.table_schema, t.table_name , (select obj_description((quote_ident(
  GROUP BY rtg.grantee, rtg.table_schema, rtg.table_name) 
 
 SELECT t.column_name, 
-	case when (gr.isselect = 0 or gr.isselect is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{2}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT' and cp.column_name=t.column_name)
-	then true else false
-	end as isselect,
-	case when (gr.isupdate = 0 or gr.isupdate is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{2}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE' and cp.column_name=t.column_name)
-	then true else false
-	end as isupdate,
-	case when (gr.isinsert = 0 or gr.isinsert is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{2}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT' and cp.column_name=t.column_name)
-	then true else false
-	end as isinsert
+    case when (gr.isselect = 0 or gr.isselect is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee=gr.grantee and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT' and cp.column_name=t.column_name)
+    then true else false
+    end as isselect,
+    case when (gr.isupdate = 0 or gr.isupdate is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee=gr.grantee and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE' and cp.column_name=t.column_name)
+    then true else false
+    end as isupdate,
+    case when (gr.isinsert = 0 or gr.isinsert is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee=gr.grantee and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT' and cp.column_name=t.column_name)
+    then true else false
+    end as isinsert
   FROM information_schema.columns t
   LEFT JOIN grants gr ON gr.table_schema||gr.table_name = t.table_schema||t.table_name  
  WHERE t.table_schema = '{0}'
@@ -381,7 +381,10 @@ SELECT t.column_name,
             if (selChanged)
             {
                 if (IsSelect)
+                {
+                    revoke("SELECT");
                     grant("SELECT");
+                }
                 else
                     revoke("SELECT");
             }
@@ -389,7 +392,10 @@ SELECT t.column_name,
             if (updChanged)
             {
                 if (IsUpdate)
+                {
+                    revoke("UPDATE");
                     grant("UPDATE");
+                }
                 else
                     revoke("UPDATE");
             }
@@ -397,7 +403,10 @@ SELECT t.column_name,
             if (insChanged)
             {
                 if (IsInsert)
+                {
+                    revoke("INSERT");
                     grant("INSERT");
+                }
                 else
                     revoke("INSERT");
             }
@@ -405,7 +414,10 @@ SELECT t.column_name,
             if (delChanged)
             {
                 if (IsDelete)
+                {
+                    revoke("DELETE");
                     grant("DELETE");
+                }
                 else
                     revoke("DELETE");
             }

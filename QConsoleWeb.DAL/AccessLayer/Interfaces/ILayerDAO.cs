@@ -20,5 +20,6 @@ namespace QConsoleWeb.DAL.AccessLayer.Interfaces
         int GetCountOfPeriod(string tableshcema, string tablename, int days);
         //Get all non-geometry tables from information_schema
         List<InformationSchemaTable> GetAllTables();
+        List<LayerGrants> GetGrantsToLayer(string schemaname, string tablename);
     }
 }

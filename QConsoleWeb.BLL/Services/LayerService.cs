@@ -86,5 +86,11 @@ namespace QConsoleWeb.BLL.Services
             _unitOfWork.DictionariesRepository.Remove(dictionary);
             _unitOfWork.Save();
         }
+
+        public List<LayerGrantsDTO> GetGrantsToLayer(string schemaname, string tablename)
+        {
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<LayerGrants, LayerGrantsDTO>()).CreateMapper();
+            return mapper.Map<IEnumerable<LayerGrants>, List<LayerGrantsDTO>>(_managerDAL.LayerAccess.GetGrantsToLayer(schemaname, tablename));
+        }
     }
 }
