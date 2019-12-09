@@ -214,11 +214,10 @@ namespace QConsoleWeb.Controllers
             updChanged = false;
             insChanged = false;
 
+            bool hasChanges = false;
             List<ColumnGranter> granters = new List<ColumnGranter>();
             for (int i = 0; i < columns.Count(); i++)
             {
-                bool hasChanges = false;
-
                 if (columns[i].IsSelect != old_columns[i].IsSelect)
                     selChanged = true;
                 if (columns[i].IsUpdate != old_columns[i].IsUpdate)
@@ -227,9 +226,15 @@ namespace QConsoleWeb.Controllers
                     insChanged = true;
 
                 if (selChanged || updChanged || insChanged)
+                {
                     hasChanges = true;
+                    break;
+                }
+            }
 
-                if (hasChanges)
+            if (hasChanges)
+            {
+                for (int i = 0; i < columns.Count(); i++)
                 {
                     ColumnGranter columnGranter = new ColumnGranter
                     {
