@@ -109,14 +109,14 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
 	end as columns_select,
 	case when isinsert <> true then
 		(select string_agg(cp.column_name, ', ') from INFORMATION_SCHEMA.column_privileges cp 
-		 	where cp.privilege_type='UPDATE' and cp.grantee=groname and cp.table_schema=schemaname and cp.table_name=tablename group by cp.grantee, cp.table_schema, cp.table_name)
-		else null
-	end as columns_update,
-	case when isupdate <> true then
-		(select string_agg(cp.column_name, ', ') from INFORMATION_SCHEMA.column_privileges cp 
 		 	where cp.privilege_type='INSERT' and cp.grantee=groname and cp.table_schema=schemaname and cp.table_name=tablename group by cp.grantee, cp.table_schema, cp.table_name)
 		else null
-	end as columns_insert
+	end as columns_insert,
+	case when isupdate <> true then
+		(select string_agg(cp.column_name, ', ') from INFORMATION_SCHEMA.column_privileges cp 
+		 	where cp.privilege_type='UPDATE' and cp.grantee=groname and cp.table_schema=schemaname and cp.table_name=tablename group by cp.grantee, cp.table_schema, cp.table_name)
+		else null
+	end as columns_update
 from
 (select
 	  a.schemaname,a.tablename,b.groname,
