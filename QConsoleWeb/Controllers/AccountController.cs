@@ -45,7 +45,7 @@ namespace QConsoleWeb.Controllers
                             user, details.Password, false, false);
                     if (result.Succeeded)
                     {
-                        return Redirect(returnUrl ?? "/");
+                        return LocalRedirect(returnUrl ?? "/");
                     }
                 }
                 ModelState.AddModelError(nameof(LoginModel.Username),
@@ -58,7 +58,7 @@ namespace QConsoleWeb.Controllers
         public async Task<IActionResult> Logout()
         {
             await signInManager.SignOutAsync();
-            return Redirect("/");
+            return LocalRedirect("/");
         }
 
         [AllowAnonymous]
