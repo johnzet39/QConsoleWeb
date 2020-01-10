@@ -54,9 +54,11 @@ namespace QConsoleWeb
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Account/Login";
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(_loginTimeout);
-                options.SlidingExpiration = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(_loginTimeout); //время действия куков.
+                options.SlidingExpiration = true; //продление времени действия куков. Применяется с середины периода.
             });
+
+            //services.Configure<SecurityStampValidatorOptions>(options => options.ValidationInterval = TimeSpan.FromMinutes(1));
 
             services.AddDetection();
             services.AddDetectionCore() //device detection
