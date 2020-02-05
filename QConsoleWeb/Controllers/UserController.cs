@@ -290,11 +290,13 @@ namespace QConsoleWeb.Controllers
             {
                 try
                 {
-                    var fileStream = new FileStream(pghba, FileMode.Create, FileAccess.Write);
-                    Encoding encodingUtf8WoBOM = new UTF8Encoding(false);
-                    using (var streamWriter = new StreamWriter(fileStream, encodingUtf8WoBOM))
+                    using (var fileStream = new FileStream(pghba, FileMode.Create, FileAccess.Write))
                     {
-                        streamWriter.Write(pghbaText);
+                        Encoding encodingUtf8WoBOM = new UTF8Encoding(false);
+                        using (var streamWriter = new StreamWriter(fileStream, encodingUtf8WoBOM))
+                        {
+                            streamWriter.Write(pghbaText);
+                        }
                     }
                 }
                 catch (Exception e)
