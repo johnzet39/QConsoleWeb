@@ -55,6 +55,7 @@ namespace QConsoleWeb
             {
                 options.LoginPath = "/Account/Login";
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(_loginTimeout); //время действия куков.
+                options.Cookie.HttpOnly = true;
                 options.SlidingExpiration = true; //продление времени действия куков. Применяется с середины периода.
             });
 

@@ -1,44 +1,93 @@
-﻿@model IEnumerable<Session>
+﻿<style>
+    .timer-span{
+        position:relative;
+    }
+        .timer-span::after {
+            position: absolute;
+            content: 'сек';
+            right: .5em;
+            font-size: small;
+            font-style:italic;
+            color:#8e8e8e;
+            transition: all .05s ease-in-out;
+        }
+        .timer-span:hover::after,
+        .timer-span:focus-within::after {
+            right: 1.5em;
+        }
+
+        .timer-span .span-tooltiptext {
+            visibility: hidden;
+            white-space: nowrap;
+            background-color: rgba(0, 0, 0, 0.71);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1500;
+        }
+
+            .timer-span .span-tooltiptext::after {
+                content: "";
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                margin-left: -5px;
+                border-width: 5px;
+                border-style: solid;
+                border-color: #555 transparent transparent transparent;
+            }
+
+        .timer-span:hover .span-tooltiptext {
+            visibility: visible;
+            transition-delay: 1s;
+            opacity: 1;
+        }
+</style>
 
 <div class="card-header">
-    <h5>Список подключенных пользователей</h5>
+    <h5 class="d-inline-block">Список подключенных пользователей <span id="time" class="mr-2"></span></h5>
+    <div class="timer-span d-inline-block">
+        <span class="span-tooltiptext">Таймер автообновления</span>
+        <input class="small" style="border-color:transparent; " type="number" id="timer_span" value=10 min="1" max="3600" >
+    </div>
 </div>
 <br />
 
-<div class="table-responsive">
-    <table class="table table-sm table-hover text-nowrap">
-        <thead class="thead-dark">
-            <tr>
-                <th>#</th>
-                <th>Приложение</th>
-                <th>Начало сеанса</th>
-                <th>Пользователь</th>
-                <th>Адрес клиента</th>
-                <th>Описание</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @{ int rowNumber = 0;}
-            @foreach (var p in Model)
-            {
-                <tr>
-                    <td>@(rowNumber += 1)</td>
-                    <td>@p.Application_name</td>
-                    <td>@p.Starttime</td>
-                    <td>@p.Usename</td>
-                    <td>@p.Client_addr</td>
-                    <td>
-                        <table class="fixed-table">
-                            <tr>
-                                <td>@p.Descript</td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-
+<div id="sessionsList">
 </div>
+
+<script>
+    var timerSpanElement = document.getElementById("timer_span");
+    var timer_value = timerSpanElement.value;
+    var interval = setInterval(loadSessions, timer_value * 1000);
+
+    timerSpanElement.addEventListener('change', (event) => {
+        timer_value = timerSpanElement.value;
+        clearInterval(interval);
+        if (timer_value > 0) {
+            interval = setInterval(loadSessions, timer_value * 1000);
+        }
+    })
+
+    function loadSessions() {
+        var d = new Date();
+        document.getElementById("time").innerHTML = "(" + d.toLocaleTimeString() + ")";
+
+        $.ajax(
+            {
+                type: "GET",
+                url: 'Session/GetSessionsList',
+                success: function (returndata) {
+                    $('#sessionsList').html(returndata);
+                },
+            });
+    };
+    loadSessions();
+</script>

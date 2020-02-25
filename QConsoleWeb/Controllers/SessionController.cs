@@ -24,9 +24,13 @@ namespace QConsoleWeb.Controllers
         public ViewResult Index()
         {
             ViewBag.Title = "Сессии";
-            var sessions = GetSessions();
+            return View();
+        }
 
-            return View(sessions);
+        public IActionResult GetSessionsList()
+        {
+            var sessions = GetSessions();
+            return PartialView("SessionsList", sessions);
         }
 
         private object GetSessions()

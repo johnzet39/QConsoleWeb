@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Session>
+
+<div class="table-responsive">
+    <table class="table table-sm table-hover text-nowrap">
+        <thead class="thead-dark">
+            <tr>
+                <th>#</th>
+                <th>Приложение</th>
+                <th>Начало сеанса</th>
+                <th>Пользователь</th>
+                <th>Адрес клиента</th>
+                <th>Описание</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int rowNumber = 0;}
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@(rowNumber += 1)</td>
+                    <td>@p.Application_name</td>
+                    <td>@p.Starttime</td>
+                    <td>@p.Usename</td>
+                    <td>@p.Client_addr</td>
+                    <td>
+                        <table class="fixed-table">
+                            <tr>
+                                <td>@p.Descript</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
