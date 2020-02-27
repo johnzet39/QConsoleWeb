@@ -42,7 +42,7 @@ namespace QConsoleWeb.Controllers
                     await signInManager.SignOutAsync();
                     Microsoft.AspNetCore.Identity.SignInResult result =
                         await signInManager.PasswordSignInAsync(
-                            user, details.Password, false, false);
+                            user, details.Password, true, false);
                     if (result.Succeeded)
                     {
                         return LocalRedirect(returnUrl ?? "/");

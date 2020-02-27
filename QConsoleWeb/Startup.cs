@@ -35,11 +35,11 @@ namespace QConsoleWeb
         {
             string _connectionString = Configuration.GetConnectionString("CONNECTION_BASE");
             string _connectionIdentity = Configuration.GetConnectionString("CONNECTION_IDENTITY");
-            int _loginTimeout = Configuration.GetValue<int>("AppSettings:Login:LoginTimeout");
+            double _loginTimeout = Configuration.GetValue<double>("AppSettings:Login:LoginTimeout");
+            System.Diagnostics.Debug.WriteLine(_loginTimeout);
 
             services.AddEntityFrameworkNpgsql()
-                .AddDbContext<AppIdentityDbContext>(opt =>
-                    opt.UseNpgsql(_connectionIdentity));
+                .AddDbContext<AppIdentityDbContext>(opt => opt.UseNpgsql(_connectionIdentity));
 
             services.AddIdentity<AppUser, IdentityRole>(opts => {
                 opts.Password.RequiredLength = 1;
@@ -47,30 +47,28 @@ namespace QConsoleWeb
                 opts.Password.RequireLowercase = false;
                 opts.Password.RequireUppercase = false;
                 opts.Password.RequireDigit = false;
-            }).AddEntityFrameworkStores<AppIdentityDbContext>()
-                .AddDefaultTokenProviders();
+            }).AddEntityFrameworkStores<AppIdentityDbContext>().AddDefaultTokenProviders();
 
-            // Changing the loging URL
+            //services.Configure<SecurityStampValidatorOptions>(opts =>
+            //    opts.ValidationInterval = TimeSpan.FromMinutes(360));
+
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Account/Login";
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(_loginTimeout); //время действия куков.
                 options.Cookie.HttpOnly = true;
-                options.SlidingExpiration = true; //продление времени действия куков. Применяется с середины периода.
+                options.SlidingExpiration = true;
             });
 
-            //services.Configure<SecurityStampValidatorOptions>(options => options.ValidationInterval = TimeSpan.FromMinutes(1));
-
             services.AddDetection();
-            services.AddDetectionCore() //device detection
-                .AddDevice();
+            services.AddDetectionCore().AddDevice(); //device detection
+
             services.AddMvc()
                 .AddMvcOptions(options =>
                 {
                     options.Filters.Add(new AuthorizeFilter()); //set [Autorizate] global
                 });
 
-            //services.AddTransient<IUserService, FakeUserService>();
             services.AddTransient<IUserService, UserService>(serviceProvider => new UserService(_connectionString));
             services.AddTransient<ISessionService, SessionService>(serviceProvider => new SessionService(_connectionString));
             services.AddTransient<ILayerService, LayerService>(serviceProvider => new LayerService(_connectionString));
