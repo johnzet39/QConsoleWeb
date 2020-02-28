@@ -36,12 +36,12 @@ namespace QConsoleWeb
             string _connectionString = Configuration.GetConnectionString("CONNECTION_BASE");
             string _connectionIdentity = Configuration.GetConnectionString("CONNECTION_IDENTITY");
             double _loginTimeout = Configuration.GetValue<double>("AppSettings:Login:LoginTimeout");
-            System.Diagnostics.Debug.WriteLine(_loginTimeout);
 
             services.AddEntityFrameworkNpgsql()
                 .AddDbContext<AppIdentityDbContext>(opt => opt.UseNpgsql(_connectionIdentity));
 
-            services.AddIdentity<AppUser, IdentityRole>(opts => {
+            services.AddIdentity<AppUser, IdentityRole>(opts =>
+            {
                 opts.Password.RequiredLength = 1;
                 opts.Password.RequireNonAlphanumeric = false;
                 opts.Password.RequireLowercase = false;
@@ -49,16 +49,27 @@ namespace QConsoleWeb
                 opts.Password.RequireDigit = false;
             }).AddEntityFrameworkStores<AppIdentityDbContext>().AddDefaultTokenProviders();
 
-            //services.Configure<SecurityStampValidatorOptions>(opts =>
-            //    opts.ValidationInterval = TimeSpan.FromMinutes(360));
+            services.Configure<SecurityStampValidatorOptions>(opts =>
+                opts.ValidationInterval = TimeSpan.FromSeconds(5));
 
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Account/Login";
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(_loginTimeout); //время действия куков.
+                //options.ExpireTimeSpan = TimeSpan.FromMinutes(360); //время действия куков.
                 options.Cookie.HttpOnly = true;
                 options.SlidingExpiration = true;
             });
+
+            //services.AddIdentity<AppUser, IdentityRole>()
+            //    .AddEntityFrameworkStores<AppIdentityDbContext>()
+            //    .AddDefaultTokenProviders();
+            //services.Configure<SecurityStampValidatorOptions>(options => options.ValidationInterval = TimeSpan.FromSeconds(10));
+            //services.AddAuthentication()
+            //    .Services.ConfigureApplicationCookie(options =>
+            //    {
+            //        options.SlidingExpiration = true;
+            //        options.ExpireTimeSpan = TimeSpan.FromMinutes(360);
+            //    });
 
             services.AddDetection();
             services.AddDetectionCore().AddDevice(); //device detection
