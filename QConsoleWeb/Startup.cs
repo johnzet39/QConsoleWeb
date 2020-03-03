@@ -50,26 +50,15 @@ namespace QConsoleWeb
             }).AddEntityFrameworkStores<AppIdentityDbContext>().AddDefaultTokenProviders();
 
             services.Configure<SecurityStampValidatorOptions>(opts =>
-                opts.ValidationInterval = TimeSpan.FromSeconds(5));
+                opts.ValidationInterval = TimeSpan.FromMinutes(5));
 
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Account/Login";
-                //options.ExpireTimeSpan = TimeSpan.FromMinutes(360); //время действия куков.
+                options.ExpireTimeSpan = TimeSpan.FromHours(_loginTimeout); //время действия куков.
                 options.Cookie.HttpOnly = true;
                 options.SlidingExpiration = true;
             });
-
-            //services.AddIdentity<AppUser, IdentityRole>()
-            //    .AddEntityFrameworkStores<AppIdentityDbContext>()
-            //    .AddDefaultTokenProviders();
-            //services.Configure<SecurityStampValidatorOptions>(options => options.ValidationInterval = TimeSpan.FromSeconds(10));
-            //services.AddAuthentication()
-            //    .Services.ConfigureApplicationCookie(options =>
-            //    {
-            //        options.SlidingExpiration = true;
-            //        options.ExpireTimeSpan = TimeSpan.FromMinutes(360);
-            //    });
 
             services.AddDetection();
             services.AddDetectionCore().AddDevice(); //device detection

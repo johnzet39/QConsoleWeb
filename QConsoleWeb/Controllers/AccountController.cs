@@ -30,7 +30,7 @@ namespace QConsoleWeb.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginModel details,
             string returnUrl)
         {
