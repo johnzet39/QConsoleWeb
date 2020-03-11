@@ -49,8 +49,10 @@ namespace QConsoleWeb.Controllers
             return View();
         }
 
-        public IActionResult GetYearStatDataCJ()
+        public IActionResult GetYearStatDataCJ(string datefrom, string dateto)
         {
+            DateTime DateFrom = DateTime.ParseExact(datefrom, "yyyy-MM", System.Globalization.CultureInfo.InvariantCulture);
+
             List<Layer> layerList = GetLayers();
 
             List<Tuple<int, int>>  dateList = new List<Tuple<int, int>>();

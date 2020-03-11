@@ -1,6 +1,13 @@
 ﻿<link rel="stylesheet" href="~/css/Stat.css" asp-append-version="false" />
 
 <div class="year-chart">
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <span class="input-group-text small" id="inputGroup-sizing-default">Период</span>
+        </div>
+        <input id="datefrom" type="month" class="form-control" value=@DateTime.Today.AddMonths(-11).ToString("yyyy-MM") aria-label="Default" aria-describedby="inputGroup-sizing-sm">
+        <input id="dateto" type="month" class="form-control" value=@DateTime.Today.ToString("yyyy-MM") aria-label="Default" aria-describedby="inputGroup-sizing-sm">
+    </div>
     <div id="yearChartDiv" style="height:50%">
 
     </div>
@@ -8,17 +15,26 @@
 
 
 <script>
-    var url = 'Stat/GetYearStatDataCJ';
-    $.ajax(
-        {
+
+    $(document).ready(function () {
+        var datefrom = $('#datefrom').val();
+        var dateto = $('#dateto').val();
+
+        var url = 'Stat/GetYearStatDataCJ';
+        $.ajax({
             type: "GET",
             url: url,
-            data: {},
+            data: { datefrom: datefrom, dateto: dateto },
             success: function (returndata) {
                 $('#yearChartDiv').html(returndata);
 
             }
         });
+    });
+
+    
+
+
 </script>
 
 
