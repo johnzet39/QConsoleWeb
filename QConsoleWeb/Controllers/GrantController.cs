@@ -58,15 +58,19 @@ namespace QConsoleWeb.Controllers
             var old_layers = GetLayers(rolename).OrderBy(r => r.Table_schema).ThenBy(r => r.Table_name).ToList();
             var old_dicts = GetDicts(rolename).OrderBy(r => r.Table_schema).ThenBy(r => r.Table_name).ToList();
 
-            var layers = model.LayersList.OrderBy(r => r.Table_schema).ThenBy(r => r.Table_name).ToList();
-            var dicts = model.DictsList.OrderBy(r => r.Table_schema).ThenBy(r => r.Table_name).ToList();
 
+            var layers = new List<Grant>();
+            if (model.LayersList != null)
+                layers = model.LayersList.OrderBy(r => r.Table_schema).ThenBy(r => r.Table_name).ToList();
             var layerGranters = CompareGrants(old_layers, layers, out bool selChanged, out bool updChanged,
-                                                      out bool insChanged, out bool delChanged);
+                                                        out bool insChanged, out bool delChanged);
+
+
+            var dicts = new List<Grant>();
+            if (model.DictsList != null)
+                dicts = model.DictsList.OrderBy(r => r.Table_schema).ThenBy(r => r.Table_name).ToList();
             var dictGranters = CompareGrants(old_dicts, dicts, out bool dict_selChanged, out bool dict_updChanged,
-                                                      out bool dict_insChanged, out bool dict_delChanged);
-
-
+                                                        out bool dict_insChanged, out bool dict_delChanged);
 
             try
             {
