@@ -1,0 +1,37 @@
+﻿<script src="~/lib/Chart.js/Chart.min.js" type="text/javascript"></script>
+
+<canvas id="YearChart"> </canvas>
+
+<script>
+    var YearStatDataCJ = @Html.Raw(ViewBag.YearStatDataCJ);
+
+    var options = {
+        legend: {
+            labels: {
+                usePointStyle: true,
+
+            },
+            position: 'right'
+        },
+        title: {
+            text: 'Количество новых объектов за 12 месяцев',
+            display: true
+        },
+        plugins: {
+            filler: {
+                propagate: true
+            }
+        },
+        tooltips: {
+            mode: 'x'
+        },
+        responsive: true,
+        maintainAspectRatio: false
+    };
+
+    var chart = new Chart('YearChart', {
+        type: 'line',
+        data: YearStatDataCJ,
+        options: options
+    });
+</script>

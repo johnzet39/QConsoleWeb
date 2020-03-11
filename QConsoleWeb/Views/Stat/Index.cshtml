@@ -1,1 +1,24 @@
-﻿<h3>No data yet.</h3>
+﻿<link rel="stylesheet" href="~/css/Stat.css" asp-append-version="false" />
+
+<div class="year-chart">
+    <div id="yearChartDiv" style="height:50%">
+
+    </div>
+</div>
+
+
+<script>
+    var url = 'Stat/GetYearStatDataCJ';
+    $.ajax(
+        {
+            type: "GET",
+            url: url,
+            data: {},
+            success: function (returndata) {
+                $('#yearChartDiv').html(returndata);
+
+            }
+        });
+</script>
+
+

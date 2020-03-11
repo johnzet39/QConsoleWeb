@@ -1,0 +1,5 @@
+﻿.year-chart {
+    height: calc(100vh - 130px);
+    width:100%;
+    position: relative;
+}
