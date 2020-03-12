@@ -110,9 +110,18 @@ namespace QConsoleWeb.BLL.Services
             return count;
         }
 
+        public int GetCountByOperation(string operation, DateTime datefrom, DateTime dateto)
+        {
+            var count = _unitOfWork.LogtableRepository.Get()
+                .Where(o => o.action.ToUpper() == operation.ToUpper())
+                .Where(o => o.timechange >= datefrom)
+                .Where(o => o.timechange < dateto)
+                .Count();
+            return count;
+        }
+
         public int GetCountInserts(string schema, string layer, int period)
         {
-
             int count = 0;
             DateTime date = DateTime.Now.AddDays(-period).Date;
             count = _unitOfWork.LogtableRepository.Get()
@@ -120,6 +129,19 @@ namespace QConsoleWeb.BLL.Services
                 .Where(o => o.tableschema == schema)
                 .Where(o => o.action.ToUpper() == "INSERT")
                 .Where(o => o.timechange >= date)
+                .Count();
+            return count;
+        }
+
+        public int GetCountInserts(string schema, string layer, DateTime datefrom, DateTime dateto)
+        {
+            int count = 0;
+            count = _unitOfWork.LogtableRepository.Get()
+                .Where(o => o.timechange >= datefrom)
+                .Where(o => o.timechange < dateto)
+                .Where(o => o.tablename == layer)
+                .Where(o => o.tableschema == schema)
+                .Where(o => o.action.ToUpper() == "INSERT")
                 .Count();
             return count;
         }
@@ -134,6 +156,15 @@ namespace QConsoleWeb.BLL.Services
                 .Where(o => o.timechange.Year == year && o.timechange.Month == month)
                 .Count();
             return count;
+        }
+
+        public List<LogRowDTO> GetAllLogByPeriod(DateTime datefrom, DateTime dateto)
+        {
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<Logtable, LogRowDTO>()).CreateMapper();
+            var dalObjects = _unitOfWork.LogtableRepository.Get()
+                .Where(o => o.timechange >= datefrom)
+                .Where(o => o.timechange < dateto).ToList();
+            return mapper.Map<IEnumerable<Logtable>, List<LogRowDTO>>(dalObjects);
         }
     }
 }

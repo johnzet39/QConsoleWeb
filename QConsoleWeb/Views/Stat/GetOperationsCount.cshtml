@@ -1,0 +1,47 @@
+﻿<canvas id="OperationsChart"></canvas>
+
+<script>
+    var operations_labels = @Html.Raw(ViewBag.StatOperations_labels);
+    var operations_dataset = @Html.Raw(ViewBag.StatOperations_dataset);
+    var operations_colors = @Html.Raw(ViewBag.StatOperations_colors);
+
+    var data = {
+        datasets: [{
+            data: operations_dataset,
+            backgroundColor: operations_colors
+        }],
+        labels: operations_labels
+    };
+    var options = {
+        title: {
+            text: 'Количество операций за период',
+            display: true
+        },
+        legend: {
+            position: 'top'
+        },
+        animation: {
+          animateScale: true,
+          animateRotate: true
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+    };
+
+    var ch = document.getElementById("OperationsChart");
+    ch.style.height = "280px";
+
+    var chart_operations = new Chart('OperationsChart', {
+        data: data,
+        type: 'polarArea',
+        options: options
+    });
+</script>
+
+@*<script>
+    $(document).ajaxStart(function () {
+        $("#loading_operations").show();
+    }).ajaxStop(function () {
+        $("#loading_operations").hide();
+    });
+</script>*@

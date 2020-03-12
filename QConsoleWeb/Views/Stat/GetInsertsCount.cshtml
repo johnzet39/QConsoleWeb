@@ -1,0 +1,48 @@
+﻿<canvas id="InsertsChart"></canvas>
+
+<script>
+    var inserts_labels = @Html.Raw(ViewBag.StatInserts_labels);
+    var inserts_dataset = @Html.Raw(ViewBag.StatInserts_dataset);
+    var inserts_colors = @Html.Raw(ViewBag.StatInserts_colors);
+
+    var data = {
+        datasets: [{
+            data: inserts_dataset,
+            backgroundColor: inserts_colors
+        }],
+        labels: inserts_labels
+    };
+    var options = {
+        title: {
+            text: 'Количество новых записей за период',
+            display: true
+        },
+        legend: {
+            position: 'top',
+            display: false
+        },
+        animation: {
+          animateScale: true,
+          animateRotate: true
+        },
+        scales: {
+            xAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+    };
+
+    var ch = document.getElementById("InsertsChart");
+    ch.style.height = (inserts_labels.length * 20).toString() + "px";
+    ch.style.minHeight = "200px";
+
+    var chart_operations = new Chart('InsertsChart', {
+        data: data,
+        type: 'horizontalBar',
+        options: options
+    });
+</script>

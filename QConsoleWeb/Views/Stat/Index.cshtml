@@ -1,40 +1,111 @@
 ﻿<link rel="stylesheet" href="~/css/Stat.css" asp-append-version="false" />
+<script src="~/lib/Chart.js/Chart.min.js" type="text/javascript"></script>
 
-<div class="year-chart">
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text small" id="inputGroup-sizing-default">Период</span>
+<div class="charts">
+    <div class="year-dates">
+        <div class="input-group input-group-sm">
+            <input id="datefrom" type="month" class="form-control form-control-sm" value=@DateTime.Today.AddMonths(-11).ToString("yyyy-MM") aria-label="Default" aria-describedby="inputGroup-sizing-sm">
+            <input id="dateto" type="month" class="form-control form-control-sm" value=@DateTime.Today.ToString("yyyy-MM") aria-label="Default" aria-describedby="inputGroup-sizing-sm">
+            <button id="refresh_year_button" class="btn btn-outline-dark btn-sm"><i class="fa fa-sync-alt" aria-hidden="true"></i></button>
         </div>
-        <input id="datefrom" type="month" class="form-control" value=@DateTime.Today.AddMonths(-11).ToString("yyyy-MM") aria-label="Default" aria-describedby="inputGroup-sizing-sm">
-        <input id="dateto" type="month" class="form-control" value=@DateTime.Today.ToString("yyyy-MM") aria-label="Default" aria-describedby="inputGroup-sizing-sm">
     </div>
-    <div id="yearChartDiv" style="height:50%">
+    <div class="chart-year-container">
+        <div id="yearChartDiv" style="height:100%">
 
+        </div>
+        <div id="loading_year" class="loading"><img src="~/images/icons/ajax-loader-bar.gif" /></div>
+    </div>
+
+    <div class="charts-bottom-part">
+        <div class="chart-operations-container">
+            <div id="operationsChartDiv">
+
+            </div>
+            <div id="loading_operations" class="loading"><img src="~/images/icons/ajax-loader-bar.gif" /></div>
+        </div>
+        <div class="chart-inserts-container">
+            <div id="insertsChartDiv">
+
+            </div>
+            <div id="loading_inserts" class="loading"><img src="~/images/icons/ajax-loader-bar.gif" /></div>
+        </div>
     </div>
 </div>
 
 
 <script>
 
-    $(document).ready(function () {
-        var datefrom = $('#datefrom').val();
+    LoadYearData();
+    LoadOperationsData();
+    LoadInsertsData();
+
+    function GetDates() {
+        var datefrom = $('#datefrom').val()
+        if (datefrom.length <= 0) {
+            var d = new Date();
+            datefrom = d.getFullYear() + "-" + (d.getMonth() + 1).toString().padStart(2, '0');
+        }
+
         var dateto = $('#dateto').val();
+        if (dateto.length <= 0) {
+            var d = new Date();
+            dateto = d.getFullYear() + "-" + (d.getMonth() + 1).toString().padStart(2, '0');
+        }
+        return [datefrom, dateto];
+    }
+
+    function LoadYearData() {
+
+        var [datefrom, dateto] = GetDates();
 
         var url = 'Stat/GetYearStatDataCJ';
         $.ajax({
             type: "GET",
             url: url,
             data: { datefrom: datefrom, dateto: dateto },
+            beforeSend: function () {$("#loading_year").show();},
+            complete: function () {$("#loading_year").hide();},
             success: function (returndata) {
                 $('#yearChartDiv').html(returndata);
-
             }
         });
-    });
+    }
 
-    
+    function LoadOperationsData() {
+        var [datefrom, dateto] = GetDates();
 
+        var url = 'Stat/GetOperationsCount';
+        $.ajax({
+            type: "GET",
+            url: url,
+            data: { datefrom: datefrom, dateto: dateto },
+            beforeSend: function () {$("#loading_operations").show();},
+            complete: function () {$("#loading_operations").hide();},
+            success: function (returndata) {
+                $('#operationsChartDiv').html(returndata);
+            }
+        });
+    }
 
+    function LoadInsertsData() {
+        var [datefrom, dateto] = GetDates();
+
+        var url = 'Stat/GetInsertsCount';
+        $.ajax({
+            type: "GET",
+            url: url,
+            data: { datefrom: datefrom, dateto: dateto },
+            beforeSend: function () {$("#loading_inserts").show();},
+            complete: function () {$("#loading_inserts").hide();},
+            success: function (returndata) {
+                $('#insertsChartDiv').html(returndata);
+            }
+        });
+    }
+
+    $('#refresh_year_button').on('click', function () {
+        LoadYearData();
+        LoadOperationsData();
+        LoadInsertsData();
+    })
 </script>
-
-

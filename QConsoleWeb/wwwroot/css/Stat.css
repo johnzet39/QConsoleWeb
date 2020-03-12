@@ -1,5 +1,42 @@
-﻿.year-chart {
-    height: calc(100vh - 130px);
+﻿.charts {
+    /*height: calc(100vh - 130px);*/
     width:100%;
     position: relative;
+}
+
+.chart-year-container{
+    height:450px;
+    position:relative;
+    margin-bottom: 10px;
+}
+
+.charts-bottom-part {
+    position: relative;
+    display:flex;
+}
+
+
+.chart-inserts-container {
+    position: relative;
+    float: right;
+    width: 50%;
+}
+
+.chart-operations-container {
+    position: relative;
+    float: left;
+    width: 50%;
+}
+
+.charts > .year-dates {
+    max-width: 400px;
+    margin-left: 30px;
+}
+
+.loading {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%);
+    z-index: 1200;
 }

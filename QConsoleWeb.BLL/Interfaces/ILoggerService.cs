@@ -23,9 +23,14 @@ namespace QConsoleWeb.BLL.Interfaces
         List<string> GetColumnsList();
         //get count of rows with selected OPERATION type
         int GetCountByOperation(string operation, int period);
+        //get count of rows with selected OPERATION type
+        int GetCountByOperation(string operation, DateTime DateFrom, DateTime DateTo);
         //get count of inserts
         int GetCountInserts(string schema, string layer, int period);
+        //get count of inserts
+        int GetCountInserts(string schema, string layer, DateTime DateFrom, DateTime DateTo);
         //get count of inserts in month
         int GetCountInsertsMonth(string schema, string layer, int month, int year);
+        List<LogRowDTO> GetAllLogByPeriod(DateTime datefrom, DateTime dateto);
     }
 }

@@ -45,21 +45,82 @@ namespace QConsoleWeb.Controllers
 
         public IActionResult Index()
         {
-            //ViewBag.YearStatDataCJ = GetYearStatDataCJ();
             return View();
+        }
+
+        public IActionResult GetOperationsCount(string datefrom, string dateto)
+        {
+            DateTime DateFrom = DateTime.ParseExact(datefrom, "yyyy-MM", System.Globalization.CultureInfo.InvariantCulture);
+            DateTime DateTo = DateTime.ParseExact(dateto, "yyyy-MM", System.Globalization.CultureInfo.InvariantCulture).AddMonths(1);
+
+            var inserts = _loggerService.GetCountByOperation("INSERT", DateFrom, DateTo);
+            var updates = _loggerService.GetCountByOperation("UPDATE", DateFrom, DateTo);
+            var deletes = _loggerService.GetCountByOperation("DELETE", DateFrom, DateTo);
+            string[] labels = new string[3] { "INSERTS", "UPDATES", "DELETES" };
+            int[] dataset = new int[3] { inserts, updates, deletes };
+            string[] colors = new string[3] { "rgb(227, 26, 28, 0.5)", "rgb(31, 120, 180, 0.5)", "rgb(255, 177, 0, 0.5)" };
+
+            ViewBag.StatOperations_labels = JsonConvert.SerializeObject(labels, _jsonSetting);
+            ViewBag.StatOperations_dataset = JsonConvert.SerializeObject(dataset, _jsonSetting);
+            ViewBag.StatOperations_colors = JsonConvert.SerializeObject(colors, _jsonSetting);
+
+            return PartialView();
+        }
+
+        public IActionResult GetInsertsCount(string datefrom, string dateto)
+        {
+            DateTime DateFrom = DateTime.ParseExact(datefrom, "yyyy-MM", System.Globalization.CultureInfo.InvariantCulture);
+            DateTime DateTo = DateTime.ParseExact(dateto, "yyyy-MM", System.Globalization.CultureInfo.InvariantCulture).AddMonths(1);
+
+            var layerList = GetLayers();
+
+            List<string> labels = new List<string>();
+            List<int> dataset = new List<int>();
+            List<string> colors = new List<string>();
+
+            var logList = _loggerService.GetAllLogByPeriod(DateFrom, DateTo)
+                .Where(o => o.Action.ToUpper() == "INSERT");
+
+            int idx = 0;
+            foreach (Layer layer in layerList)
+            {
+                //int count = _loggerService.GetCountInserts(layer.Table_schema, layer.Table_name, DateFrom, DateTo);
+                int count = logList
+                        .Where(o => o.Tablename == layer.Table_name)
+                        .Where(o => o.Tableschema == layer.Table_schema)
+                        .Count();
+                if (count > 0)
+                {
+                    labels.Add($"{layer.Table_schema}.{layer.Table_name} ({count})");
+                    dataset.Add(count);
+
+                    if (idx > ColorValues.Length - 1)
+                        idx = 0;
+                    colors.Add("#"+ColorValues[idx]+"44");
+                    ++idx;
+                }
+            }
+
+            ViewBag.StatInserts_labels = JsonConvert.SerializeObject(labels, _jsonSetting);
+            ViewBag.StatInserts_dataset = JsonConvert.SerializeObject(dataset, _jsonSetting);
+            ViewBag.StatInserts_colors = JsonConvert.SerializeObject(colors, _jsonSetting);
+
+            return PartialView();
         }
 
         public IActionResult GetYearStatDataCJ(string datefrom, string dateto)
         {
             DateTime DateFrom = DateTime.ParseExact(datefrom, "yyyy-MM", System.Globalization.CultureInfo.InvariantCulture);
+            DateTime DateTo = DateTime.ParseExact(dateto, "yyyy-MM", System.Globalization.CultureInfo.InvariantCulture);
+            int period_months = MonthDifference(DateFrom, DateTo);
 
             List<Layer> layerList = GetLayers();
 
             List<Tuple<int, int>>  dateList = new List<Tuple<int, int>>();
             List<string> LabelsYears = new List<string>();
-            for (int i = 11; i >= 0; i--)
+            for (int i = period_months; i >= 0; i--)
             {
-                DateTime date = DateTime.Now.AddMonths(-i);
+                DateTime date = DateTo.AddMonths(-i);
                 int month = date.Month;
                 int year = date.Year;
                 dateList.Add(new Tuple<int, int>(month, year));
@@ -69,15 +130,25 @@ namespace QConsoleWeb.Controllers
                 LabelsYears.Add(dateList[j].Item1 + "." + dateList[j].Item2);
             }
 
+            var logList = _loggerService.GetAllLogByPeriod(DateFrom, DateTo.AddMonths(1))
+                .Where(o => o.Action.ToUpper() == "INSERT");
+
             int idx = 0;
             List<SerieChartJs> datasets = new List<SerieChartJs>();
+
             foreach (Layer layer in layerList)
             {
                 List<int> values = new List<int>();
                 bool isHasData = false;
                 foreach (var date in dateList)
                 {
-                    int count = _loggerService.GetCountInsertsMonth(layer.Table_schema, layer.Table_name, date.Item1, date.Item2);
+                    //int count = _loggerService.GetCountInsertsMonth(layer.Table_schema, layer.Table_name, date.Item1, date.Item2);
+                    int count = logList
+                        .Where(o => o.Tablename == layer.Table_name)
+                        .Where(o => o.Tableschema == layer.Table_schema)
+                        .Where(o => o.Timechange.Year == date.Item2 && o.Timechange.Month == date.Item1)
+                        .Count();
+
                     values.Add(count);
                     if (count > 0)
                         isHasData = true;
@@ -110,6 +181,11 @@ namespace QConsoleWeb.Controllers
             };
             ViewBag.YearStatDataCJ = JsonConvert.SerializeObject(datachartjs, _jsonSetting);
             return PartialView();
+        }
+
+        private int MonthDifference(DateTime lValue, DateTime rValue)
+        {
+            return Math.Abs((lValue.Month - rValue.Month) + 12 * (lValue.Year - rValue.Year));
         }
     }
 }

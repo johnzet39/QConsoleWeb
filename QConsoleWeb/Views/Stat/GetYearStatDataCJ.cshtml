@@ -1,4 +1,4 @@
-﻿<script src="~/lib/Chart.js/Chart.min.js" type="text/javascript"></script>
+﻿
 
 <canvas id="YearChart"> </canvas>
 
@@ -14,7 +14,7 @@
             position: 'right'
         },
         title: {
-            text: 'Количество новых объектов за 12 месяцев',
+            text: 'Количество новых объектов за период',
             display: true
         },
         plugins: {
@@ -35,3 +35,11 @@
         options: options
     });
 </script>
+
+@*<script>
+    $(document).ajaxStart(function () {
+        $("#loading_year").show();
+    }).ajaxStop(function () {
+        $("#loading_year").hide();
+    });
+</script>*@
