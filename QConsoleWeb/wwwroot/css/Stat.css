@@ -29,8 +29,16 @@
 }
 
 .charts > .year-dates {
-    max-width: 400px;
+    /*max-width: 400px;*/
     margin-left: 30px;
+}
+
+.year-dates > #datefrom {
+    min-width: 150px;
+}
+
+.year-dates > #dateto {
+    min-width: 150px;
 }
 
 .loading {

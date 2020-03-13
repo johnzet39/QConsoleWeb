@@ -45,6 +45,7 @@ namespace QConsoleWeb.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.Title = "Статистика";
             return View();
         }
 
@@ -53,10 +54,15 @@ namespace QConsoleWeb.Controllers
             DateTime DateFrom = DateTime.ParseExact(datefrom, "yyyy-MM", System.Globalization.CultureInfo.InvariantCulture);
             DateTime DateTo = DateTime.ParseExact(dateto, "yyyy-MM", System.Globalization.CultureInfo.InvariantCulture).AddMonths(1);
 
-            var inserts = _loggerService.GetCountByOperation("INSERT", DateFrom, DateTo);
-            var updates = _loggerService.GetCountByOperation("UPDATE", DateFrom, DateTo);
-            var deletes = _loggerService.GetCountByOperation("DELETE", DateFrom, DateTo);
-            string[] labels = new string[3] { "INSERTS", "UPDATES", "DELETES" };
+            //var inserts = _loggerService.GetCountByOperation("INSERT", DateFrom, DateTo);
+            //var updates = _loggerService.GetCountByOperation("UPDATE", DateFrom, DateTo);
+            //var deletes = _loggerService.GetCountByOperation("DELETE", DateFrom, DateTo);
+            var logList = _loggerService.GetAllLogByPeriod(DateFrom, DateTo);
+            var inserts = logList.Where(o => o.Action == "INSERT").Count();
+            var updates = logList.Where(o => o.Action == "UPDATE").Count();
+            var deletes = logList.Where(o => o.Action == "DELETE").Count();
+
+            string[] labels = new string[3] { $"INSERTS({inserts})", $"UPDATES({updates})", $"DELETES({deletes})" };
             int[] dataset = new int[3] { inserts, updates, deletes };
             string[] colors = new string[3] { "rgb(227, 26, 28, 0.5)", "rgb(31, 120, 180, 0.5)", "rgb(255, 177, 0, 0.5)" };
 
@@ -96,7 +102,7 @@ namespace QConsoleWeb.Controllers
 
                     if (idx > ColorValues.Length - 1)
                         idx = 0;
-                    colors.Add("#"+ColorValues[idx]+"44");
+                    colors.Add("#"+ColorValues[idx]+"77");
                     ++idx;
                 }
             }

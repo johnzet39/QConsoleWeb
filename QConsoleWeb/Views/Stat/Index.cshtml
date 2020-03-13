@@ -4,9 +4,13 @@
 <div class="charts">
     <div class="year-dates">
         <div class="input-group input-group-sm">
-            <input id="datefrom" type="month" class="form-control form-control-sm" value=@DateTime.Today.AddMonths(-11).ToString("yyyy-MM") aria-label="Default" aria-describedby="inputGroup-sizing-sm">
-            <input id="dateto" type="month" class="form-control form-control-sm" value=@DateTime.Today.ToString("yyyy-MM") aria-label="Default" aria-describedby="inputGroup-sizing-sm">
-            <button id="refresh_year_button" class="btn btn-outline-dark btn-sm"><i class="fa fa-sync-alt" aria-hidden="true"></i></button>
+            <input id="datefrom" type="month" class="form-control form-control-sm" style="min-width: 150px; max-width: 200px"
+                   value=@DateTime.Today.AddMonths(-11).ToString("yyyy-MM") aria-label="Default" aria-describedby="inputGroup-sizing-sm">
+            <input id="dateto" type="month" class="form-control form-control-sm" style="min-width: 150px; max-width: 200px"
+                   value=@DateTime.Today.ToString("yyyy-MM") aria-label="Default" aria-describedby="inputGroup-sizing-sm">
+            <button id="refresh_date_button" class="btn btn-outline-dark btn-sm mr-4" title="Применить"><i class="fa fa-sync-alt" aria-hidden="true"></i></button>
+            <button id="refresh_year_button" class="btn btn-outline-dark btn-sm mr-1">12 месяцев</button>
+            <button id="refresh_cur_year_button" class="btn btn-outline-dark btn-sm">Текущий год</button>
         </div>
     </div>
     <div class="chart-year-container">
@@ -34,10 +38,13 @@
 
 
 <script>
+    refreshCharts();    
 
-    LoadYearData();
-    LoadOperationsData();
-    LoadInsertsData();
+    function refreshCharts() {
+        LoadYearData();
+        LoadOperationsData();
+        LoadInsertsData();
+    }
 
     function GetDates() {
         var datefrom = $('#datefrom').val()
@@ -103,9 +110,22 @@
         });
     }
 
+    $('#refresh_date_button').on('click', function () {
+        refreshCharts();
+    })
+
     $('#refresh_year_button').on('click', function () {
-        LoadYearData();
-        LoadOperationsData();
-        LoadInsertsData();
+        var d = new Date();
+        $('#dateto').val(d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, '0'));
+        d.setMonth(d.getMonth() - 11);
+        $('#datefrom').val(d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, '0'));
+        refreshCharts();
+    })
+
+    $('#refresh_cur_year_button').on('click', function () {
+        var d = new Date();
+        $('#dateto').val(d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, '0'));
+        $('#datefrom').val(d.getFullYear() + '-01');
+        refreshCharts();
     })
 </script>
