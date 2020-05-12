@@ -174,9 +174,10 @@ tr.active {
     padding: 5px;
 }
 
-    /*
-        Grants page
-    */
+/*
+    ###################################
+    Grants page
+*/
 
 .splitter {
     display: flex;
@@ -205,4 +206,20 @@ td.ellipsis-100 {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+
+
+
+/*LOADING INDICATOR*/
+.loading {
+    position: absolute;
+    left: 0%;
+    top: 0%;
+    width: 100%;
+    height: 100%;
+    z-index: 1200;
+    background-image: url("../images/icons/ajax-loader-bar.gif");
+    background-position: center;
+    background-repeat: no-repeat;
 }

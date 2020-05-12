@@ -20,12 +20,14 @@
     position: relative;
     float: right;
     width: 50%;
+    min-height: 300px;
 }
 
 .chart-operations-container {
     position: relative;
     float: left;
     width: 50%;
+    min-height: 300px;
 }
 
 .charts > .year-dates {
@@ -41,10 +43,3 @@
     min-width: 150px;
 }
 
-.loading {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translateX(-50%);
-    z-index: 1200;
-}
