@@ -89,35 +89,35 @@
                 }
                 @foreach (var p in Model.DictsList)
                 {
-                <tr>
-                    <td>@(rowNoD + 1)</td>
-                    <td>@p.Table_schema</td>
-                    <td>@p.Table_name</td>
-                    <td>
-                        <table class="fixed-table">
-                            <tr>
-                                <td>@p.Descript</td>
-                            </tr>
-                        </table>
-                    </td>
-                    <td class="text-center">@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsSelect)</td>
-                    <td class="text-center">@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsUpdate)</td>
-                    <td class="text-center">@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsInsert)</td>
-                    <td class="text-center">@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsDelete)</td>
-                    <td class="ellipsis-100 border-right">@p.ColumnsSelect</td>
-                    <td class="ellipsis-100 border-right">@p.ColumnsUpdate</td>
-                    <td class="ellipsis-100 border-right">@p.ColumnsInsert</td>
-                    <td>
-                        <button data-toggle="ajax-edit-modal" data-target="#grantsColumns"
-                           data-schema=@p.Table_schema data-table=@p.Table_name data-rolename=@ViewBag.Rolename data-url="@Url.Action("EditColumns")"
-                           class="btn btn-outline-secondary btn-sm" style="border: 0">
-                            <i class="fas fa-pen"></i>
-                        </button>
-                    </td>
-                </tr>
-                    @Html.HiddenFor(m => m.LayersList[@rowNoD].Table_schema)
-                    @Html.HiddenFor(m => m.LayersList[@rowNoD].Table_name)
-                    @Html.HiddenFor(m => m.LayersList[@rowNoD].Descript)
+                    <tr>
+                        <td>@(rowNoD + 1)</td>
+                        <td>@p.Table_schema</td>
+                        <td>@p.Table_name</td>
+                        <td>
+                            <table class="fixed-table">
+                                <tr>
+                                    <td>@p.Descript</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td class="text-center">@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsSelect)</td>
+                        <td class="text-center">@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsUpdate)</td>
+                        <td class="text-center">@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsInsert)</td>
+                        <td class="text-center">@Html.CheckBoxFor(m => m.DictsList[@rowNoD].IsDelete)</td>
+                        <td class="ellipsis-100 border-right">@p.ColumnsSelect</td>
+                        <td class="ellipsis-100 border-right">@p.ColumnsUpdate</td>
+                        <td class="ellipsis-100 border-right">@p.ColumnsInsert</td>
+                        <td>
+                            <button data-toggle="ajax-edit-modal" data-target="#grantsColumns"
+                                    data-schema=@p.Table_schema data-table=@p.Table_name data-rolename=@ViewBag.Rolename data-url="@Url.Action("EditColumns")"
+                                    class="btn btn-outline-secondary btn-sm" style="border: 0">
+                                <i class="fas fa-pen"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    @Html.HiddenFor(m => m.DictsList[@rowNoD].Table_schema)
+                    @Html.HiddenFor(m => m.DictsList[@rowNoD].Table_name)
+                    @Html.HiddenFor(m => m.DictsList[@rowNoD].Descript)
                     rowNoD++;
                 }
             </tbody>
