@@ -1,6 +1,8 @@
 ﻿@model LogRowViewModel
+    
 @using QConsoleWeb.Components
 
+    <div id="modal-placeholder"></div>
 
     <form asp-action="Index" asp-controller="LogRow" method="get">
 
@@ -85,7 +87,9 @@
                         {
                             var rowNo = (Model.PagedLogRows.CurrentPage - 1) * Model.PagedLogRows.PageSize + i;
                             i++;
-                            <tr class="ButtonClass" onclick="location.href = '@(Url.Action("LogRowHistory", "LogRow", new { id = @p.Gid }))'">
+                            @*<tr class="ButtonClass" data-toggle="ajax-edit-modal" data-target="#logrowHistory" onclick="location.href = '@(Url.Action("LogRowHistory", "LogRow", new { id = @p.Gid }))'">
+                            *@
+                            <tr class="ButtonClass" data-toggle="ajax-edit-modal" data-target="#logrowHistory" data-id=@p.Gid data-url="@Url.Action("LogRowHistory")">
                                 <td>@rowNo</td>
                                 <td>@p.Gid</td>
                                 <td>@p.Action</td>
@@ -95,7 +99,6 @@
                                 <td>@p.Tableschema</td>
                                 <td>@p.Tablename</td>
                                 <td>@p.Gidnum</td>
-                                @*<td class="text"><span>@p.Context</span></td>*@
                                 <td><table class="fixed-table"><tr><td>@p.Context</td></tr></table></td>
                             </tr>
                         }
@@ -151,5 +154,25 @@
             document.getElementById("SubQueryId").value =
                 document.getElementById("SubQueryId").value + '"' + $(this).prop("title") + '"';
         });
+    });
+</script>
+
+
+<script>
+
+    $(function () {
+        var placeholderElement = $('#modal-placeholder');
+
+        $('tr[data-toggle="ajax-edit-modal"]').click(function (event) {
+            event.preventDefault();
+
+            var url = $(this).data('url');
+            var v_id = $(this).data('id');
+            $.get(url, { id: v_id }).done(function (data) {
+                $('#modal-placeholder').html(data);
+                $('#modal-placeholder > .modal').modal('show');
+            });
+        });
+
     });
 </script>

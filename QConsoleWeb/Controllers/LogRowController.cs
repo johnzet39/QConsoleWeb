@@ -60,7 +60,7 @@ namespace QConsoleWeb.Controllers
             return View(model);
         }
 
-        public ViewResult LogRowHistory(string id)
+        public IActionResult LogRowHistory(string id)
         {
             LogRowViewModel model = new LogRowViewModel();
             ViewBag.Title = "История изменений";
@@ -71,7 +71,8 @@ namespace QConsoleWeb.Controllers
             hismodel.HitoriedLogRows = logrows
                                         .Where(h => h.Gidnum == cur.Gidnum && h.Gid != cur.Gid)
                                         .Where(h => h.Tableschema == cur.Tableschema && h.Tablename == cur.Tablename);
-            return View(hismodel);
+            //return View(hismodel);
+            return PartialView(hismodel);
         }
 
 
