@@ -119,13 +119,13 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
 	end as columns_update
 from
 (select
-	  a.schemaname,a.tablename,b.groname,
-	  HAS_TABLE_PRIVILEGE(b.groname,a.schemaname||'.'||a.tablename, 'select') as isselect,
-	  HAS_TABLE_PRIVILEGE(b.groname,a.schemaname||'.'||a.tablename, 'insert') as isinsert,
-	  HAS_TABLE_PRIVILEGE(b.groname,a.schemaname||'.'||a.tablename, 'update') as isupdate,
-	  HAS_TABLE_PRIVILEGE(b.groname,a.schemaname||'.'||a.tablename, 'delete') as isdelete
-	  from pg_tables a , pg_group b 
-	where a.tablename='{1}' and a.schemaname='{0}') sub", schemaname, tablename);
+	  a.table_schema as schemaname,a.table_name as tablename,b.groname,
+	  HAS_TABLE_PRIVILEGE(b.groname,a.table_schema||'.'||a.table_name, 'select') as isselect,
+	  HAS_TABLE_PRIVILEGE(b.groname,a.table_schema||'.'||a.table_name, 'insert') as isinsert,
+	  HAS_TABLE_PRIVILEGE(b.groname,a.table_schema||'.'||a.table_name, 'update') as isupdate,
+	  HAS_TABLE_PRIVILEGE(b.groname,a.table_schema||'.'||a.table_name, 'delete') as isdelete
+	  from information_schema.tables a , pg_group b 
+	where a.table_name='{1}' and a.table_schema='{0}') sub", schemaname, tablename);
             return GetListOfLayerGrants(sql_query);
         }
 
