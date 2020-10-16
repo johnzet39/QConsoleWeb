@@ -62,15 +62,13 @@ namespace QConsoleWeb.Controllers
             var layers = new List<Grant>();
             if (model.LayersList != null)
                 layers = model.LayersList.OrderBy(r => r.Table_schema).ThenBy(r => r.Table_name).ToList();
-            var layerGranters = CompareGrants(old_layers, layers, out bool selChanged, out bool updChanged,
-                                                        out bool insChanged, out bool delChanged);
+            var layerGranters = CompareGrants(old_layers, layers);
 
 
             var dicts = new List<Grant>();
             if (model.DictsList != null)
                 dicts = model.DictsList.OrderBy(r => r.Table_schema).ThenBy(r => r.Table_name).ToList();
-            var dictGranters = CompareGrants(old_dicts, dicts, out bool dict_selChanged, out bool dict_updChanged,
-                                                        out bool dict_insChanged, out bool dict_delChanged);
+            var dictGranters = CompareGrants(old_dicts, dicts);
 
             try
             {
@@ -79,14 +77,14 @@ namespace QConsoleWeb.Controllers
                     foreach (var gran in layerGranters)
                         _service.GrantTableToRole(gran.TableSchema, gran.TableName, rolename,
                             gran.IsSelect, gran.IsUpdate, gran.IsInsert, gran.IsDelete,
-                            selChanged, updChanged, insChanged, delChanged);
+                            gran.selChanged, gran.updChanged, gran.insChanged, gran.delChanged);
                 }
                 if (dictGranters?.Count() > 0)
                 {
                     foreach (var gran in dictGranters)
                         _service.GrantTableToRole(gran.TableSchema, gran.TableName, rolename,
                             gran.IsSelect, gran.IsUpdate, gran.IsInsert, gran.IsDelete,
-                            dict_selChanged, dict_updChanged, dict_insChanged, dict_delChanged);
+                            gran.selChanged, gran.updChanged, gran.insChanged, gran.delChanged);
                 }
                 if (layerGranters?.Count() > 0 || dictGranters?.Count() > 0)
                     TempData["message"] = $"Сохранено.";
@@ -99,26 +97,28 @@ namespace QConsoleWeb.Controllers
             return RedirectToAction("Index");
         }
 
-        private List<Granter> CompareGrants(List<Grant> old_layers, List<Grant> layers, 
-                                            out bool selChanged, out bool updChanged, out bool insChanged, out bool delChanged)
+        private List<Granter> CompareGrants(List<Grant> old_layers, List<Grant> layers)
         {
-            selChanged = false;
-            updChanged = false;
-            insChanged = false;
-            delChanged = false;
-
             List<Granter> granters = new List<Granter>();
             for (int i = 0; i < layers.Count(); i++)
             {
+                var layer = layers[i];
+                var oldlayer = old_layers[i];
+
                 bool hasChanges = false;
 
-                if (layers[i].IsSelect != old_layers[i].IsSelect)
+                bool selChanged = false;
+                bool updChanged = false;
+                bool insChanged = false;
+                bool delChanged = false;
+
+                if (layer.IsSelect != oldlayer.IsSelect)
                     selChanged = true;
-                if (layers[i].IsUpdate != old_layers[i].IsUpdate)
+                if (layer.IsUpdate != oldlayer.IsUpdate)
                     updChanged = true;
-                if (layers[i].IsInsert != old_layers[i].IsInsert)
+                if (layer.IsInsert != oldlayer.IsInsert)
                     insChanged = true;
-                if (layers[i].IsDelete != old_layers[i].IsDelete)
+                if (layer.IsDelete != oldlayer.IsDelete)
                     delChanged = true;
 
                 if (selChanged || updChanged || insChanged || delChanged)
@@ -128,19 +128,17 @@ namespace QConsoleWeb.Controllers
                 {
                     Granter granter = new Granter
                     {
-                        TableSchema = old_layers[i].Table_schema,
-                        TableName = old_layers[i].Table_name,
+                        TableSchema = oldlayer.Table_schema,
+                        TableName = oldlayer.Table_name,
+                        IsSelect = layer.IsSelect,
+                        IsUpdate = layer.IsUpdate,
+                        IsInsert = layer.IsInsert,
+                        IsDelete = layer.IsDelete,
+                        selChanged = selChanged,
+                        updChanged = updChanged,
+                        insChanged = insChanged,
+                        delChanged = delChanged
                     };
-
-                    if (layers[i].IsSelect)
-                        granter.IsSelect = true;
-                    if (layers[i].IsUpdate)
-                        granter.IsUpdate = true;
-                    if (layers[i].IsInsert)
-                        granter.IsInsert = true;
-                    if (layers[i].IsDelete)
-                        granter.IsDelete = true;
-
                     granters.Add(granter);
                 }
             }
@@ -169,11 +167,9 @@ namespace QConsoleWeb.Controllers
                                 .OrderBy(r => r.Column_name).ToList();
             var columns = model.Columns.OrderBy(r => r.Column_name).ToList();
 
-            var columnGranters = CompareColumnsGrants(old_columns, columns, 
-                                                      out bool selChanged, out bool updChanged, 
-                                                      out bool insChanged);
+            CompareColumnsGrants(old_columns, columns, out bool selChanged, out bool updChanged, out bool insChanged);
 
-            if (columnGranters?.Count() > 0)
+            if (selChanged || updChanged || insChanged)
             {
                 try
                 {
@@ -181,14 +177,14 @@ namespace QConsoleWeb.Controllers
                     List<string> updateList = new List<string>();
                     List<string> insertList = new List<string>();
 
-                    foreach (var gran in columnGranters)
+                    foreach (var column in columns)
                     {
-                        if (gran.IsSelect)
-                            selectList.Add(gran.ColumnName);
-                        if (gran.IsUpdate)
-                            updateList.Add(gran.ColumnName);
-                        if (gran.IsInsert)
-                            insertList.Add(gran.ColumnName);
+                        if (column.IsSelect)
+                            selectList.Add(column.Column_name);
+                        if (column.IsUpdate)
+                            updateList.Add(column.Column_name);
+                        if (column.IsInsert)
+                            insertList.Add(column.Column_name);
                     }
                     _service.GrantColumnsToRole(model.SchemaName, model.TableName, model.Rolename, 
                                                 selectList, updateList, insertList,
@@ -211,51 +207,40 @@ namespace QConsoleWeb.Controllers
             return Json(new { ok = true });
         }
 
-        private List<ColumnGranter> CompareColumnsGrants(List<GrantColumn> old_columns, List<GrantColumn> columns, 
-                                                        out bool selChanged, out bool updChanged, out bool insChanged)
+        private void CompareColumnsGrants(List<GrantColumn> old_columns, List<GrantColumn> columns,
+                                                         out bool selChanged, out bool updChanged, out bool insChanged)
         {
             selChanged = false;
             updChanged = false;
             insChanged = false;
 
-            bool hasChanges = false;
             List<ColumnGranter> granters = new List<ColumnGranter>();
             for (int i = 0; i < columns.Count(); i++)
             {
-                if (columns[i].IsSelect != old_columns[i].IsSelect)
+                var column = columns[i];
+                var oldcolumn = old_columns[i];
+
+                if (column.IsSelect != oldcolumn.IsSelect)
                     selChanged = true;
-                if (columns[i].IsUpdate != old_columns[i].IsUpdate)
+                if (column.IsUpdate != oldcolumn.IsUpdate)
                     updChanged = true;
-                if (columns[i].IsInsert != old_columns[i].IsInsert)
+                if (column.IsInsert != oldcolumn.IsInsert)
                     insChanged = true;
 
-                if (selChanged || updChanged || insChanged)
-                {
-                    hasChanges = true;
-                    break;
-                }
+                //if (hasChanges)
+                //{
+                //    ColumnGranter columnGranter = new ColumnGranter
+                //    {
+                //        ColumnName = column.Column_name,
+                //        IsSelect = column.IsSelect,
+                //        IsUpdate = column.IsUpdate,
+                //        IsInsert = column.IsInsert
+                //    };
+                //    granters.Add(columnGranter);
+
+                //}
             }
-
-            if (hasChanges)
-            {
-                for (int i = 0; i < columns.Count(); i++)
-                {
-                    ColumnGranter columnGranter = new ColumnGranter
-                    {
-                        ColumnName = columns[i].Column_name
-                    };
-
-                    if (columns[i].IsSelect)
-                        columnGranter.IsSelect = true;
-                    if (columns[i].IsUpdate)
-                        columnGranter.IsUpdate = true;
-                    if (columns[i].IsInsert)
-                        columnGranter.IsInsert = true;
-
-                    granters.Add(columnGranter);
-                }
-            }
-            return granters;
+            return;
         }
 
         private IEnumerable<User> GetUsers(string userid)
@@ -297,6 +282,10 @@ namespace QConsoleWeb.Controllers
         public bool IsUpdate { get; set; }
         public bool IsInsert { get; set; }
         public bool IsDelete { get; set; }
+        public bool selChanged { get; set; }
+        public bool updChanged { get; set; }
+        public bool insChanged { get; set; }
+        public bool delChanged { get; set; }
     }
 
     public class ColumnGranter
@@ -305,5 +294,8 @@ namespace QConsoleWeb.Controllers
         public bool IsSelect { get; set; }
         public bool IsUpdate { get; set; }
         public bool IsInsert { get; set; }
+        //public bool selChanged { get; set; }
+        //public bool updChanged { get; set; }
+        //public bool insChanged { get; set; }
     }
 }
