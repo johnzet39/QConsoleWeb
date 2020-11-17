@@ -30,27 +30,42 @@ namespace QConsoleWeb.Controllers
         public ViewResult Index()
         {
             ViewBag.Title = "Список пользователей";
-            var users = GetUsers();
+            return View();
+        }
 
-            return View(users);
+        public IActionResult GetUsersListPartial()
+        {
+            var users = GetUsers();
+            return PartialView("UsersListPartial", users);
         }
 
         [HttpGet]
-        public ViewResult EditUser(string id)
+        public IActionResult EditUser(string id)
         {
             UserViewModel model = new UserViewModel();
             User current = GetUsers()
                     .First(p => p.Usesysid == id);
-            model.CurrentUser = current;
-            model.AssignedRoles = GetAssignedRoles(current.Usesysid);
-            model.Roles = GetUsers().Where(m => m.Isrole && m.Usesysid != id);
+            if (current != null)
+            {
+                model.CurrentUser = current;
+                model.AssignedRoles = GetAssignedRoles(current.Usesysid).ToList();
+                model.Roles = GetUsers().Where(m => m.Isrole && m.Usesysid != id).ToList();
+                foreach (var r in model.Roles)
+                {
+                    if (model.AssignedRoles.Exists(o => o.Usename == r.Usename))
+                    {
+                        r.IsSelected = true;
+                    }
+                }
 
-            ViewBag.Title = "Редактирование пользователя";
-            return View(model);
+                ViewBag.Title = "Редактирование пользователя";
+                return PartialView(model);
+            }
+            return null;
         }
 
         [HttpPost]
-        public IActionResult EditUser(UserViewModel model, List<string> ischeckedlist)
+        public IActionResult EditUser(UserViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -63,38 +78,30 @@ namespace QConsoleWeb.Controllers
                 try
                 {
                     _service.EditUserOrRole(model.CurrentUser.Usename, model.CurrentUser.Password, descript);
-                    AcceptPrivilegies(model.CurrentUser, ischeckedlist);
-
-                    TempData["message"] = $"{model.CurrentUser.Usename} сохранен.";
+                    AcceptPrivilegies(model.CurrentUser, model.Roles);
                 }
                 catch (Exception e)
                 {
-                    TempData["error"] = $"Warning: {e.Message}";
+                    ModelState.AddModelError("", e.Message);
                 }
-                return RedirectToAction("Index");
             }
-            else
-            {
-                model.AssignedRoles = GetAssignedRoles(model.CurrentUser.Usesysid);
-                model.Roles = GetUsers().Where(m => m.Isrole && m.Usesysid != model.CurrentUser.Usesysid);
-                ViewBag.Title = "Редактирование пользователя";
-                return View(model);
-            }
+            ViewBag.Title = "Редактирование пользователя";
+            return PartialView(model);
         }
 
         public IActionResult CreateUser()
         {
             UserViewModel model = new UserViewModel()
             {
-                Roles = GetUsers().Where(m => m.Isrole)
+                Roles = GetUsers().Where(m => m.Isrole).ToList()
             };
             ViewBag.MethodDefault = _config.GetSection("AppSettings:UserTab:Pg_hba:method_default").Get<string>();
             ViewBag.Title = "Создание пользователя";
-            return View(model);
+            return PartialView(model);
         }
 
         [HttpPost]
-        public ActionResult CreateUser(UserViewModel model, List<string> ischeckedlist)
+        public IActionResult CreateUser(UserViewModel model)
         {
             if (model.CurrentUser.Isrole == false && string.IsNullOrEmpty(model.CurrentUser.Password))
             {
@@ -108,11 +115,11 @@ namespace QConsoleWeb.Controllers
                 {
                     string message = string.Empty;
                     _service.CreateUserOrRole(model.CurrentUser.Usename, model.CurrentUser.Password, model.CurrentUser.Descript);
-                    TempData["message"] = $"{model.CurrentUser.Usename} добавлен.";
+                    //TempData["message"] = $"{model.CurrentUser.Usename} добавлен.";
                     try
                     {
                         message = message + $"Присвоение привилегий: ";
-                        AcceptPrivilegies(model.CurrentUser.Usename, ischeckedlist);
+                        AcceptPrivilegies(model.CurrentUser.Usename, model.Roles);
                         message = message + $"ОК. " + Environment.NewLine;
                         if (model.ToPgHba) {
                             message = message + $" Создание записи в pg_hba: ";
@@ -122,22 +129,23 @@ namespace QConsoleWeb.Controllers
                     }
                     catch (Exception e)
                     {
-                        TempData["error"] = message + $" Warning: {e.Message}";
+                        ModelState.AddModelError("", e.Message);
+
                     }  
                 }
                 catch (Exception e)
                 {
-                    TempData["error"] = $"Warning: {e.Message}";
+                    ModelState.AddModelError("", e.Message);
                 }
-                return RedirectToAction("Index");
             }
             ViewBag.MethodDefault = _config.GetSection("AppSettings:UserTab:Pg_hba:method_default").Get<string>();
-            model.Roles = GetUsers().Where(m => m.Isrole);
-            return View(model);
+            return PartialView(model);
         }
 
-        private void AcceptPrivilegies(User curUser, List<string> ischeckedList)
+        //private void AcceptPrivilegies(User curUser, List<string> ischeckedList)
+        private void AcceptPrivilegies(User curUser, List<User> ischeckedRoles)
         {
+            var ischeckedList = ischeckedRoles.Where(p => p.IsSelected).Select(o => o.Usename).ToList();
             var assignedList = GetAssignedRoles(curUser.Usesysid).Select(o => o.Usename).ToList();
             ischeckedList.RemoveAll(o => o == "false");
 
@@ -150,9 +158,9 @@ namespace QConsoleWeb.Controllers
                 _service.RevokeRole(curUser.Usename, revokeRole);
         }
 
-        private void AcceptPrivilegies(string newUserName, List<string> ischeckedList)
+        private void AcceptPrivilegies(string newUserName, List<User> ischeckedRoles)
         {
-            ischeckedList.RemoveAll(o => o == "false");
+            List<string> ischeckedList = ischeckedRoles.Where(p => p.IsSelected).Select(o => o.Usename).ToList();
             foreach (string rolestring in ischeckedList)
                 _service.GrantRole(newUserName, rolestring);
         }
@@ -216,17 +224,22 @@ namespace QConsoleWeb.Controllers
         public IActionResult DeleteUser(string id)
         {
             User user = GetUsers().FirstOrDefault(p => p.Usesysid == id);
-            try
+            if (user != null)
             {
-                _service.RemoveRoleOrUser(user.Usename);
-                TempData["message"] = $"Пользователь {user.Usename} был удален.";
-                return Json(new { ok = true, newurl = Url.Action("Index") });
+                try
+                {
+                    _service.RemoveRoleOrUser(user.Usename);
+                    //TempData["message"] = $"Пользователь {user.Usename} был удален.";
+                    //return Json(new { ok = true, newurl = Url.Action("Index") });
+                    return Json(new { ok = true });
+                }
+                catch (Exception e)
+                {
+                    //TempData["error"] = $"Пользователь {user.Usename} не был удален. {e.Message}";
+                    return Json(new { ok = false, message = e.Message });
+                }
             }
-            catch (Exception e)
-            {
-                //TempData["error"] = $"Пользователь {user.Usename} не был удален. {e.Message}";
-                return Json(new { ok = false, message = e.Message });
-            }
+            return null;
         }
 
         private IEnumerable<User> GetAvailableRoles(string oid)
@@ -247,7 +260,7 @@ namespace QConsoleWeb.Controllers
             return mapper.Map<IEnumerable<UserDTO>, List<User>>(_service.GetUsers());
         }
 
-        public ViewResult EditPgHba()
+        public IActionResult EditPgHba()
         {
             var pgHbas = _config.GetSection("AppSettings:UserTab:Pg_hba:pg_hbaPaths").Get<List<string>>();
             UserPgHbaViewModel model = new UserPgHbaViewModel();
@@ -271,12 +284,13 @@ namespace QConsoleWeb.Controllers
             catch (Exception e)
             {
                 pghbaText = e.Message;
+                ModelState.AddModelError("", e.Message);
             }
             
             model.PgHbaContext = pghbaText;
             model.FileDate = fileDate;
 
-            return View(model);
+            return PartialView(model);
         }
 
         [HttpPost]
@@ -302,14 +316,26 @@ namespace QConsoleWeb.Controllers
                 catch (Exception e)
                 {
                    errors += $"Не удалось сохранить файл конфигурации {pghba}. ({e.Message}).\n";
+                   
                 }
             }
 
             if (errors.Length > 0)
-                TempData["error"] = errors;
+            {
+                ModelState.AddModelError("", errors);
+            }
 
+            string fileDate = string.Empty;
+            try
+            {
+                fileDate = GetFileDate(pgHbas[0]);
+            }
+            catch
+            {
+            }
+            model.FileDate = fileDate;
 
-            return RedirectToAction("Index");
+            return PartialView(model);
         }
 
         private string GetFileDate(string filePath)

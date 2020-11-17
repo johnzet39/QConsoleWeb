@@ -10,8 +10,8 @@ namespace QConsoleWeb.Views.ViewModels
 {
     public class UserViewModel
     {
-        public IEnumerable<User> AssignedRoles { get; set; }
-        public IEnumerable<User> Roles { get; set; }
+        public List<User> AssignedRoles { get; set; }
+        public List<User> Roles { get; set; }
         public User CurrentUser { get; set; }
 
         [Display(Name = "Ip-адрес пользователя")]

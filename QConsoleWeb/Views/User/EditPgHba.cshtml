@@ -1,27 +1,38 @@
 ﻿@model UserPgHbaViewModel
+<!-- Modal -->
+<div class="modal fade" id="hbaEdit" tabindex="-1" role="dialog" aria-labelledby="hbaEdit" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="hbaEdit">Редактирование pg_hba</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
 
-<h4>pg_hba</h4>
+                @if (Model.FileDate.Length > 0)
+                {
+                    <p class="mb-2">Последние изменения: @Model.FileDate</p>
+                }
 
-@if (Model.FileDate.Length > 0)
-{
-    <p>Последние изменения: @Model.FileDate</p>
-}
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <form asp-action="EditPgHba" method="post">
+                    <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
 
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-<form asp-action="EditPgHba" method="post">
-    <div class="text-center m-2">
-        <button class="btn btn-primary btn-sm" type="submit" >Сохранить</button>
-        <a asp-action="Index" class="btn btn-secondary btn-sm">Отмена</a>
+                    <div class="form-group">
+                        @*<textarea class="form-control rounded-0" style="font-size: 0.825rem" asp-for=@Model.PgHbaContext rows=@Model.PgHbaContext.ToString().Split('\n').Length>  </textarea>*@
+                        <textarea class="form-control rounded-0" style="font-size: 0.825rem; height: 70vh" asp-for=@Model.PgHbaContext >  </textarea>
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" data-savehba="modal">Сохранить</button>
+            </div>
+        </div>
     </div>
-
-    <div class="form-group">
-        <textarea class="form-control rounded-0" style="font-size: 0.825rem" asp-for=@Model.PgHbaContext rows=@Model.PgHbaContext.ToString().Split('\n').Length>  </textarea>
-    </div>
-
-    <div class="text-center m2">
-        <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
-        <a asp-action="Index" class="btn btn-secondary btn-sm">Отмена</a>
-    </div>
-</form>
+</div>
 
 @*rows=@Model.PgHbaContext.ToString().Split('\n').Length*@

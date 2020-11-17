@@ -35,7 +35,13 @@ table.table-sm td{
 tr.active {
     background-color: #d4d3d3;
 }
-
+td.td-main {
+    font-weight: 500;
+    color: #005ee0;
+    padding-left: 5px!important;
+}
+    
+    
 /*
     Users table yellow row
     if role is group
@@ -49,6 +55,16 @@ tr.active {
 .redrow {
     background-color: #fff1f1;
 }
+.sticky {
+    position: sticky;
+    top: 40px;
+    z-index: 2;
+}
+    .sticky.scrolled {
+        background: linear-gradient(180deg, rgba(255,255,255,0.75) 90%, rgba(255,255,255,0) 100%);
+    }
+
+
 /*
     Context
 */
@@ -157,6 +173,7 @@ tr.active {
 
     .validation-summary-errors {
         color: #b94a48;
+        padding: 16px;
     }
 
     .validation-summary-valid {

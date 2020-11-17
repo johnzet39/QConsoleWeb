@@ -1,0 +1,93 @@
+﻿@model IEnumerable<User>
+<div class="table-responsive">
+    <table id="usersTable" class="table table-sm table-hover text-nowrap">
+        <thead class="thead-dark">
+            <tr>
+                <th>#</th>
+                <th>Имя</th>
+                <th>
+                    <table class="fixed-table">
+                        <tr>
+                            <td>Описание</td>
+                        </tr>
+                    </table>
+                </th>
+                <th>Админ</th>
+                <th>Группа</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int rowNumber = 0;}
+            @foreach (var p in Model)
+            {
+                <tr class="ButtonClass" data-toggle="ajax-edit-modal" data-target="#userEdit" data-id=@p.Usesysid data-url="@Url.Action("EditUser")">
+                    <td>@(rowNumber += 1)</td>
+                    <td class="td-main">@p.Usename</td>
+                    <td>
+                        <table class="fixed-table">
+                            <tr>
+                                <td>@p.Descript</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>@p.Usesuper</td>
+                    <td class="isrole">@p.Isrole</td>
+                    <td>
+                        <div>
+                            <button class="btn btn-outline-secondary btn-sm" style="border: 0" data-toggle="ajax-delete-modal" data-target="#deleteUser" data-username=@p.Usename data-userid=@p.Usesysid data-url="@Url.Action("DeleteUser")">
+                                <i class="fas fa-trash"></i>
+                            </button>
+
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $('#usersTable tr').each(function () {
+
+        var isFlagged = $(this).find(".isrole").html();
+        if (isFlagged == 'True') {
+            $(this).addClass('yellowrow');
+        }
+        $(this).find('td:contains("True")').html("<i class='fa fa-check' aria-hidden='true' style='color: green;'></i>").addClass("text-center");
+        $(this).find('td:contains("False")').html("<i class='fa fa-times' aria-hidden='true' style='color: #cccccc;'></i>").addClass("text-center");
+    });
+</script>
+
+<script>
+    $(function () {
+        //var placeholderElement = $('#modal-placeholder');
+        $('tr[data-toggle="ajax-edit-modal"]').click(function (event) {
+            event.preventDefault();
+            var url = $(this).data('url');
+            var v_id = $(this).data('id');
+            $.get(url, { id: v_id }).done(function (data) {
+                $('#modal-placeholder').html(data);
+                $('#modal-placeholder > .modal').modal('show');
+            });
+        });
+
+    });
+</script>
+
+<script>
+    var placeholderElement = $('#modal-placeholder');
+
+    $('button[data-toggle="ajax-delete-modal"]').click(function (event) {
+        event.preventDefault();
+
+        var url = $(this).data('url');
+        var userid = $(this).data('userid');
+        var username = $(this).data('username');
+        $.get(url, { id: userid, name: username }).done(function (data) {
+            $('#modal-placeholder').html(data);
+            $('#modal-placeholder > .modal').modal('show');
+        });
+        event.stopPropagation();
+    });
+</script>

@@ -1,7 +1,7 @@
 ﻿@model Dictionary<string, string>
 <!-- Modal -->
 <div class="modal fade" id="deleteUser" tabindex="-1" role="dialog" aria-labelledby="deleteUserLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="deleteUserLabel">Удаление пользователя</h5>
@@ -12,7 +12,7 @@
             <div class="modal-body">
                 <form asp-action="DeleteUser">
                     <div>
-                        Удалить пользователя @Model["username"]?
+                        Удалить пользователя <b>@Model["username"]</b>?
                     </div>
                     <input type="hidden" name="id" value=@Model["userid"] />
                 </form>
@@ -20,7 +20,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-primary" data-save="modal">Удалить</button>
+                <button type="button" class="btn btn-danger" data-delete="modal">Удалить</button>
             </div>
         </div>
     </div>

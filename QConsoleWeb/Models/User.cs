@@ -10,7 +10,7 @@ namespace QConsoleWeb.Models
     public class User
     {
         [Required(ErrorMessage = "Введите имя пользователя/роли")]
-        [Display(Name = "Имя пользователя/роли")]
+        [Display(Name = "Имя роли")]
         public string Usename { get; set; }
 
         [Display(Name = "Описание")]
@@ -31,5 +31,6 @@ namespace QConsoleWeb.Models
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage ="Пароли не совпадают")]
         public string ConfirmPassword { get; set; }
+        public bool IsSelected { get; set; }
     }
 }

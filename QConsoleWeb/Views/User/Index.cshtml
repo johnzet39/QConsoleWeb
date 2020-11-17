@@ -1,121 +1,152 @@
-﻿@model IEnumerable<User>
-@*Modal placeholder*@
+﻿@*Modal placeholder*@
 <div id="modal-placeholder"></div>
 
 <div class="card-header">
     <h5>Список пользователей</h5>
 </div>
 
-<div class="mb-2 mt-2">
-    <a asp-action="CreateUser" asp-controller="User" class="btn btn-sm btn-outline-primary">
-        <span style="color:green"><i class="fas fa-plus"></i></span>
-        Новый пользователь
-    </a>
-    <a asp-action="EditPgHba" asp-controller="User" class="btn btn-sm btn-outline-secondary">
-        <span><i class="fas fa-list"></i></span>
-        pg_hba
-    </a>
+<div class="pb-2 pt-2 sticky">
+    <button data-url="@Url.Action("CreateUser")" data-toggle="ajax-create-modal" data-target="#userCreate" class="btn btn-sm btn-light btn-outline-primary">
+        <span style="color:#00c747"><i class="fas fa-plus"></i></span>
+        Создать
+    </button>
+    @*<a asp-action="EditPgHba" asp-controller="User" class="btn btn-sm btn-outline-secondary">*@
+     <button data-url="@Url.Action("EditPgHba")" data-toggle="ajax-hba-modal" data-target="#hbaEdit" class="btn btn-sm btn-light btn-outline-primary">
+            <span><i class="fas fa-list"></i></span>
+            pg_hba
+        </button>
 </div>
 
-<div class="table-responsive">
-    <table id="usersTable" class="table table-sm table-hover text-nowrap">
-        <thead class="thead-dark">
-            <tr>
-                <th>#</th>
-                <th>Имя</th>
-                <th>
-                    <table class="fixed-table">
-                        <tr>
-                            <td>Описание</td>
-                        </tr>
-                    </table>
-                </th>
-                <th>Админ</th>
-                <th>Группа</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @{ int rowNumber = 0;}
-            @foreach (var p in Model)
-            {
-                <tr>
-                    <td>@(rowNumber += 1)</td>
-                    <td><a asp-action="EditUser" asp-controller="User" asp-route-id=@p.Usesysid>@p.Usename</a></td>
-                    <td>
-                        <table class="fixed-table">
-                            <tr>
-                                <td>@p.Descript</td>
-                            </tr>
-                        </table>
-                    </td>
-                    <td>@p.Usesuper</td>
-                    <td class="isrole">@p.Isrole</td>
-                    <td>
-                        <div>
-                            @*<a class="btn btn-info delete"
-                               data-id="@p.Usesysid"
-                               data-controller="User"
-                               data-action="DeleteUser"
-                               data-body-message="Are you sure to delete?"
-                               data-redirect-url="User/Index">
-                                Modal
-                            </a>
-                            |*@
-                            @*<a asp-action="DeleteUser" asp-controller="User" asp-route-id=@p.Usesysid class="btn-outline-secondary btn-sm" onclick="return confirm('Подтвердите удаление');">
-                                <i class="fas fa-trash"></i>
-                            </a>*@
-                            <button class="btn btn-outline-secondary btn-sm" style="border: 0" data-toggle="ajax-delete-modal" data-target="#deleteUser" data-username=@p.Usename data-userid=@p.Usesysid data-url="@Url.Action("DeleteUser")">
-                                <i class="fas fa-trash"></i>
-                            </button>
-
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<div style="position:relative;">
+    <div id="userslist">
+    </div>
 </div>
-
-
-@*<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Warning</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body delete-modal-body">
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel-delete">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="confirm-delete">Delete</button>
-                </div>
-            </div>
-        </div>
-    </div>*@
-
-@*<script src="~/js/delete.js"></script>*@
 
 <script>
-    $('#usersTable tr').each(function () {
-
-        var isFlagged = $(this).find(".isrole").html();
-        if (isFlagged == 'True') {
-            $(this).addClass('yellowrow');
+    $(window).on('scroll', function () {
+        if ($(window).scrollTop() > 50) {
+            $('.sticky').addClass('scrolled');
+        } else {
+            $('.sticky').removeClass('scrolled');
         }
-        $(this).find('td:contains("True")').html("<i class='fa fa-check' aria-hidden='true' style='color: green;'></i>").addClass("text-center");
-        $(this).find('td:contains("False")').html("<i class='fa fa-times' aria-hidden='true' style='color: #cccccc;'></i>").addClass("text-center");
+    });
+</script>
+
+
+<script>
+    function loadUsers() {
+        $.ajax(
+            {
+                type: "GET",
+                url: 'User/GetUsersListPartial',
+                //beforeSend: function () { $("#loading_users").show(); },
+                //complete: function () { $("#loading_users").hide(); },
+                success: function (returndata) {
+                    $('#userslist').html(returndata);
+                },
+            });
+    };
+    loadUsers();
+</script>
+
+<script>
+    $(function () {
+        $('button[data-toggle="ajax-create-modal"]').click(function (event) {
+            event.preventDefault();
+            var url = $(this).data('url');
+            $.get(url, { }).done(function (data) {
+                $('#modal-placeholder').html(data);
+                $('#modal-placeholder > .modal').modal('show');
+            });
+        });
+
     });
 </script>
 
 <script>
-    //$('td:contains("True")').html("<i class='fa fa-check' aria-hidden='true' style='color: green;'></i>").addClass("text-center");
-    //$('td:contains("False")').html("<i class='fa fa-times' aria-hidden='true' style='color: #cccccc;'></i>").addClass("text-center");
+    $(function () {
+        $('button[data-toggle="ajax-hba-modal"]').click(function (event) {
+            event.preventDefault();
+            var url = $(this).data('url');
+            $.get(url, {}).done(function (data) {
+                $('#modal-placeholder').html(data);
+                $('#modal-placeholder > .modal').modal('show');
+            });
+        });
+
+    });
 </script>
 
-<script src="~/js/deleteUserPartial.js"></script>
+<script type="text/javascript">
+    var placeholderElement = $('#modal-placeholder');
+    placeholderElement.on('click', '[data-savehba="modal"]', function (event) {
+        event.preventDefault();
+
+        var form = $(this).parents('.modal').find('form');
+        var actionUrl = form.attr('action');
+        var dataToSend = form.serialize();
+
+        $.post(actionUrl, dataToSend).done(function (data) {
+            var newBody = $('.modal-body', data);
+            placeholderElement.find('.modal-body').replaceWith(newBody);
+
+            var isValid = newBody.find('[name="IsValid"]').val() == 'True';
+            if (isValid) {
+                placeholderElement.find('.modal').modal('hide');
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    var placeholderElement = $('#modal-placeholder');
+    placeholderElement.on('click', '[data-saveedits="modal"]', function (event) {
+        event.preventDefault();
+
+        var form = $(this).parents('.modal').find('form');
+        var actionUrl = form.attr('action');
+        var dataToSend = form.serialize();
+
+        $.post(actionUrl, dataToSend).done(function (data) {
+            var newBody = $('.modal-body', data);
+            placeholderElement.find('.modal-body').replaceWith(newBody);
+
+            var isValid = newBody.find('[name="IsValid"]').val() == 'True';
+            if (isValid) {
+                placeholderElement.find('.modal').modal('hide');
+                loadUsers();
+            }
+        });
+    });
+</script>
+
+<script>
+    placeholderElement.on('click', '[data-delete="modal"]', function (event) {
+        event.preventDefault();
+
+        var form = $(this).parents('.modal').find('form');
+        var actionUrl = form.attr('action');
+        var userid = $('#userid').val();
+        var dataToSend = form.serialize();
+
+        $.post(actionUrl, dataToSend).done(function (returndata) {
+            if (returndata.ok) {
+                var newBody = $('.modal-body', returndata);
+                placeholderElement.find('.modal-body').replaceWith(newBody);
+
+                placeholderElement.find('.modal').modal('hide');
+                //window.location = returndata.newurl
+                loadUsers();
+            }
+            else {
+                var modal_body = placeholderElement.find('.modal-body');
+                modal_body.addClass('modal-error');
+                modal_body.children().first().replaceWith(returndata.message);
+            }
+        });
+    });
+</script>
+
 
 @section scripts{
 

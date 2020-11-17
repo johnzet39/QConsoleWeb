@@ -12,88 +12,102 @@
     <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 }
 
-<h6 class="card-header" mb-2>@ViewBag.Title</h6>
+<!-- Modal -->
+<div class="modal fade" id="userEdit" tabindex="-1" role="dialog" aria-labelledby="userEdit" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userEdit">Редактирование @Model.CurrentUser.Usename</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
 
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-<form asp-action="EditUser" method="post">
-    <input type="hidden" asp-for="@Model.CurrentUser.Usesysid" />
-    <div class="form-group">
-        <label asp-for="@Model.CurrentUser.Usename"></label>
-        <div><span asp-validation-for="@Model.CurrentUser.Usename" class="text-danger"></span></div>
-        @*@Html.TextBoxFor(m => m.CurrentUser.Usename, HtmlHelpers.GetHtmlAttributes(new { @class = "form-control form-control-sm" }, dicUserName))*@
-        <input asp-for="@Model.CurrentUser.Usename" class="form-control form-control-sm" readonly="readonly" />
-    </div>
-    <div class="form-group">
-        <label asp-for="@Model.CurrentUser.Descript"></label>
-        <div><span asp-validation-for="@Model.CurrentUser.Descript" class="text-danger"></span></div>
-        <input asp-for="@Model.CurrentUser.Descript" class="form-control form-control-sm" />
-    </div>
-    <div class="form-check">
-        <input type="checkbox" asp-for="@Model.CurrentUser.Isrole" id="role_checkbox" class="form-check-input" disabled="disabled" />
-        <label asp-for="@Model.CurrentUser.Isrole"></label>
-        <div><span asp-validation-for="@Model.CurrentUser.Isrole" class="text-danger"></span></div>
-        @*@Html.CheckBoxFor(m => m.CurrentUser.Isrole, HtmlHelpers.GetHtmlAttributes(new { @class = "form-check", @id = "role_checkbox" }, dicCheckBoxIsRole))*@
-    </div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <form asp-action="EditUser" method="post">
+                    <input type="hidden" asp-for="@Model.CurrentUser.Usesysid" />
+                    <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
+                    <div class="form-group row">
+                        <label asp-for="@Model.CurrentUser.Usename" class="col-lg-2 col-form-label"></label>
+                        <div class="col-lg-10">
+                            <div><span asp-validation-for="@Model.CurrentUser.Usename" class="text-danger"></span></div>
+                            <input asp-for="@Model.CurrentUser.Usename" class="form-control form-control-sm" readonly="readonly" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label asp-for="@Model.CurrentUser.Descript" class="col-lg-2 col-form-label"></label>
+                        <div class="col-lg-10">
+                            <div><span asp-validation-for="@Model.CurrentUser.Descript" class="text-danger"></span></div>
+                            <input asp-for="@Model.CurrentUser.Descript" class="form-control form-control-sm" placeholder="Описание"/>
+                        </div>
+                     </div>
+                    <div class="form-check">
+                        <input type="checkbox" asp-for="@Model.CurrentUser.Isrole" id="role_checkbox" class="form-check-input" disabled="disabled" />
+                        <label asp-for="@Model.CurrentUser.Isrole"></label>
+                        <div><span asp-validation-for="@Model.CurrentUser.Isrole" class="text-danger"></span></div>
+                        @*@Html.CheckBoxFor(m => m.CurrentUser.Isrole, HtmlHelpers.GetHtmlAttributes(new { @class = "form-check", @id = "role_checkbox" }, dicCheckBoxIsRole))*@
+                    </div>
 
-    <div class="form-group" id="only_user_group">
-        <hr />
-        <div class="form-group">
-            <label asp-for="@Model.CurrentUser.Password"></label>
-            <div><span asp-validation-for="@Model.CurrentUser.Password" class="text-danger"></span></div>
-            <input asp-for="@Model.CurrentUser.Password" class="form-control form-control-sm" placeholder="Новый пароль" id="pass" />
+                    <div class="form-group" id="only_user_group">
+                        <hr />
+                        <div class="form-group row">
+                            <label asp-for="@Model.CurrentUser.Password" class="col-lg-2 col-form-label"></label>
+                            <div class="col-lg-10">
+                                <div><span asp-validation-for="@Model.CurrentUser.Password" class="text-danger"></span></div>
+                                <input asp-for="@Model.CurrentUser.Password" class="form-control form-control-sm" placeholder="Новый пароль" id="pass" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label asp-for="@Model.CurrentUser.ConfirmPassword" class="col-lg-2 col-form-label"></label>
+                            <div class="col-lg-10">
+                                <div><span asp-validation-for="@Model.CurrentUser.ConfirmPassword" class="text-danger"></span></div>
+                                <input asp-for="@Model.CurrentUser.ConfirmPassword" class="form-control form-control-sm" placeholder="Повторите пароль" id="conf_pass" />
+                            </div>
+                            <hr />
+                        </div>
+                    </div>
+
+
+
+                        <div class="table table-responsive">
+                            <h6 class="card-header">Доступные роли</h6>
+                            <table id="DataTableAsi" style="width:100%;" class="table table-striped table-sm table-hover table-bordered text-nowrap">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th><input type="checkbox" id="checkBoxAll" class="custom-checkbox" /></th>
+                                        <th>Роль</th>
+                                        <th style="width:100%">Описание</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                    }
+                                    @for (int i = 0; i < Model.Roles.Count(); i++)
+                                    {
+                                        <tr>
+                                            <td><input asp-for="@Model.Roles[i].IsSelected" type="checkbox" class="chkCheckBoxId" /></td>
+                                            <td>@Model.Roles[i].Usename</td>
+                                            <td>@Model.Roles[i].Descript</td>
+
+                                        </tr>
+                                        <input asp-for="@Model.Roles[i].Usename" type="hidden" />
+                                        <input asp-for="@Model.Roles[i].Descript" type="hidden" />
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                </form>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" data-saveedits="modal">Сохранить</button>
+            </div>
         </div>
-        <div class="form-group">
-            <label asp-for="@Model.CurrentUser.ConfirmPassword"></label>
-            <div><span asp-validation-for="@Model.CurrentUser.ConfirmPassword" class="text-danger"></span></div>
-            <input asp-for="@Model.CurrentUser.ConfirmPassword" class="form-control form-control-sm" placeholder="Повторите пароль" id="conf_pass" />
-        </div>
-        <hr />
     </div>
-
-
-
-    <div class="table table-responsive">
-        <h6 class="card-header">Доступные роли</h6>
-        <table id="DataTableAsi" style="width:100%;" class="table table-striped table-sm table-hover table-bordered text-nowrap">
-            <thead class="thead-dark">
-                <tr>
-                    <th><input type="checkbox" id="checkBoxAll" class="custom-checkbox" /></th>
-                    <th>Роль</th>
-                    <th style="width:100%">Описание</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                    List<User> assignedList = Model.AssignedRoles.ToList();
-                }
-                @foreach (var p in Model.Roles)
-                {
-                    var dicrole = new Dictionary<string, object>();
-
-                    if (assignedList.Exists(a => a.Usename == p.Usename))
-                    {
-                        dicrole.Add("checked", "checked");
-                    }
-
-                    <tr>
-                        <td>@Html.CheckBox("ischeckedlist", HtmlHelpers.GetHtmlAttributes(new { @class = "custom-checkbox chkCheckBoxId", @value = @p.Usename }, dicrole))</td>
-                        <td>@p.Usename</td>
-                        <td>@p.Descript</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-
-    <div class="text-center">
-        <button class="btn btn-primary" type="submit">Сохранить</button>
-        <a asp-action="Index" class="btn btn-secondary">Отмена</a>
-    </div>
-
-
-
-</form>
-
+</div>
 
 
 @*Hide or show pass-group when checkbox IsRole changes its status*@
@@ -126,7 +140,6 @@
 @*select all chechboxes in table column*@
 <script type="text/javascript">
     $(document).ready(function () {
-        //$('#DataTableAsi').DataTable();
         $('#checkBoxAll').click(function () {
             if ($(this).is(":checked")) {
                 $(".chkCheckBoxId").prop("checked", true)
@@ -137,3 +150,5 @@
         });
     });
 </script>
+
+
