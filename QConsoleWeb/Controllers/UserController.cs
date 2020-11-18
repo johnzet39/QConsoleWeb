@@ -115,6 +115,7 @@ namespace QConsoleWeb.Controllers
                 {
                     string message = string.Empty;
                     _service.CreateUserOrRole(model.CurrentUser.Usename, model.CurrentUser.Password, model.CurrentUser.Descript);
+                    message = message + $"Создание Роли: ОК." + Environment.NewLine;
                     //TempData["message"] = $"{model.CurrentUser.Usename} добавлен.";
                     try
                     {
@@ -129,7 +130,8 @@ namespace QConsoleWeb.Controllers
                     }
                     catch (Exception e)
                     {
-                        ModelState.AddModelError("", e.Message);
+                        message = message + e.Message;
+                        ModelState.AddModelError("", message);
 
                     }  
                 }
