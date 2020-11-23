@@ -77,11 +77,11 @@ namespace QConsoleWeb.BLL.Services
                 List<Logtable> OrderedList;
                 if (onlyLastRows)
                 {
-                    OrderedList = _unitOfWork.LogtableRepository.Get().OrderByDescending(r => r.gid).Take(LastRowsCount).ToList();
+                    OrderedList = _unitOfWork.LogtableRepository.Get().OrderByDescending(r => r.timechange).Take(LastRowsCount).ToList();
                 }
                 else
                 {
-                    OrderedList = _unitOfWork.LogtableRepository.Get().OrderByDescending(r => r.gid).ToList();
+                    OrderedList = _unitOfWork.LogtableRepository.Get().OrderByDescending(r => r.timechange).ToList();
                 }
 
                 var mapper = new MapperConfiguration(cfg => cfg.CreateMap<Logtable, LogRowDTO>()).CreateMapper();

@@ -25,8 +25,8 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
         //LOG LIST main
         public List<LogRow> GetLogList(string ExtraQueryFull, string FirstRowsQuery)
         {
-             string sql_query = String.Format("SELECT \"gid\", \"action\", \"username\", \"address\", to_char(\"timechange\",'DD.MM.YYYY HH24:MI:SS') as \"timechange\", " +
-                                " \"tableschema\", \"tablename\", \"gidnum\", \"context\"   FROM logger.logtable {0}  order by gid DESC {1} ", ExtraQueryFull, FirstRowsQuery);
+             string sql_query = String.Format("SELECT a.\"gid\", a.\"action\", a.\"username\", a.\"address\", to_char(a.\"timechange\",'DD.MM.YYYY HH24:MI:SS') as \"timechange\", " +
+                                " a.\"tableschema\", a.\"tablename\", a.\"gidnum\", a.\"context\"   FROM logger.logtable a {0}  order by a.\"timechange\" DESC {1} ", ExtraQueryFull, FirstRowsQuery);
 
             return GetListOfObjects(sql_query);
 
