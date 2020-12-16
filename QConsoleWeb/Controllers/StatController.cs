@@ -51,16 +51,16 @@ namespace QConsoleWeb.Controllers
 
         public IActionResult GetOperationsCount(string datefrom, string dateto)
         {
+            var layerNameList = GetLayers().Select(o => $"{o.Table_schema}.{o.Table_name}");
+
+
             DateTime DateFrom = DateTime.ParseExact(datefrom, "yyyy-MM", System.Globalization.CultureInfo.InvariantCulture);
             DateTime DateTo = DateTime.ParseExact(dateto, "yyyy-MM", System.Globalization.CultureInfo.InvariantCulture).AddMonths(1);
 
-            //var inserts = _loggerService.GetCountByOperation("INSERT", DateFrom, DateTo);
-            //var updates = _loggerService.GetCountByOperation("UPDATE", DateFrom, DateTo);
-            //var deletes = _loggerService.GetCountByOperation("DELETE", DateFrom, DateTo);
             var logList = _loggerService.GetAllLogByPeriod(DateFrom, DateTo);
-            var inserts = logList.Where(o => o.Action == "INSERT").Count();
-            var updates = logList.Where(o => o.Action == "UPDATE").Count();
-            var deletes = logList.Where(o => o.Action == "DELETE").Count();
+            var inserts = logList.Where(o => o.Action == "INSERT" && layerNameList.Contains($"{o.Tableschema}.{o.Tablename}") ).Count();
+            var updates = logList.Where(o => o.Action == "UPDATE" && layerNameList.Contains($"{o.Tableschema}.{o.Tablename}")).Count();
+            var deletes = logList.Where(o => o.Action == "DELETE" && layerNameList.Contains($"{o.Tableschema}.{o.Tablename}")).Count();
 
             string[] labels = new string[3] { $"INSERTS({inserts})", $"UPDATES({updates})", $"DELETES({deletes})" };
             int[] dataset = new int[3] { inserts, updates, deletes };
