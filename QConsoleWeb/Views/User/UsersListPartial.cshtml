@@ -18,9 +18,19 @@
             </tr>
         </thead>
         <tbody>
-            @{ int rowNumber = 0;}
+            @{int rowNumber = 0; }
+            @{bool isRowRole = true; }
+            
             @foreach (var p in Model)
             {
+                if (isRowRole)
+                {
+                    if (!@p.Isrole)
+                    {
+                        isRowRole = false;
+                        rowNumber = 0;
+                    }
+                }
                 <tr class="ButtonClass" data-toggle="ajax-edit-modal" data-target="#userEdit" data-id=@p.Usesysid data-url="@Url.Action("EditUser")">
                     <td>@(rowNumber += 1)</td>
                     <td class="td-main">@p.Usename</td>
