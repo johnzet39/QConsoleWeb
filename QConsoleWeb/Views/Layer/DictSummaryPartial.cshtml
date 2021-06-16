@@ -13,7 +13,7 @@
                     <th>Таблица</th>
                     <th>Схема</th>
                     <th>Описание</th>
-                    <th>Тип геометрии</th>
+                    @*<th>Тип геометрии</th>*@
                     <th>Логгер</th>
                     <th>Аудит</th>
                 </tr>
@@ -22,27 +22,22 @@
                 @{ int rowNumber = 0;}
                 @foreach (var p in Model)
                 {
-                    <tr>
-                        <td>@(rowNumber += 1)</td>
-                        <td>
-                            <a asp-action="EditLayer" asp-controller="Layer"
-                               asp-route-schemaname=@p.Table_schema
-                               asp-route-tablename=@p.Table_name
-                               asp-route-geomtype=@p.Geomtype>@p.Table_name</a>
-                        </td>
-                        <td>@p.Table_schema</td>
+                <tr class="ButtonClass" data-toggle="ajax-dictedit-modal" data-target="#dictEdit" data-schema=@p.Table_schema data-table=@p.Table_name data-url="@Url.Action("EditLayer")">
+                    <td>@(rowNumber += 1)</td>
+                    <td class="td-main">@p.Table_name</td>
+                    <td>@p.Table_schema</td>
 
-                        <td>
-                            <table class="fixed-table">
-                                <tr>
-                                    <td>@p.Descript</td>
-                                </tr>
-                            </table>
-                        </td>
-                        <td>@p.Geomtype</td>
-                        <td>@p.Isupdater</td>
-                        <td>@p.Islogger</td>
-                    </tr>
+                    <td>
+                        <table class="fixed-table">
+                            <tr>
+                                <td>@p.Descript</td>
+                            </tr>
+                        </table>
+                    </td>
+                    @*<td>@p.Geomtype</td>*@
+                    <td>@p.Isupdater</td>
+                    <td>@p.Islogger</td>
+                </tr>
                 }
             </tbody>
         </table>
@@ -52,4 +47,21 @@
     <script>
         $('td:contains("True")').html("<i class='fa fa-check' aria-hidden='true' style='color: green;'></i>").addClass("text-center");
         $('td:contains("False")').html("<i class='fa fa-times' aria-hidden='true' style='color: #cccccc;'></i>").addClass("text-center");
+    </script>
+
+    <script>
+        $(function () {
+            var placeholderElement = $('#modal-placeholder');
+            $('tr[data-toggle="ajax-dictedit-modal"]').click(function (event) {
+                event.preventDefault();
+                var url = $(this).data('url');
+                var v_schema = $(this).data('schema');
+                var v_table = $(this).data('table');
+                $.get(url, { schemaname: v_schema, tablename: v_table}).done(function (data) {
+                    $('#modal-placeholder').html(data);
+                    $('#modal-placeholder > .modal').modal('show');
+                });
+            });
+
+        });
     </script>

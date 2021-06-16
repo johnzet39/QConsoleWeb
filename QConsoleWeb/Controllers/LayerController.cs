@@ -44,32 +44,37 @@ namespace QConsoleWeb.Controllers
         }
 
         [HttpGet]
-        public ViewResult EditLayer(string schemaname, 
+        public IActionResult EditLayer(string schemaname, 
                                     string tablename, 
                                     string geomtype)
         {
             LayerEditViewModel vm = new LayerEditViewModel();
-            if (geomtype == null)
-                vm.CurrentLayer = GetDictionaries()
-                    .First(d => d.Table_schema == schemaname && d.Table_name == tablename);
-            else
-                vm.CurrentLayer = GetLayers()
-                    .First(d => d.Table_schema == schemaname && d.Table_name == tablename);
+            try
+            {
+                if (geomtype == null)
+                    vm.CurrentLayer = GetDictionaries()
+                        .First(d => d.Table_schema == schemaname && d.Table_name == tablename);
+                else
+                    vm.CurrentLayer = GetLayers()
+                        .First(d => d.Table_schema == schemaname && d.Table_name == tablename);
 
-            vm.LayerGrantsList = GetGrantsToLayer(schemaname, tablename);
-
-            ViewBag.Title = "Редактирование параметров таблицы";
-            return View(vm);
+                vm.LayerGrantsList = GetGrantsToLayer(schemaname, tablename);
+            }
+            catch(Exception e)
+            {
+                ModelState.AddModelError("errormessage", e.Message);
+            }
+            return PartialView(vm);
         }
 
         [HttpPost]
-        public IActionResult EditLayer(LayerEditViewModel model, string geomtype)
+        public JsonResult EditLayer(LayerEditViewModel model)
         {
             if (ModelState.IsValid)
             {
                 Layer layer = model.CurrentLayer;
                 Layer olrlayer;
-                if (geomtype == null)
+                if (model.CurrentLayer.Geomtype == null)
                     olrlayer = GetDictionaries()
                         .FirstOrDefault(d => d.Table_schema == layer.Table_schema && d.Table_name == layer.Table_name);
                 else
@@ -90,7 +95,7 @@ namespace QConsoleWeb.Controllers
                     else
                         descript = layer.Descript;
 
-                    try
+                try
                 {
                     _service.ChangeLayer(
                         layer.Table_schema,
@@ -99,16 +104,20 @@ namespace QConsoleWeb.Controllers
                         isupdaterCompare,
                         isloggerCompare
                         );
-                    TempData["message"] = $"Изменения в {layer.Table_schema}.{layer.Table_name} сохранены.";
                 }
                 catch(Exception e)
                 {
-                    TempData["error"] = $"Warning: {e.Message}";
+                    return Json(new { error = e.Message });
                 }
-
-                return RedirectToAction("Index");
             }
-            return View(model);
+            else
+            {
+                string messages = string.Join("; ", ViewData.ModelState.Values
+                    .SelectMany(x => x.Errors)
+                            .Select(x => x.ErrorMessage));
+                return Json(new { error = messages });
+            }
+            return Json(new { status = "ok" });
         }
 
         public ViewResult DictListManage()

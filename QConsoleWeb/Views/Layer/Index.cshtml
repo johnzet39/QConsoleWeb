@@ -1,21 +1,19 @@
-﻿@model LayerViewModel
+﻿@*Modal placeholder*@
+<div id="modal-placeholder"></div>
 
 <div class="card-header">
     <h5>Слои</h5>
 </div>
 <div id="layerlist">
-   @* @Html.Partial("LayerSummary", Model.Layers)*@
 </div>
 
 <hr />
 <div asp-validation-summary="All" class="text-danger px-5"></div>
 <br />
 
-
-
 <div id="dictlist">
-    @* @Html.Partial("LayerSummary", Model.Dictionaries)*@
 </div>
+
 
 
 <script>
@@ -46,3 +44,34 @@
     loadDicts();
 </script>
 
+<script type="text/javascript">
+    var placeholderElement = $('#modal-placeholder');
+    placeholderElement.on('click', '[data-saveedits="modal"]', function (event) {
+        event.preventDefault();
+
+        var form = $(this).parents('.modal').find('form');
+        var actionUrl = form.attr('action');
+        var dataToSend = form.serialize();
+
+        $.post(actionUrl, dataToSend).done(function (data) {
+            console.log(data);
+            if (data.status == "ok") {
+                placeholderElement.find('.modal').modal('hide');
+                loadLayers();
+                loadDicts();
+            }
+            else {
+                var newBody = data.error;
+                placeholderElement.find('.modal-body').replaceWith(newBody);
+            }
+
+
+        });
+    });
+</script>
+
+
+
+@section scripts{
+
+}
