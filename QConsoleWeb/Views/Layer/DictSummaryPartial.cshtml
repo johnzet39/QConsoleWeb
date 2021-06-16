@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Layer>
+
+@if (Model != null)
+{
+    <div class="card-header">
+        <h5>Справочники <a asp-action="DictListManage" class="btn btn-link">Управление справочниками</a></h5>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-sm table-hover text-nowrap">
+            <thead class="thead-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Таблица</th>
+                    <th>Схема</th>
+                    <th>Описание</th>
+                    <th>Тип геометрии</th>
+                    <th>Логгер</th>
+                    <th>Аудит</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int rowNumber = 0;}
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td>@(rowNumber += 1)</td>
+                        <td>
+                            <a asp-action="EditLayer" asp-controller="Layer"
+                               asp-route-schemaname=@p.Table_schema
+                               asp-route-tablename=@p.Table_name
+                               asp-route-geomtype=@p.Geomtype>@p.Table_name</a>
+                        </td>
+                        <td>@p.Table_schema</td>
+
+                        <td>
+                            <table class="fixed-table">
+                                <tr>
+                                    <td>@p.Descript</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>@p.Geomtype</td>
+                        <td>@p.Isupdater</td>
+                        <td>@p.Islogger</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+    <script>
+        $('td:contains("True")').html("<i class='fa fa-check' aria-hidden='true' style='color: green;'></i>").addClass("text-center");
+        $('td:contains("False")').html("<i class='fa fa-times' aria-hidden='true' style='color: #cccccc;'></i>").addClass("text-center");
+    </script>

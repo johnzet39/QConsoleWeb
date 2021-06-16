@@ -26,11 +26,21 @@ namespace QConsoleWeb.Controllers
         public IActionResult Index()
         {
             ViewBag.Title = "Слои и справочники";
+            return View();
+        }
+
+        public IActionResult GetLayersPartial()
+        {
             LayerViewModel model = new LayerViewModel();
             model.Layers = GetLayers();
-            model.Dictionaries = GetDictionaries();
+            return PartialView("LayerSummaryPartial", model.Layers);
+        }
 
-            return View(model);
+        public IActionResult GetDictsPartial()
+        {
+            LayerViewModel model = new LayerViewModel();
+            model.Dictionaries = GetDictionaries();
+            return PartialView("DictSummaryPartial", model.Dictionaries);
         }
 
         [HttpGet]

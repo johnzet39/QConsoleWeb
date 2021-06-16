@@ -3,22 +3,46 @@
 <div class="card-header">
     <h5>Слои</h5>
 </div>
-<div>
-    @Html.Partial("LayerSummary", Model.Layers)
+<div id="layerlist">
+   @* @Html.Partial("LayerSummary", Model.Layers)*@
 </div>
 
 <hr />
 <div asp-validation-summary="All" class="text-danger px-5"></div>
 <br />
 
-@if (Model.Dictionaries != null)
-{
-    <div class="card-header">
-        <h5>Справочники <a asp-action="DictListManage" class="btn btn-link">Управление справочниками</a></h5>
-    </div>
 
-    <div>
-        @Html.Partial("LayerSummary", Model.Dictionaries)
-    </div>
-}
+
+<div id="dictlist">
+    @* @Html.Partial("LayerSummary", Model.Dictionaries)*@
+</div>
+
+
+<script>
+    function loadLayers() {
+        $.ajax(
+            {
+                type: "GET",
+                url: 'Layer/GetLayersPartial',
+                success: function (returndata) {
+                    $('#layerlist').html(returndata);
+                },
+            });
+    };
+    loadLayers();
+</script>
+
+<script>
+    function loadDicts() {
+        $.ajax(
+            {
+                type: "GET",
+                url: 'Layer/GetDictsPartial',
+                success: function (returndata) {
+                    $('#dictlist').html(returndata);
+                },
+            });
+    };
+    loadDicts();
+</script>
 
