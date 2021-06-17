@@ -58,13 +58,20 @@ namespace QConsoleWeb.Controllers
                     vm.CurrentLayer = GetLayers()
                         .First(d => d.Table_schema == schemaname && d.Table_name == tablename);
 
-                vm.LayerGrantsList = GetGrantsToLayer(schemaname, tablename);
+                //vm.LayerGrantsList = GetGrantsToLayer(schemaname, tablename);
             }
             catch(Exception e)
             {
                 ModelState.AddModelError("errormessage", e.Message);
             }
             return PartialView(vm);
+        }
+
+        public IActionResult GetGrantsToLayerPartial(string schemaname,
+                                                     string tablename)
+        {
+            var grants = GetGrantsToLayer(schemaname, tablename);
+            return PartialView(grants);
         }
 
         [HttpPost]

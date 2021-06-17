@@ -1,7 +1,7 @@
 ﻿@model LayerEditViewModel
 <!-- Modal -->
     <div class="modal fade" id="layerEdit" tabindex="-1" role="dialog" aria-labelledby="layerEdit" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-dialog  modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="layerEdit">Редактирование</h5>
@@ -59,47 +59,9 @@
 
                         </form>
 
-                        @if (Model.LayerGrantsList != null)
-                        {
-                            <br />
-
-                            <h6 class="card-header" mb-2>Привилегии</h6>
-                            <div class="table-responsive">
-                                <table class="table table-sm border-bottom">
-                                    <thead class="thead-dark">
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Группа</th>
-                                            <th class="text-center">SELECT</th>
-                                            <th class="text-center">UPDATE</th>
-                                            <th class="text-center">INSERT</th>
-                                            <th class="text-center">DELETE</th>
-                                            <th class="border-right border-left" data-toggle="tooltip" title="GRANT SELECT(columns)">S+</th>
-                                            <th class="border-right" data-toggle="tooltip" title="GRANT UPDATE(columns)">U+</th>
-                                            <th class="border-right" data-toggle="tooltip" title="GRANT INSERT(columns)">I+</th>
-
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @{ int rowNumber = 0;}
-                                        @foreach (var p in Model.LayerGrantsList)
-                                        {
-                                            <tr>
-                                                <td>@(rowNumber += 1)</td>
-                                                <td>@p.groname</td>
-                                                <td>@p.isselect</td>
-                                                <td>@p.isupdate</td>
-                                                <td>@p.isinsert</td>
-                                                <td>@p.isdelete</td>
-                                                <td class="border-right border-left">@p.columns_select</td>
-                                                <td class="border-right">@p.columns_update</td>
-                                                <td class="border-right">@p.columns_insert</td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
-                        }
+                        <div id="privs">
+                        </div>
+                        
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
@@ -119,7 +81,16 @@
                 </div>
     </div>
 
+
+
         <script>
-            $('td:contains("True")').html("<i class='fa fa-check' aria-hidden='true' style='color: green;'></i>").addClass("text-center");
-            $('td:contains("False")').html("<i class='fa fa-times' aria-hidden='true' style='color: #cccccc;'></i>").addClass("text-center");
+            function loadGrants() {
+                var v_schema = '@Model.CurrentLayer.Table_schema';
+                var v_table = '@Model.CurrentLayer.Table_name';
+                var url = 'Layer/GetGrantsToLayerPartial';
+                $.get( url, { schemaname: v_schema, tablename: v_table }).done(function (data) {
+                    $('#privs').html(data);
+                });
+            };
+            loadGrants();
         </script>
