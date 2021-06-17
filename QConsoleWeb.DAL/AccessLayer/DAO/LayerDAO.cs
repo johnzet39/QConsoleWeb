@@ -118,14 +118,19 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
 		else null
 	end as columns_update
 from
-(select
-	  a.table_schema as schemaname,a.table_name as tablename,b.groname,
-	  HAS_TABLE_PRIVILEGE(b.groname,a.table_schema||'.'||a.table_name, 'select') as isselect,
-	  HAS_TABLE_PRIVILEGE(b.groname,a.table_schema||'.'||a.table_name, 'insert') as isinsert,
-	  HAS_TABLE_PRIVILEGE(b.groname,a.table_schema||'.'||a.table_name, 'update') as isupdate,
-	  HAS_TABLE_PRIVILEGE(b.groname,a.table_schema||'.'||a.table_name, 'delete') as isdelete
-	  from information_schema.tables a , pg_group b 
-	where a.table_name='{1}' and a.table_schema='{0}') sub", schemaname, tablename);
+(	with pgclass_ad as 
+	 (select a.relname, a.oid, a.relnamespace, s.nspname from
+		pg_class a
+		join pg_namespace s ON s.oid = a.relnamespace)
+	
+	select
+		  pgc.nspname as schemaname, pgc.relname as tablename, b.groname,
+		  HAS_TABLE_PRIVILEGE(b.groname,pgc.oid, 'select') as isselect,
+		  HAS_TABLE_PRIVILEGE(b.groname,pgc.oid, 'insert') as isinsert,
+		  HAS_TABLE_PRIVILEGE(b.groname,pgc.oid, 'update') as isupdate,
+		  HAS_TABLE_PRIVILEGE(b.groname,pgc.oid, 'delete') as isdelete
+		  from pgclass_ad as pgc , pg_group b 
+		where pgc.relname='{1}' and pgc.relnamespace = (SELECT to_regnamespace('{0}')::oid)) sub", schemaname, tablename);
             return GetListOfLayerGrants(sql_query);
         }
 
