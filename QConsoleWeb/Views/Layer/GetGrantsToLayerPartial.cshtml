@@ -25,20 +25,21 @@
                 @{ int rowNumber = 0;}
                 @foreach (var p in Model)
                 {
-                    <tr>
-                        <td>@(rowNumber += 1)</td>
-                        <td>@p.groname</td>
-                        <td>@p.isselect</td>
-                        <td>@p.isupdate</td>
-                        <td>@p.isinsert</td>
-                        <td>@p.isdelete</td>
-                        <td class="border-right border-left">@p.columns_select</td>
-                        <td class="border-right">@p.columns_update</td>
-                        <td class="border-right">@p.columns_insert</td>
-                    </tr>
+                <tr>
+                    <td>@(rowNumber += 1)</td>
+                    <td>@p.groname</td>
+                    <td>@p.isselect</td>
+                    <td>@p.isupdate</td>
+                    <td>@p.isinsert</td>
+                    <td>@p.isdelete</td>
+                    <td class="border-right border-left">@p.columns_select</td>
+                    <td class="border-right">@p.columns_update</td>
+                    <td class="border-right">@p.columns_insert</td>
+                </tr>
                 }
             </tbody>
         </table>
+        
     </div>
 }
 
@@ -46,3 +47,4 @@
             $('td:contains("True")').html("<i class='fa fa-check' aria-hidden='true' style='color: green;'></i>").addClass("text-center");
             $('td:contains("False")').html("<i class='fa fa-times' aria-hidden='true' style='color: #cccccc;'></i>").addClass("text-center");
 </script>
+
