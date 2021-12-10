@@ -28,13 +28,13 @@
                     </div>
 
                     @if (Model.CurrentLayer.Geomtype.Length > 0)
-                            {
-                    <div class="form-group">
-                        <label asp-for="@Model.CurrentLayer.Geomtype"></label>
-                        <div><span asp-validation-for="@Model.CurrentLayer.Geomtype" class="text-danger"></span></div>
-                        <input asp-for="@Model.CurrentLayer.Geomtype" class="form-control form-control-sm" readonly />
-                    </div>
-                            }
+                    {
+                        <div class="form-group">
+                            <label asp-for="@Model.CurrentLayer.Geomtype"></label>
+                            <div><span asp-validation-for="@Model.CurrentLayer.Geomtype" class="text-danger"></span></div>
+                            <input asp-for="@Model.CurrentLayer.Geomtype" class="form-control form-control-sm" readonly />
+                        </div>
+                    }
 
                     <div class="form-group">
                         <label asp-for="@Model.CurrentLayer.Descript"></label>
@@ -59,17 +59,17 @@
 
                 </form>
 
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-primary" data-saveedits="modal">Сохранить</button>
+                </div>
+
                 <div id="loading_privs" class="loading_privs"></div>
 
                 <div id="privs">
                 </div>
 
 
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-                    <button type="button" class="btn btn-primary" data-saveedits="modal">Сохранить</button>
-                </div>
             </div>
                 }
                 else

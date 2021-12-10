@@ -97,43 +97,48 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
         public List<LayerGrants> GetGrantsToLayer(string schemaname, string tablename)
         {
             string sql_query = String.Format(
-@"with colsprivs as
-(select cpr.column_name, cpr.privilege_type, cpr.grantee, cpr.table_schema, cpr.table_name from INFORMATION_SCHEMA.column_privileges cpr where 
-cpr.table_schema = '{0}' and cpr.table_name = '{1}')
+@"select * from (
+    with colsprivs as
+    (select cpr.column_name, cpr.privilege_type, cpr.grantee, cpr.table_schema, cpr.table_name from INFORMATION_SCHEMA.column_privileges cpr where 
+    cpr.table_schema = '{0}' and cpr.table_name = '{1}')
 
-select schemaname, tablename, groname,
-    isselect,
-    isinsert,
-    isupdate,
-    isdelete,
-	case when isselect<> true then
-       (select string_agg(cp.column_name, ', ') from colsprivs cp
-            where cp.privilege_type = 'SELECT' and cp.grantee = groname group by cp.grantee, cp.table_schema, cp.table_name)
-        else null
-    end as columns_select,
-	case when isinsert<> true then
-       (select string_agg(cp.column_name, ', ') from colsprivs cp
-            where cp.privilege_type = 'INSERT' and cp.grantee = groname group by cp.grantee, cp.table_schema, cp.table_name)
-        else null
-    end as columns_insert,
-	case when isupdate<> true then
-       (select string_agg(cp.column_name, ', ') from colsprivs cp
-            where cp.privilege_type = 'UPDATE' and cp.grantee = groname group by cp.grantee, cp.table_schema, cp.table_name)
-        else null
-    end as columns_update
-from
-(with pgclass_ad as
-     (select a.relname, a.oid, a.relnamespace, s.nspname from
-        pg_class a
-        join pg_namespace s ON s.oid = a.relnamespace)
-    select
-          pgc.nspname as schemaname, pgc.relname as tablename, b.groname,
-		  HAS_TABLE_PRIVILEGE(b.groname, pgc.oid, 'select') as isselect,
-		  HAS_TABLE_PRIVILEGE(b.groname, pgc.oid, 'insert') as isinsert,
-		  HAS_TABLE_PRIVILEGE(b.groname, pgc.oid, 'update') as isupdate,
-		  HAS_TABLE_PRIVILEGE(b.groname, pgc.oid, 'delete') as isdelete
-          from pgclass_ad as pgc , pg_group b
-        where pgc.relname = '{1}' and pgc.relnamespace = (SELECT to_regnamespace('{0}')::oid)) sub", schemaname, tablename);
+    select schemaname, tablename, groname,
+        isselect,
+        isinsert,
+        isupdate,
+        isdelete,
+	    case when isselect<> true then
+           (select string_agg(cp.column_name, ', ') from colsprivs cp
+                where cp.privilege_type = 'SELECT' and cp.grantee = groname group by cp.grantee, cp.table_schema, cp.table_name)
+            else null
+        end as columns_select,
+	    case when isinsert<> true then
+           (select string_agg(cp.column_name, ', ') from colsprivs cp
+                where cp.privilege_type = 'INSERT' and cp.grantee = groname group by cp.grantee, cp.table_schema, cp.table_name)
+            else null
+        end as columns_insert,
+	    case when isupdate<> true then
+           (select string_agg(cp.column_name, ', ') from colsprivs cp
+                where cp.privilege_type = 'UPDATE' and cp.grantee = groname group by cp.grantee, cp.table_schema, cp.table_name)
+            else null
+        end as columns_update
+    from
+    (with pgclass_ad as
+         (select a.relname, a.oid, a.relnamespace, s.nspname from
+            pg_class a
+            join pg_namespace s ON s.oid = a.relnamespace)
+        select
+              pgc.nspname as schemaname, pgc.relname as tablename, b.groname,
+		      HAS_TABLE_PRIVILEGE(b.groname, pgc.oid, 'select') as isselect,
+		      HAS_TABLE_PRIVILEGE(b.groname, pgc.oid, 'insert') as isinsert,
+		      HAS_TABLE_PRIVILEGE(b.groname, pgc.oid, 'update') as isupdate,
+		      HAS_TABLE_PRIVILEGE(b.groname, pgc.oid, 'delete') as isdelete
+              from pgclass_ad as pgc , pg_group b
+            where pgc.relname = '{1}' and pgc.relnamespace = (SELECT to_regnamespace('{0}')::oid)) sub
+) al
+where isselect = true or isinsert = true or isupdate = true or isdelete = true
+    or columns_select is not null or columns_insert is not null or columns_update is not null"
+                                                , schemaname, tablename);
             return GetListOfLayerGrants(sql_query);
         }
 
