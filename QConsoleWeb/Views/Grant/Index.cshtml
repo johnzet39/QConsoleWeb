@@ -7,40 +7,55 @@
         <div class="card-header">
             <h5>Группы пользователей</h5>
         </div>
-
-        <div class="table-responsive">
-            <table id="TableRoles" class="table table-sm table-hover text-nowrap">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>#</th>
-                        <th>Роль</th>
-                        <th>Описание</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{ int rowNumber = 0;}
-                    @foreach (var p in Model)
-                    {
-                        <tr class="ButtonClass" data-toggle="ajax-edit-group" data-rolename=@p.Usename data-userid=@p.Usesysid data-url="@Url.Action("EditGroup")">
-                            <td>@(rowNumber += 1)</td>
-                            <td class="td-main" data-toggle="tooltip" title="@p.Descript">@p.Usename</td>
-                            <td>
-                                <table class="fixed-table">
-                                    <tr>
-                                        <td>@p.Descript</td>
-                                    </tr>
-                                </table>
-                            </td>
+        <div id="divtable">
+            <div class="table-responsive">
+                <table id="TableRoles" class="table table-sm table-hover text-nowrap">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Роль</th>
+                            <th>Описание</th>
+                            <th class="d-none">Роль</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @{int rowNumber = 0; }
+                        @{bool isRowRole = true; }
+                        @foreach (var p in Model)
+                        {
+                            if (isRowRole)
+                            {
+                                if (!@p.Isrole)
+                                {
+                                    isRowRole = false;
+                                    rowNumber = 0;
+                                }
+                            }
+                            <tr class="ButtonClass" data-toggle="ajax-edit-group" data-rolename=@p.Usename data-userid=@p.Usesysid data-url="@Url.Action("EditGroup")">
+                                <td>@(rowNumber += 1)</td>
+                                <td class="td-main" data-toggle="tooltip" title="@p.Descript">@p.Usename</td>
+                                <td>
+                                    <table class="fixed-table">
+                                        <tr>
+                                            <td>@p.Descript</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td class="isrole d-none">@p.Isrole</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
 
     </div>
 
     <div id="separator" class="separator bg-light"></div>
     <div id="splitterDetails" class="">
+
+        
+
         <div id="detailsContainer">
 
         </div>
@@ -48,21 +63,79 @@
 
 </div>
 
+
+<script>
+    $('#TableRoles tr').each(function () {
+
+        var isFlagged = $(this).find(".isrole").html();
+        if (isFlagged == 'True') {
+            $(this).addClass('yellowrow');
+        }
+    });
+</script>
+
 <script src="~/js/splitter.js"></script>
+
+
 <script>
     splitter("splitterGroups", "splitterDetails", "separator", "splitter", true, "H");
 </script>
 
 <script>
     /*
-     * remove right sidebar
-     */
+        * remove right sidebar
+        */
     $(function () {
         $('.sidebar-right').removeClass("col-lg-2");
         $('main').removeClass("col-lg-8");
         $('main').addClass("col-lg-10");
     });
-    
+
 </script>
 
-<script src="~/js/editGroupPartial.js"></script>
+<script>
+    $(function () {
+        const first = $("#splitterGroups");
+        const second = $("#splitterDetails");
+
+        $('tr[data-toggle="ajax-edit-group"]').click(function (event) {
+            event.preventDefault();
+
+            addClassToSplitters();
+
+            if ($(this).hasClass('active')) {
+                $(this).removeClass('active');
+            } else {
+                $(this).addClass('active').siblings().removeClass('active');
+            }
+
+            var url = $(this).data('url');
+            var userid = $(this).data('userid');
+            var rolename = $(this).data('rolename');
+
+            $.ajax(
+                {
+                    type: "GET",
+                    url: url,
+                    data: { userid: userid, rolename: rolename },
+                    beforeSend: function () { $("#loading_grants").show(); },
+                    complete: function () { $("#loading_grants").hide(); },
+                    success: function (returndata) {
+                        $('#detailsContainer').html(returndata);
+                    }
+                });
+        });
+
+        function addClassToSplitters() {
+
+            if (!first.hasClass("animated") && !second.hasClass("animated")) {
+                first.addClass('animated');
+                second.addClass('aniamted');
+
+                $('#splitterGroups').animate({
+                    width: '20%'
+                }, 150);
+            }
+        }
+    });
+</script>

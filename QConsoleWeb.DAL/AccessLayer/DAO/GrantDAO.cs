@@ -68,10 +68,9 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
         //groups
         public List<User> GetGroups()
         {
-            string sql_query = " select pg.groname as rolname, (select shobj_description(pg.grosysid, 'pg_authid')) as descript, pg.grosysid as sysid, " +
-                            " 1 as isrole, 0 as usesuper " +
-                            " FROM pg_group pg WHERE pg.groname not in ('pg_signal_backend') " +
-                            " ORDER BY pg.groname;";
+            string sql_query =  @"SELECT pu.rolname, (select shobj_description(pu.oid, 'pg_authid')) as descript, pu.oid as sysid, 
+                CASE WHEN EXISTS(SELECT 1 from pg_user p where p.usesysid = pu.oid) THEN 0 else 1 END as isrole,pu.rolsuper as usesuper 
+               FROM pg_roles pu WHERE pu.rolname not in ('pg_signal_backend') ORDER BY isrole desc, pu.rolname;" ;
             return GetListOfRoles(sql_query);
         }
 
@@ -123,42 +122,37 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
         public List<Grant> GetLayers(string grantee)
         {
             string sql_query = String.Format(
-@"WITH grants AS(SELECT   
-   rtg.grantee, rtg.table_schema, rtg.table_name, (select obj_description((quote_ident(rtg.table_schema) || '.' || quote_ident(rtg.table_name))::regclass, 'pg_class')) descript,  
-     CASE WHEN exists(select 1 from information_schema.role_table_grants where grantee = rtg.grantee AND rtg.table_schema=table_schema AND rtg.table_name=table_name and privilege_type = 'INSERT')  
-       THEN 1 ELSE 0 END AS isinsert, 
-     CASE WHEN exists(select 1 from information_schema.role_table_grants where grantee = rtg.grantee AND rtg.table_schema=table_schema AND rtg.table_name=table_name and privilege_type = 'SELECT')  
-       THEN 1 ELSE 0 END AS isselect,  
-     CASE WHEN exists(select 1 from information_schema.role_table_grants where grantee = rtg.grantee AND rtg.table_schema=table_schema AND rtg.table_name=table_name and privilege_type = 'UPDATE')  
-       THEN 1 ELSE 0 END AS isupdate,  
-     CASE WHEN exists(select 1 from information_schema.role_table_grants where grantee = rtg.grantee AND rtg.table_schema=table_schema AND rtg.table_name=table_name and privilege_type = 'DELETE')  
-       THEN 1 ELSE 0 END AS isdelete  
- FROM    information_schema.role_table_grants rtg  
- WHERE EXISTS  (select 1 from geometry_columns gc where gc.f_table_schema = rtg.table_schema and gc.f_table_name = rtg.table_name limit 1) AND(rtg.table_name <> 'logtable') AND rtg.grantee = '{0}'  
- GROUP BY rtg.grantee, rtg.table_schema, rtg.table_name) 
-
-select table_schema, table_name, descript, isselect,isupdate,isinsert,isdelete,grantee, columns_select ,columns_update, columns_insert 
-from 
-  (SELECT t.table_schema, t.table_name , (select obj_description((quote_ident(t.table_schema) || '.' || quote_ident(t.table_name))::regclass, 'pg_class')) as descript,   
-    case when gr.isselect = 1 then true else false end as isselect,  
-    case when gr.isupdate = 1 then true else false end as isupdate,  
-    case when gr.isinsert = 1 then true else false end as isinsert,  
-    case when gr.isdelete = 1 then true else false end as isdelete,  gr.grantee ,
-    --признаки наличия грантов для столбцов при отсутствии грантов на всю таблицу
-    case when (gr.isselect = 0 or gr.isselect is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT')              
-        then (select string_agg(cp.column_name, ', ') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT' group by cp.grantee, cp.table_schema, cp.table_name )
+@"WITH 
+  tabsprivs as 
+        (select grantee, table_schema, table_name, privilege_type from INFORMATION_SCHEMA.table_privileges cpr where cpr.grantee = '{0}' ),
+  colsprivs as 
+        (select cpr.column_name, cpr.privilege_type, cpr.grantee, cpr.table_schema, cpr.table_name from INFORMATION_SCHEMA.column_privileges cpr where cpr.grantee = '{0}' )
+      
+SELECT table_schema, table_name, descript, isselect,isupdate,isinsert,isdelete,
+      --признаки наличия грантов для столбцов при отсутствии грантов на всю таблицу
+    case when (isselect = false or isselect is null)               
+        then (select string_agg(cp.column_name, ', ') from colsprivs cp where cp.table_schema=ps.table_schema and cp.table_name=ps.table_name and cp.privilege_type='SELECT' group by cp.grantee, cp.table_schema, cp.table_name )
       else null
     end as columns_select,
-    case when (gr.isupdate = 0 or gr.isupdate is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE')              
-        then (select string_agg(cp.column_name, ', ') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE' group by cp.grantee, cp.table_schema, cp.table_name )
+    case when (isupdate = false or isupdate is null)               
+        then (select string_agg(cp.column_name, ', ') from colsprivs cp where cp.table_schema=ps.table_schema and cp.table_name=ps.table_name and cp.privilege_type='UPDATE' group by cp.grantee, cp.table_schema, cp.table_name )
       else null
     end as columns_update,
-    case when (gr.isinsert = 0 or gr.isinsert is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT')              
-        then (select string_agg(cp.column_name, ', ') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT' group by cp.grantee, cp.table_schema, cp.table_name )
+    case when (isinsert = false or isinsert is null) 
+        then (select string_agg(cp.column_name, ', ') from colsprivs cp where cp.table_schema=ps.table_schema and cp.table_name=ps.table_name and cp.privilege_type='INSERT' group by cp.grantee, cp.table_schema, cp.table_name )
       else null
-    end as columns_insert
-    -----
-  FROM information_schema.tables t  LEFT JOIN  grants gr ON gr.table_schema||gr.table_name = t.table_schema||t.table_name  
+    end as columns_insert,
+    
+    grantee
+  --, columns_select ,columns_update, columns_insert 
+FROM 
+  (SELECT t.table_schema, t.table_name , (select obj_description((quote_ident(t.table_schema) || '.' || quote_ident(t.table_name))::regclass, 'pg_class')) as descript,   
+    case when exists (select 1 from tabsprivs where tabsprivs.table_schema=t.table_schema and tabsprivs.table_name=t.table_name and tabsprivs.privilege_type='SELECT') then true else false end as isselect,  
+    case when exists (select 1 from tabsprivs where tabsprivs.table_schema=t.table_schema and tabsprivs.table_name=t.table_name and tabsprivs.privilege_type='UPDATE') then true else false end as isupdate,  
+    case when exists (select 1 from tabsprivs where tabsprivs.table_schema=t.table_schema and tabsprivs.table_name=t.table_name and tabsprivs.privilege_type='INSERT') then true else false end as isinsert,  
+    case when exists (select 1 from tabsprivs where tabsprivs.table_schema=t.table_schema and tabsprivs.table_name=t.table_name and tabsprivs.privilege_type='DELETE') then true else false end as isdelete,  
+    '{0}' as grantee 
+  FROM information_schema.tables t 
   WHERE EXISTS  (select 1 from geometry_columns gc where gc.f_table_schema = t.table_schema and gc.f_table_name = t.table_name limit 1) AND (t.table_schema not in  ('logger', 'tiger', 'schema_spr')) 
   ORDER BY t.table_schema, t.table_name) ps;", grantee);
             return GetListOfTables(sql_query);
@@ -168,46 +162,39 @@ from
         public List<Grant> GetDicts(string grantee)
         {
             string sql_query = String.Format(
-@"WITH grants AS
-(SELECT    
-   rtg.grantee, rtg.table_schema, rtg.table_name, (select obj_description((quote_ident(rtg.table_schema) || '.' || quote_ident(rtg.table_name))::regclass, 'pg_class')) descript,   
-       CASE WHEN exists(select 1 from information_schema.role_table_grants where grantee = rtg.grantee AND rtg.table_schema=table_schema AND rtg.table_name=table_name and privilege_type = 'INSERT')   
-           THEN 1 ELSE 0 END AS isinsert,  
-       CASE WHEN exists(select 1 from information_schema.role_table_grants where grantee = rtg.grantee AND rtg.table_schema=table_schema AND rtg.table_name=table_name and privilege_type = 'SELECT')   
-           THEN 1 ELSE 0 END AS isselect,   
-       CASE WHEN exists(select 1 from information_schema.role_table_grants where grantee = rtg.grantee AND rtg.table_schema=table_schema AND rtg.table_name=table_name and privilege_type = 'UPDATE')   
-           THEN 1 ELSE 0 END AS isupdate,   
-       CASE WHEN exists(select 1 from information_schema.role_table_grants where grantee = rtg.grantee AND rtg.table_schema=table_schema AND rtg.table_name=table_name and privilege_type = 'DELETE')   
-           THEN 1 ELSE 0 END AS isdelete   
-FROM    information_schema.role_table_grants rtg   
-WHERE ((rtg.table_schema = 'schema_spr') OR rtg.table_schema||rtg.table_name in (select spr.schema_name||spr.table_name from logger.dictionaries spr)) AND rtg.grantee = '{0}'   
-GROUP BY rtg.grantee, rtg.table_schema, rtg.table_name)   
-
-(select table_schema, table_name, descript, isselect,isupdate,isinsert,isdelete,grantee, columns_select ,columns_update, columns_insert 
-
-FROM(SELECT t.table_schema, t.table_name , (select obj_description((quote_ident(t.table_schema) || '.' || quote_ident(t.table_name))::regclass, 'pg_class')) as descript,    
-  case when gr.isselect = 1 then true else false end as isselect,   
-  case when gr.isupdate = 1 then true else false end as isupdate,   
-  case when gr.isinsert = 1 then true else false end as isinsert,   
-  case when gr.isdelete = 1 then true else false end as isdelete, 
-    gr.grantee,
-    --признаки наличия грантов для столбцов при отсутствии грантов на всю таблицу
-    case when (gr.isselect = 0 or gr.isselect is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT')              
-        then (select string_agg(cp.column_name, ', ') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='SELECT' group by cp.grantee, cp.table_schema, cp.table_name )
+@"WITH 
+  tabsprivs as 
+        (select grantee, table_schema, table_name, privilege_type from INFORMATION_SCHEMA.table_privileges cpr where cpr.grantee = '{0}' ),
+  colsprivs as 
+        (select cpr.column_name, cpr.privilege_type, cpr.grantee, cpr.table_schema, cpr.table_name from INFORMATION_SCHEMA.column_privileges cpr where cpr.grantee = '{0}' )
+      
+SELECT table_schema, table_name, descript, isselect,isupdate,isinsert,isdelete,
+      --признаки наличия грантов для столбцов при отсутствии грантов на всю таблицу
+    case when (isselect = false or isselect is null)               
+        then (select string_agg(cp.column_name, ', ') from colsprivs cp where cp.table_schema=ps.table_schema and cp.table_name=ps.table_name and cp.privilege_type='SELECT' group by cp.grantee, cp.table_schema, cp.table_name )
       else null
     end as columns_select,
-    case when (gr.isupdate = 0 or gr.isupdate is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE')              
-        then (select string_agg(cp.column_name, ', ') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='UPDATE' group by cp.grantee, cp.table_schema, cp.table_name )
+    case when (isupdate = false or isupdate is null)               
+        then (select string_agg(cp.column_name, ', ') from colsprivs cp where cp.table_schema=ps.table_schema and cp.table_name=ps.table_name and cp.privilege_type='UPDATE' group by cp.grantee, cp.table_schema, cp.table_name )
       else null
     end as columns_update,
-    case when (gr.isinsert = 0 or gr.isinsert is null) and exists (select 1 from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT')              
-        then (select string_agg(cp.column_name, ', ') from INFORMATION_SCHEMA.column_privileges cp where cp.grantee='{0}' and cp.table_schema=t.table_schema and cp.table_name=t.table_name and cp.privilege_type='INSERT' group by cp.grantee, cp.table_schema, cp.table_name )
+    case when (isinsert = false or isinsert is null) 
+        then (select string_agg(cp.column_name, ', ') from colsprivs cp where cp.table_schema=ps.table_schema and cp.table_name=ps.table_name and cp.privilege_type='INSERT' group by cp.grantee, cp.table_schema, cp.table_name )
       else null
-    end as columns_insert
-    -----
-  FROM information_schema.tables t LEFT JOIN  grants gr ON gr.table_schema||gr.table_name = t.table_schema||t.table_name   
-  WHERE (t.table_schema = 'schema_spr') OR t.table_schema||t.table_name in (select spr.schema_name||spr.table_name from logger.dictionaries spr)  
-  ORDER BY t.table_schema, t.table_name) ps); ", grantee);
+    end as columns_insert,
+    
+    grantee
+  --, columns_select ,columns_update, columns_insert 
+FROM 
+  (SELECT t.table_schema, t.table_name , (select obj_description((quote_ident(t.table_schema) || '.' || quote_ident(t.table_name))::regclass, 'pg_class')) as descript,   
+    case when exists (select 1 from tabsprivs where tabsprivs.table_schema=t.table_schema and tabsprivs.table_name=t.table_name and tabsprivs.privilege_type='SELECT') then true else false end as isselect,  
+    case when exists (select 1 from tabsprivs where tabsprivs.table_schema=t.table_schema and tabsprivs.table_name=t.table_name and tabsprivs.privilege_type='UPDATE') then true else false end as isupdate,  
+    case when exists (select 1 from tabsprivs where tabsprivs.table_schema=t.table_schema and tabsprivs.table_name=t.table_name and tabsprivs.privilege_type='INSERT') then true else false end as isinsert,  
+    case when exists (select 1 from tabsprivs where tabsprivs.table_schema=t.table_schema and tabsprivs.table_name=t.table_name and tabsprivs.privilege_type='DELETE') then true else false end as isdelete,  
+    '{0}' as grantee 
+  FROM information_schema.tables t 
+  WHERE (t.table_schema = 'schema_spr') OR t.table_schema||t.table_name in (select spr.schema_name||spr.table_name from logger.dictionaries spr) 
+  ORDER BY t.table_schema, t.table_name) ps; ", grantee);
             return GetListOfTables(sql_query);
         }
 

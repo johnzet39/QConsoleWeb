@@ -5,6 +5,10 @@
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
 <div id="DetailsSplitter" class="splitter">
+
+    <div id="loading_grants" class="loading_grants"></div>
+
+
     <div id="UsersTable" class="firstSplitter">
         <div class="card-header">
             <h6>Члены группы:</h6>
@@ -14,7 +18,7 @@
 
     <div id="SeparatorRights" class="separator bg-light"></div>
 
-    <div id="RightsTable" class="secondSplitter" >
+    <div id="RightsTable" class="secondSplitter">
         @Html.Partial("EditGroupDetailsPartial", @Model)
     </div>
 </div>
