@@ -6,15 +6,21 @@
 </div>
 
 <div class="pb-2 pt-2 sticky">
-    <button data-url="@Url.Action("CreateUser")" data-toggle="ajax-create-modal" data-target="#userCreate" class="btn btn-sm btn-light btn-outline-primary">
-        <span style="color:#00c747"><i class="fas fa-plus"></i></span>
-        Создать
-    </button>
-    @*<a asp-action="EditPgHba" asp-controller="User" class="btn btn-sm btn-outline-secondary">*@
-     <button data-url="@Url.Action("EditPgHba")" data-toggle="ajax-hba-modal" data-target="#hbaEdit" class="btn btn-sm btn-light btn-outline-primary">
-            <span><i class="fas fa-list"></i></span>
-            pg_hba
-        </button>
+
+    <div class="input-group input-group-sm">
+        <div class="input-group-prepend">
+            <button data-url="@Url.Action("CreateUser")" data-toggle="ajax-create-modal" data-target="#userCreate" class="btn btn-sm btn-light btn-outline-primary">
+                <span style="color:#00c747"><i class="fas fa-plus"></i></span>
+                Создать
+            </button>
+            <button data-url="@Url.Action("EditPgHba")" data-toggle="ajax-hba-modal" data-target="#hbaEdit" class="btn btn-sm btn-light btn-outline-primary">
+                <span><i class="fas fa-list"></i></span>
+                pg_hba
+            </button>
+        </div>
+        <input type="text" class="form-control" id="nameFilter" onkeyup="filterUserList()" placeholder="Введите роль для поиска..." aria-label="" aria-describedby="basic-addon1">
+    </div>
+
 </div>
 
 <div style="position:relative;">
@@ -145,6 +151,37 @@
             }
         });
     });
+</script>
+
+<script>
+    function filterUserList() {
+
+        var td, t, cnt;
+
+        var input = document.getElementById('nameFilter');
+        var filter = input.value.toUpperCase();
+        var table = document.getElementById('usersTable').getElementsByTagName('tbody')[0];
+        //console.log(table);
+        var rows = table.getElementsByTagName('tr');
+
+        for (i = 0; i < rows.length; i++) {
+            td = rows[i].getElementsByTagName('td');
+            cnt = 0;
+            for (j = 1; j < 3; j++) {
+
+                t = td[j].innerText;
+                if (t.toUpperCase().indexOf(filter) > -1) {
+                    rows[i].style.display = "";
+                    cnt = cnt + 1;
+                }
+            }
+            if (cnt == 0) {
+                rows[i].style.display = "none";
+            }
+         }
+    }
+
+   
 </script>
 
 
