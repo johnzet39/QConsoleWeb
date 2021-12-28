@@ -28,6 +28,10 @@
     </div>
 </div>
 
+<div class="table-noresult" style="display: none;">
+    Нет записей
+</div>
+
 <script>
     $(window).on('scroll', function () {
         if ($(window).scrollTop() > 50) {
@@ -156,13 +160,17 @@
 <script>
     function filterUserList() {
 
-        var td, t, cnt;
+        var td, t, cnt, has_recs;
 
         var input = document.getElementById('nameFilter');
         var filter = input.value.toUpperCase();
         var table = document.getElementById('usersTable').getElementsByTagName('tbody')[0];
-        //console.log(table);
+
         var rows = table.getElementsByTagName('tr');
+
+        var noresult_div = document.getElementsByClassName('table-noresult')[0];
+
+        has_recs = false;
 
         for (i = 0; i < rows.length; i++) {
             td = rows[i].getElementsByTagName('td');
@@ -171,6 +179,7 @@
 
                 t = td[j].innerText;
                 if (t.toUpperCase().indexOf(filter) > -1) {
+                    has_recs = true;
                     rows[i].style.display = "";
                     cnt = cnt + 1;
                 }
@@ -178,7 +187,14 @@
             if (cnt == 0) {
                 rows[i].style.display = "none";
             }
-         }
+        }
+
+        if (has_recs) {
+            noresult_div.style.display = "none";
+        }
+        else {
+            noresult_div.style.display = "";
+        }
     }
 
    
