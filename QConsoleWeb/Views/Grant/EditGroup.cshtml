@@ -2,12 +2,13 @@
 
 
     <!-- Modal -->
-<div class="modal fade" id="privEdit" tabindex="-1" role="dialog" aria-labelledby="privEdit" aria-hidden="true">
-    
+@*<div class="modal fade" id="privEdit" tabindex="-1" role="dialog" aria-labelledby="privEdit" aria-hidden="true">*@
+<div class="modal fade modal-fullscreen" id="privEdit" tabindex="-1" role="dialog" aria-labelledby="privEdit" aria-hidden="true">
+
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="privEdit">Привилегии роли</h5>
+                <h5 class="modal-title" id="privEdit">Привилегии роли <strong>@ViewBag.Rolename</strong></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -16,27 +17,42 @@
 
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                <div id="UsersTable">
-                    <div class="card-header">
-                        <h6>Члены группы:</h6>
+
+                @if (Model.UserList.Count() > 0)
+                {
+                    <div class="card-header" id="accordionMembers">
+                        <div class="card">
+                            <h6>
+                                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseMembers" aria-expanded="true" aria-controls="collapseOne" style="text-decoration: none;">
+                                    Члены группы
+                                </button>
+                            </h6>
+                            <div id="collapseMembers" class="collapse" aria-labelledby="headingOne" data-parent="#accordionMembers">
+                                <div class="card-body">
+                                    @Html.Partial("UsersOfGroupPartial", @Model)
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    @Html.Partial("UsersOfGroupPartial", @Model)
+                }
+
+
+
+                    <form form asp-action="EditGroup" asp-controller="Grant" asp-route-rolename=@ViewBag.Rolename method="post">
+                        <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
+
+                        <div id="RightsTable">
+                            @Html.Partial("EditGroupDetailsPartial", @Model)
+                        </div>
+
+                    </form>
+
                 </div>
 
-                <form form asp-action="EditGroup" asp-controller="Grant" asp-route-rolename=@ViewBag.Rolename method="post">
-                    <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
-
-                    <div id="RightsTable">
-                        @Html.Partial("EditGroupDetailsPartial", @Model)
-                    </div>
-
-                </form>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-primary" data-saveprivs="modal">Сохранить</button>
-            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+            <button type="button" class="btn btn-primary" data-saveprivs="modal">Сохранить</button>
         </div>
     </div>
 </div>

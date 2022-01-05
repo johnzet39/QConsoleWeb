@@ -8,58 +8,108 @@
 <div id="modal-placeholder"></div>
 <div id="modal-placeholder-columns"></div>
 
-<div id="splitter" class="">
-    <div id="splitterGroups" class="">
-
-        <div class="card-header">
-            <h5>Группы пользователей</h5>
-        </div>
-        <div id="divtable">
-            <div class="table-responsive">
-                <table id="TableRoles" class="table table-sm table-hover text-nowrap">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>#</th>
-                            <th>Роль</th>
-                            <th>Описание</th>
-                            <th class="d-none">Роль</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @{int rowNumber = 0; }
-                        @{bool isRowRole = true; }
-                        @foreach (var p in Model)
-                        {
-                            if (isRowRole)
-                            {
-                                if (!@p.Isrole)
-                                {
-                                    isRowRole = false;
-                                    rowNumber = 0;
-                                }
-                            }
-                            <tr class="ButtonClass" data-toggle="ajax-edit-role" data-target="privEdit" data-rolename=@p.Usename data-userid=@p.Usesysid data-url="@Url.Action("EditGroup")">
-                                <td>@(rowNumber += 1)</td>
-                                <td class="td-main" data-toggle="tooltip" title="@p.Descript">@p.Usename</td>
-                                <td>
-                                    <table class="fixed-table">
-                                        <tr>
-                                            <td>@p.Descript</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                                <td class="isrole d-none">@p.Isrole</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
+    <div class="card-header">
+        <h5>Роли и пользователи</h5>
     </div>
 
+    <div class="pb-2 pt-2 sticky">
+        <div class="input-group input-group-sm">
+            <input type="text" class="form-control" id="nameFilter" onkeyup="filterUserList()" placeholder="Введите роль для поиска..." aria-label="" aria-describedby="basic-addon1">
+        </div>
+    </div>
+
+    <div id="divtable">
+        <div class="table-responsive">
+            <table id="TableRoles" class="table table-sm table-hover text-nowrap">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Роль</th>
+                        <th>Описание</th>
+                        <th class="d-none">Роль</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{int rowNumber = 0; }
+                    @{bool isRowRole = true; }
+                    @foreach (var p in Model)
+                    {
+                        if (isRowRole)
+                        {
+                            if (!@p.Isrole)
+                            {
+                                isRowRole = false;
+                                rowNumber = 0;
+                            }
+                        }
+                        <tr class="ButtonClass" data-toggle="ajax-edit-role" data-target="privEdit" data-rolename=@p.Usename data-userid=@p.Usesysid data-url="@Url.Action("EditGroup")">
+                            <td>@(rowNumber += 1)</td>
+                            <td class="td-main" data-toggle="tooltip" title="@p.Descript">@p.Usename</td>
+                            <td>@p.Descript</td>
+                            <td class="isrole d-none">@p.Isrole</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+<div class="table-noresult" style="display: none;">
+    Нет записей
 </div>
 
+<script>
+    $(window).on('scroll', function () {
+        if ($(window).scrollTop() > 50) {
+            $('.sticky').addClass('scrolled');
+        } else {
+            $('.sticky').removeClass('scrolled');
+        }
+    });
+</script>
+
+<script>
+    function filterUserList() {
+
+        var td, t, cnt, has_recs;
+
+        var input = document.getElementById('nameFilter');
+        var filter = input.value.toUpperCase();
+        var table = document.getElementById('TableRoles').getElementsByTagName('tbody')[0];
+
+        var rows = table.getElementsByTagName('tr');
+
+        var noresult_div = document.getElementsByClassName('table-noresult')[0];
+
+        has_recs = false;
+
+        for (i = 0; i < rows.length; i++) {
+            td = rows[i].getElementsByTagName('td');
+            cnt = 0;
+            for (j = 1; j < 3; j++) {
+                t = td[j].innerText;
+                if (t.toUpperCase().indexOf(filter) > -1) {
+                    has_recs = true;
+                    rows[i].style.display = "";
+                    cnt = cnt + 1;
+                }
+            }
+            if (cnt == 0) {
+                rows[i].style.display = "none";
+            }
+        }
+
+        if (has_recs) {
+            noresult_div.style.display = "none";
+        }
+        else {
+            noresult_div.style.display = "";
+        }
+    }
+
+
+</script>
 
 
 <script>
@@ -123,7 +173,7 @@
 </script>
 
 
-@*<script>
+<script>
     $(document).on('show.bs.modal', '.modal', function (event) {
         var zIndex = 1040 + (10 * $('.modal:visible').length);
         $(this).css('z-index', zIndex);
@@ -131,4 +181,4 @@
             $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
         }, 0);
     });
-</script>*@
+</script>

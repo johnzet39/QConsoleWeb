@@ -85,6 +85,7 @@
                     //    placeholderElement_col.find('.modal').modal('hide');
                     //}
                     placeholderElement_col.find('.modal').modal('hide');
+                    //reloadRights();
                 }
                 else {
                     console.log('error');
@@ -94,4 +95,21 @@
             }
         });
     });
+</script>
+
+<script>
+    function reloadRights() {
+        var placeholderElement = $('#modal-placeholder');
+        var form = placeholderElement.find('form');
+        console.log(form);
+        var url = form.attr('action')
+        var v_userid = form.attr('userid');
+        var v_rolename = form.attr('rolename');
+
+        $.get(url, { userid: v_userid, rolename: v_rolename }).done(function (data) {
+            $('#modal-placeholder').html(data);
+        });
+
+
+    };
 </script>

@@ -284,3 +284,30 @@ td.ellipsis-100 {
 table.table-sm.no-padding-td td {
     padding: 0px;
 }
+
+.modal.modal-fullscreen .modal-dialog {
+    /*width: 100vw;*/
+    height: 100vh;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    /*max-width: none;*/
+    /*margin: 0;
+    padding: 0;*/
+}
+
+
+
+.modal.modal-fullscreen .modal-content {
+    height: auto;
+    height: 100vh;
+    border-radius: 0;
+    border: none;
+}
+
+
+
+.modal.modal-fullscreen .modal-body {
+    overflow-y: auto;
+}
