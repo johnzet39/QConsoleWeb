@@ -29,10 +29,11 @@ namespace QConsoleWeb.Controllers
         {
             ViewBag.Title = "Привилегии";
             var groups = GetGroups();
-            if (_device.Type.ToString().ToLower() == "desktop")
-                return View(groups);
-            else
-                return View("IndexMobile", groups);
+            //if (_device.Type.ToString().ToLower() == "desktop")
+            //    return View(groups);
+            //else
+            //    return View("IndexMobile", groups);
+            return View(groups);
         }
 
         [HttpGet]
@@ -45,11 +46,12 @@ namespace QConsoleWeb.Controllers
 
             ViewBag.Title = "Редактирование группы";
             ViewBag.Rolename = rolename;
-            if (_device.Type.ToString().ToLower() == "desktop")
-                return PartialView(model);
-            else
-                return View("EditGroupMobile", model);
-                
+            //if (_device.Type.ToString().ToLower() == "desktop")
+            //    return PartialView(model);
+            //else
+            //    return View("EditGroupMobile", model);
+            return PartialView(model);
+
         }
 
         [HttpPost]
@@ -190,13 +192,16 @@ namespace QConsoleWeb.Controllers
                                                 selectList, updateList, insertList,
                                                 selChanged, updChanged, insChanged);
                     //TempData["message"] = $"Сохранено.";
-                    if (_device.Type.ToString().ToLower() == "desktop")
-                        return Json(new { ok = true, mobile = false });
-                    else
-                    {
-                        TempData["message"] = $"Сохранено.";
-                        return Json(new { ok = true, mobile = true,  newurl = Url.Action("Index") });
-                    }
+
+                    //if (_device.Type.ToString().ToLower() == "desktop")
+                    //    return Json(new { ok = true, mobile = false });
+                    //else
+                    //{
+                    //    TempData["message"] = $"Сохранено.";
+                    //    return Json(new { ok = true, mobile = true,  newurl = Url.Action("Index") });
+                    //}
+
+                    return Json(new { ok = true, mobile = false });
                 }
                 catch (Exception e)
                 {

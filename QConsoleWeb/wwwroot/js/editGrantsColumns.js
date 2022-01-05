@@ -1,8 +1,8 @@
 ﻿
 $(function () {
-    var placeholderElement = $('#modal-placeholder');
+    var placeholderElement_col = $('#modal-placeholder-columns');
 
-    $('button[data-toggle="ajax-edit-modal"]').click(function (event) {
+    $('button[data-toggle="ajax-edit-columns"]').click(function (event) {
         event.preventDefault();
 
         var url = $(this).data('url');
@@ -10,12 +10,13 @@ $(function () {
         var v_table = $(this).data('table');
         var v_rolename = $(this).data('rolename');
         $.get(url, { schema: v_schema, table: v_table, rolename: v_rolename }).done(function (data) {
-            $('#modal-placeholder').html(data);
-            $('#modal-placeholder > .modal').modal('show');
+            $('#modal-placeholder-columns').html(data);
+            $('#modal-placeholder-columns > .modal').modal('show');
         });
     });
 
-    placeholderElement.on('click', '[data-save="modal"]', function (event) {
+    placeholderElement_col.on('click', '[data-save-col="modal"]', function (event) {
+        console.log('aaa');
         event.preventDefault();
 
         var form = $(this).parents('.modal').find('form');
@@ -36,15 +37,7 @@ $(function () {
                         window.location = returndata.newurl
                     }
                     else {
-                        placeholderElement.find('.modal').modal('hide');
-
-                        var activeRow = $('tr[data-toggle="ajax-edit-group"].active');
-                        activeRow.click();
-                        if ($(activeRow).hasClass('active')) {
-                            $(activeRow).removeClass('active');
-                        } else {
-                            $(activeRow).addClass('active').siblings().removeClass('active');
-                        }
+                        placeholderElement_col.find('.modal').modal('hide');
                     }
                     
                 }

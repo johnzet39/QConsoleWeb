@@ -1,29 +1,42 @@
 ﻿@model GrantViewModel
-@*Modal placeholder*@
-<div id="modal-placeholder"></div>
-
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-<div id="DetailsSplitter" class="splitter">
-
-    <div id="loading_grants" class="loading_grants"></div>
 
 
-    <div id="UsersTable" class="firstSplitter">
-        <div class="card-header">
-            <h6>Члены группы:</h6>
+    <!-- Modal -->
+<div class="modal fade" id="privEdit" tabindex="-1" role="dialog" aria-labelledby="privEdit" aria-hidden="true">
+    
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="privEdit">Привилегии роли</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div id="UsersTable">
+                    <div class="card-header">
+                        <h6>Члены группы:</h6>
+                    </div>
+                    @Html.Partial("UsersOfGroupPartial", @Model)
+                </div>
+
+                <form form asp-action="EditGroup" asp-controller="Grant" asp-route-rolename=@ViewBag.Rolename method="post">
+                    <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
+
+                    <div id="RightsTable">
+                        @Html.Partial("EditGroupDetailsPartial", @Model)
+                    </div>
+
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" data-saveprivs="modal">Сохранить</button>
+            </div>
         </div>
-        @Html.Partial("UsersOfGroupPartial", @Model)
-    </div>
-
-    <div id="SeparatorRights" class="separator bg-light"></div>
-
-    <div id="RightsTable" class="secondSplitter">
-        @Html.Partial("EditGroupDetailsPartial", @Model)
     </div>
 </div>
-
-<script src="~/js/splitter.js"></script>
-<script>
-    splitter("UsersTable", "RightsTable", "SeparatorRights", "DetailsSplitter", true, "H");
-</script>

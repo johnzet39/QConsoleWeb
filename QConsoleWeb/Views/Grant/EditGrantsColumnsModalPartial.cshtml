@@ -1,12 +1,14 @@
 ﻿@model GrantColumnsViewModel
 
+
+
 <!-- Modal -->
-<div class="modal fade" id="grantsColumns" tabindex="-1" role="dialog" aria-labelledby="grantsColumnsLabel" aria-hidden="true">
+<div class="modal fade" id="grantsColumns" tabindex="-1" role="dialog" aria-labelledby="grantsColumnsLabel" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="grantsColumnsLabel">Привилегии для атрибутов</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss-col="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -50,8 +52,46 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-primary" data-save="modal">Сохранить</button>
+                <button type="button" class="btn btn-primary" data-save-col="modal">Сохранить</button>
             </div>
         </div>
     </div>
 </div>
+
+
+<script>
+    var placeholderElement_col = $('#modal-placeholder-columns');
+    $('button[data-save-col="modal"]').click(function (event) {
+        event.preventDefault();
+
+        var form = $(this).parents('.modal').find('form');
+        var actionUrl = form.attr('action');
+        var model = form.serialize();
+
+        //var model_data = JSON.stringify(model);
+
+        $.ajax({
+            type: "POST",
+            url: actionUrl,
+            dataType: 'json',
+            data: model,
+            crossDomain: true,
+            success: function (returndata) {
+                if (returndata.ok) {
+                    //if (returndata.mobile == true) {
+                    //    window.location = returndata.newurl
+                    //}
+                    //else {
+                    //    placeholderElement_col.find('.modal').modal('hide');
+                    //}
+                    placeholderElement_col.find('.modal').modal('hide');
+                }
+                else {
+                    console.log('error');
+                    console.log(returndata.message);
+                }
+
+            }
+        });
+    });
+</script>
