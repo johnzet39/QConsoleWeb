@@ -85,7 +85,7 @@
                     //    placeholderElement_col.find('.modal').modal('hide');
                     //}
                     placeholderElement_col.find('.modal').modal('hide');
-                    //reloadRights();
+                    reloadRights();
                 }
                 else {
                     console.log('error');
@@ -101,15 +101,13 @@
     function reloadRights() {
         var placeholderElement = $('#modal-placeholder');
         var form = placeholderElement.find('form');
-        console.log(form);
         var url = form.attr('action')
-        var v_userid = form.attr('userid');
-        var v_rolename = form.attr('rolename');
+        var v_userid = document.getElementById('userid_form').value;
+        var v_rolename = document.getElementById('rolename_form').value;
+        var v_part = new Boolean(true);
 
-        $.get(url, { userid: v_userid, rolename: v_rolename }).done(function (data) {
-            $('#modal-placeholder').html(data);
+        $.get(url, { userid: v_userid, rolename: v_rolename, ispart: v_part }).done(function (data) {
+            $('#RightsTable').html(data);
         });
-
-
     };
 </script>

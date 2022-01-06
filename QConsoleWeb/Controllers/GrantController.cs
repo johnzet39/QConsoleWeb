@@ -37,7 +37,7 @@ namespace QConsoleWeb.Controllers
         }
 
         [HttpGet]
-        public IActionResult EditGroup(string userid, string rolename)
+        public IActionResult EditGroup(string userid, string rolename, bool ispart)
         {
             GrantViewModel model = new GrantViewModel();
             model.UserList = GetUsers(userid).ToList();
@@ -46,11 +46,18 @@ namespace QConsoleWeb.Controllers
 
             ViewBag.Title = "Редактирование группы";
             ViewBag.Rolename = rolename;
+            ViewBag.Userid = userid;
             //if (_device.Type.ToString().ToLower() == "desktop")
             //    return PartialView(model);
             //else
             //    return View("EditGroupMobile", model);
-            return PartialView(model);
+            if (ispart)
+            {
+                return PartialView("EditGroupPart", model);
+            }
+            else {
+                return PartialView(model);
+            }
 
         }
 

@@ -38,14 +38,16 @@
 
 
 
-                    <form form asp-action="EditGroup" asp-controller="Grant" asp-route-rolename=@ViewBag.Rolename method="post">
-                        <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
+            <form form asp-action="EditGroup" asp-controller="Grant" asp-route-rolename=@ViewBag.Rolename method="post">
+                <input name="IsValid" type="hidden" value="@ViewData.ModelState.IsValid.ToString()" />
+                <input id="userid_form" type="hidden" value="@ViewBag.Userid.ToString()" />
+                <input id="rolename_form" type="hidden" value="@ViewBag.Rolename.ToString()" />
 
-                        <div id="RightsTable">
-                            @Html.Partial("EditGroupDetailsPartial", @Model)
-                        </div>
+                <div id="RightsTable">
+                    @Html.Partial("EditGroupDetailsPartial", @Model)
+                </div>
 
-                    </form>
+            </form>
 
                 </div>
 

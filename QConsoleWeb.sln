@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QConsoleWeb", "QConsoleWeb\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QConsoleWeb.DAL", "QConsoleWeb.DAL\QConsoleWeb.DAL.csproj", "{9F1ADAA0-9BCC-4294-BD11-52093033FF4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QConsoleWeb.BLL", "QConsoleWeb.BLL\QConsoleWeb.BLL.csproj", "{25AD96D1-F4B4-4953-A91A-00F90602F189}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QConsoleWeb.BLL", "QConsoleWeb.BLL\QConsoleWeb.BLL.csproj", "{25AD96D1-F4B4-4953-A91A-00F90602F189}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
