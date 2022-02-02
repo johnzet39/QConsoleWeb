@@ -4,6 +4,7 @@
     var operations_labels = @Html.Raw(ViewBag.StatOperations_labels);
     var operations_dataset = @Html.Raw(ViewBag.StatOperations_dataset);
     var operations_colors = @Html.Raw(ViewBag.StatOperations_colors);
+    var PeriodString = "@Html.Raw(ViewBag.Periodstring)";
 
     var data = {
         datasets: [{
@@ -14,7 +15,7 @@
     };
     var options = {
         title: {
-            text: 'Количество операций за период',
+            text: 'Количество операций за период ' + PeriodString,
             display: true
         },
         legend: {
@@ -37,11 +38,3 @@
         options: options
     });
 </script>
-
-@*<script>
-    $(document).ajaxStart(function () {
-        $("#loading_operations").show();
-    }).ajaxStop(function () {
-        $("#loading_operations").hide();
-    });
-</script>*@

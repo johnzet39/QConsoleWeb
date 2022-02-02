@@ -4,6 +4,7 @@
     var inserts_labels = @Html.Raw(ViewBag.StatInserts_labels);
     var inserts_dataset = @Html.Raw(ViewBag.StatInserts_dataset);
     var inserts_colors = @Html.Raw(ViewBag.StatInserts_colors);
+    var period_string = "@Html.Raw(ViewBag.StatInserts_periodstring)";
 
     var data = {
         datasets: [{
@@ -16,12 +17,13 @@
     };
     var options = {
         title: {
-            text: 'Количество новых записей за период',
+            text: 'Количество новых записей за период ' + period_string,
             display: true
         },
         legend: {
             position: 'top',
-            display: false
+            display: false,
+            fontSize: 8
         },
         animation: {
           animateScale: true,

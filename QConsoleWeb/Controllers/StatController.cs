@@ -66,9 +66,13 @@ namespace QConsoleWeb.Controllers
             int[] dataset = new int[3] { inserts, updates, deletes };
             string[] colors = new string[3] { "rgb(227, 26, 28, 0.5)", "rgb(31, 120, 180, 0.5)", "rgb(255, 177, 0, 0.5)" };
 
+            var datefrom_string = DateFrom.ToString("MM.yyyy");
+            var dateto_string = DateTo.ToString("MM.yyyy");
+
             ViewBag.StatOperations_labels = JsonConvert.SerializeObject(labels, _jsonSetting);
             ViewBag.StatOperations_dataset = JsonConvert.SerializeObject(dataset, _jsonSetting);
             ViewBag.StatOperations_colors = JsonConvert.SerializeObject(colors, _jsonSetting);
+            ViewBag.Periodstring = $"{datefrom_string} - {dateto_string}";
 
             return PartialView();
         }
@@ -97,7 +101,7 @@ namespace QConsoleWeb.Controllers
                         .Count();
                 if (count > 0)
                 {
-                    labels.Add($"{layer.Table_schema}.{layer.Table_name} ({count})");
+                    labels.Add($"{layer.Descript} ({layer.Table_schema}.{layer.Table_name}) ({count})");
                     dataset.Add(count);
 
                     if (idx > ColorValues.Length - 1)
@@ -106,10 +110,13 @@ namespace QConsoleWeb.Controllers
                     ++idx;
                 }
             }
+            var datefrom_string = DateFrom.ToString("MM.yyyy");
+            var dateto_string = DateTo.ToString("MM.yyyy");
 
             ViewBag.StatInserts_labels = JsonConvert.SerializeObject(labels, _jsonSetting);
             ViewBag.StatInserts_dataset = JsonConvert.SerializeObject(dataset, _jsonSetting);
             ViewBag.StatInserts_colors = JsonConvert.SerializeObject(colors, _jsonSetting);
+            ViewBag.StatInserts_periodstring = $"{datefrom_string} - {dateto_string}";
 
             return PartialView();
         }
@@ -185,7 +192,12 @@ namespace QConsoleWeb.Controllers
                 labels = LabelsYears,
                 datasets = datasets
             };
+
+            var datefrom_string = DateFrom.ToString("MM.yyyy");
+            var dateto_string = DateTo.ToString("MM.yyyy");
+
             ViewBag.YearStatDataCJ = JsonConvert.SerializeObject(datachartjs, _jsonSetting);
+            ViewBag.Periodstring = $"{datefrom_string} - {dateto_string}";
             return PartialView();
         }
 
