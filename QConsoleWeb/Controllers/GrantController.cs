@@ -62,6 +62,7 @@ namespace QConsoleWeb.Controllers
         }
 
         [HttpPost]
+        [RequestFormLimits(ValueCountLimit = 10000)]
         public IActionResult EditGroup(GrantViewModel model, string rolename)
         {
             var old_layers = GetLayers(rolename).OrderBy(r => r.Table_schema).ThenBy(r => r.Table_name).ToList();
