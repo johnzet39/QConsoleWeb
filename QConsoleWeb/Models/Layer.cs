@@ -21,6 +21,8 @@ namespace QConsoleWeb.Models
         public Boolean Isupdater { get; set; }
         [Display(Name = "Аудит")]
         public Boolean Islogger { get; set; }
+        [Display(Name = "Файлы")]
+        public Boolean Isdocfiles { get; set; }
     }
 
     public class Dict

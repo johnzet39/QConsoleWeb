@@ -14,6 +14,7 @@ namespace QConsoleWeb.BLL.DTO
         public string Geomtype { get; set; }
         public Boolean Isupdater { get; set; }
         public Boolean Islogger { get; set; }
+        public Boolean Isdocfiles { get; set; }
     }
 
     public class DictionaryDTO
