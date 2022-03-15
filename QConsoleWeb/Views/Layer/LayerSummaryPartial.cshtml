@@ -34,7 +34,7 @@
                     <td>@p.Geomtype</td>
                     <td>@p.Isupdater</td>
                     <td>@p.Islogger</td>
-                    <td>@p.Isdocfiles</td>
+                    <td>@(@p.Docfiles_table.Length > 0) </td>
                 </tr>
             }
         </tbody>

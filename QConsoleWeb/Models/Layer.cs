@@ -22,7 +22,7 @@ namespace QConsoleWeb.Models
         [Display(Name = "Аудит")]
         public Boolean Islogger { get; set; }
         [Display(Name = "Файлы")]
-        public Boolean Isdocfiles { get; set; }
+        public string Docfiles_table { get; set; }
     }
 
     public class Dict

@@ -28,9 +28,9 @@ namespace QConsoleWeb.BLL.Services
             _managerDAL = new ManagerDAL(_conn);
         }
 
-        public void ChangeLayer(string tableschema, string tablename, string descript, bool? isupdater, bool? islogger)
+        public void ChangeLayer(string tableschema, string tablename, string descript, bool? isupdater, bool? islogger, string nameDocFilesTable)
         {
-            _managerDAL.LayerAccess.ChangeLayer(tableschema, tablename, descript, isupdater, islogger);
+            _managerDAL.LayerAccess.ChangeLayer(tableschema, tablename, descript, isupdater, islogger, nameDocFilesTable);
         }
 
         public int GetCountOfPeriod(string tableshcema, string tablename, int days)

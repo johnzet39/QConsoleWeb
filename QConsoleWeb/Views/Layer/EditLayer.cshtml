@@ -57,7 +57,51 @@
                         </div>
                     </div>
 
-                </form>
+                    <div class="form-group">
+                        <div><span asp-validation-for="@Model.CurrentLayer.Docfiles_table" class="text-danger"></span></div>
+
+                        @{ var isDocFiles = Model.CurrentLayer.Docfiles_table.Trim().Length > 0;}
+                        @{ var isShowAcc = (isDocFiles ? "collapse show" : "collapse");}
+
+                        <div id="accordion">
+                            <div class="card">
+                                <div class="form-group mb-0" id="headingOne">
+                                    <div class="m-2">
+                                        @* нет времени, возможности написать по-человечьи без ифов. Надо переписать нормально *@
+                                        @if (@isDocFiles)
+                                        {
+                                            <input type="checkbox" asp-for="@Model.IsAddDocFiles" id="role_checkbox3" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne" checked disabled>
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" asp-for="@Model.IsAddDocFiles" id="role_checkbox3" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                        }
+                                        <label class="mb-0">
+                                            Таблица с файлами
+                                        </label>
+                                    </div>
+                                </div>
+
+
+                                <div id="collapseOne" class="@isShowAcc" aria-labelledby="headingOne" data-parent="#accordion">
+                                    <div class="card-body p-2">
+                                        @if (@isDocFiles)
+                                        {
+                                            <input asp-for="@Model.CurrentLayer.Docfiles_table" placeholder="Введите имя таблицы (необязательно)" class="form-control form-control-sm w-100" readonly />
+                                        }
+                                        else
+                                        {
+                                            <input asp-for="@Model.CurrentLayer.Docfiles_table" placeholder="Введите имя таблицы (необязательно)" class="form-control form-control-sm w-100" />
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+</form>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>

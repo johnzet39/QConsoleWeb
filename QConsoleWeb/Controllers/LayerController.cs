@@ -95,6 +95,15 @@ namespace QConsoleWeb.Controllers
                 if (layer.Islogger != olrlayer.Islogger)
                     isloggerCompare = layer.Islogger;
 
+                string nameDocFilesTable = null;
+                if (model.IsAddDocFiles)
+                {
+                    if ((olrlayer.Docfiles_table.Trim().Length == 0) && (model.IsAddDocFiles))
+                    {
+                        nameDocFilesTable = layer.Docfiles_table ?? "";
+                    }
+                }
+
                 string descript = null;
                 if (layer.Descript != olrlayer.Descript)
                     if (layer.Descript == null)
@@ -109,7 +118,8 @@ namespace QConsoleWeb.Controllers
                         layer.Table_name,
                         descript,
                         isupdaterCompare,
-                        isloggerCompare
+                        isloggerCompare,
+                        nameDocFilesTable
                         );
                 }
                 catch(Exception e)

@@ -10,5 +10,6 @@ namespace QConsoleWeb.Views.ViewModels
     {
         public Layer CurrentLayer { get; set; }
         public IEnumerable<LayerGrants> LayerGrantsList { get; set; }
+        public bool IsAddDocFiles { get; set; }
     }
 }

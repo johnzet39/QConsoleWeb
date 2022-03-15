@@ -25,6 +25,14 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
             return String.Format("SELECT logger.qfunc_loglogger('{0}', '{1}', {2});", tableschema, tablename, islogger.ToString().ToUpper());
         }
 
+        public static string SetDocFiles(string tableschema, string tablename, Boolean isdocfiles, string df_tablename=null)
+        {
+            if (df_tablename == null)
+                return String.Format("SELECT schema_docfiles.qfunc_docfiles_creater('{0}', '{1}', {2});", tableschema, tablename, isdocfiles.ToString().ToUpper());
+            else
+                return String.Format("SELECT schema_docfiles.qfunc_docfiles_creater('{0}', '{1}', {2}, '{3}');", tableschema, tablename, isdocfiles.ToString().ToUpper(), df_tablename);
+        }
+
     }
 
 
@@ -56,7 +64,7 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
                                         " false " +
                                 " end as islogger, " +
 
-                                    " (SELECT count( r.table_name) > 0 " +
+                                    " (SELECT string_agg(r.table_name, ', ') " +
                                     " FROM information_schema.constraint_column_usage       u " +
                                     " INNER JOIN information_schema.referential_constraints fk " +
                                     "            ON u.constraint_catalog = fk.unique_constraint_catalog " +
@@ -71,7 +79,7 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
                                     "     u.table_name = t.table_name AND " +
                                     "     r.table_name like 'df_%' AND " +
                                     "     r.table_schema = 'schema_docfiles') " +
-                                " as isdocfiles " +
+                                " as docfiles_table " +
                                " FROM information_schema.tables t  " +
                                " WHERE EXISTS  (select 1 from geometry_columns gc where gc.f_table_schema = t.table_schema and gc.f_table_name = t.table_name limit 1) AND (t.table_schema not in  ('logger', 'tiger', 'schema_spr')) " +
                                " ORDER BY t.table_schema, t.table_name ; ";
@@ -98,7 +106,7 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
                                         " false " +
                                 " end as islogger, " +
 
-                                    " (SELECT count( r.table_name) > 0 " +
+                                    " (SELECT string_agg(r.table_name, ', ') " +
                                     " FROM information_schema.constraint_column_usage       u " +
                                     " INNER JOIN information_schema.referential_constraints fk " +
                                     "            ON u.constraint_catalog = fk.unique_constraint_catalog " +
@@ -113,7 +121,7 @@ namespace QConsoleWeb.DAL.AccessLayer.DAO
                                     "     u.table_name = t.table_name AND " +
                                     "     r.table_name like 'df_%' AND " +
                                     "     r.table_schema = 'schema_docfiles') " +
-                                " as isdocfiles " +
+                                " as docfiles_table " +
                                " FROM information_schema.tables t  " +
                                " WHERE (t.table_schema = 'schema_spr') OR t.table_schema||t.table_name in (select spr.schema_name||spr.table_name from logger.dictionaries spr) " +
                                " ORDER BY t.table_schema, t.table_name ; ";
@@ -207,7 +215,7 @@ order by groname
                             objectpsql.Geomtype = dataReader["geomtype"].ToString();
                             objectpsql.Isupdater = Convert.ToBoolean(dataReader["isupdater"]);
                             objectpsql.Islogger = Convert.ToBoolean(dataReader["islogger"]);
-                            objectpsql.Isdocfiles = Convert.ToBoolean(dataReader["isdocfiles"]);
+                            objectpsql.Docfiles_table = dataReader["docfiles_table"].ToString();
 
                             listOfObjects.Add(objectpsql);
                         }
@@ -280,13 +288,17 @@ order by groname
         }
 
         //Change layer
-        public void ChangeLayer(string tableschema, string tablename, string descript, bool? isupdater, bool? islogger)
+        public void ChangeLayer(string tableschema, string tablename, string descript, bool? isupdater, bool? islogger, string nameDocFilesTable)
         {
             List<String> sql_queries = new List<String>();
 
             if (descript != null) sql_queries.Add(LayerQueries.CommentOnTable(tableschema, tablename, descript));
             if (isupdater != null) sql_queries.Add(LayerQueries.SetUpdater(tableschema, tablename, (bool)isupdater));
             if (islogger != null) sql_queries.Add(LayerQueries.SetLogger(tableschema, tablename, (bool)islogger));
+            if (nameDocFilesTable != null) {
+                if (nameDocFilesTable.Trim().Length == 0) nameDocFilesTable = null;
+                sql_queries.Add(LayerQueries.SetDocFiles(tableschema, tablename, true, nameDocFilesTable));
+            }
 
             try
             {

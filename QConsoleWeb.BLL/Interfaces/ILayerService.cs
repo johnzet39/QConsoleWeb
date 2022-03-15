@@ -15,7 +15,7 @@ namespace QConsoleWeb.BLL.Interfaces
         //dictionaries
         List<LayerDTO> GetDicts();
         //Change layer
-        void ChangeLayer(string tableschema, string tablename, string descript, bool? isupdater, bool? islogger);
+        void ChangeLayer(string tableschema, string tablename, string descript, bool? isupdater, bool? islogger, string nameDocFilesTable);
         //Get count of changed rows in last days
         int GetCountOfPeriod(string tableshcema, string tablename, int days);
         //GetListOfDictionaries
